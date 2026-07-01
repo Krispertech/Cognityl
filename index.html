@@ -10,7 +10,7 @@
   connect-src 'self';
   frame-ancestors 'none';
   base-uri 'self';
-  form-action 'self';
+ form-action 'self' https://formspree.io;
 ">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
@@ -270,16 +270,42 @@ function Contact(){
       </div>
       <div className="relative bg-white text-[var(--ink)] rounded-3xl p-6 lg:p-8">
         {sent ? <div className="py-16 text-center"><div className="mx-auto mb-5 w-14 h-14 rounded-full bg-[var(--green-light)] text-[var(--green)] flex items-center justify-center"><Icon name="check"/></div><h3 className="font-display text-2xl font-bold">Message sent</h3><p className="text-[var(--muted)] mt-2">We'll get back to you soon.</p></div> :
-        <form onSubmit={(e)=>{e.preventDefault();setSent(true)}} className="space-y-4">
+       <form
+  action="https://formspree.io/f/mwvdrvdw"
+  method="POST"
+  className="space-y-4"
+>
           <div className="grid sm:grid-cols-2 gap-4">
-            <input required placeholder="Your name" className="rounded-2xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)]" />
-            <input required type="email" placeholder="Work email" className="rounded-2xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)]" />
+           <input
+  required
+  name="name"
+  placeholder="Your name"
+  className="rounded-2xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)]"
+/>
+            <input
+  required
+  name="email"
+  type="email"
+  placeholder="Work email"
+  className="rounded-2xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)]"
+/>
           </div>
-          <input placeholder="Company website" className="w-full rounded-2xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)]" />
-          <select className="w-full rounded-2xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)]">
+         <input
+  name="website"
+  placeholder="Company website"
+  className="w-full rounded-2xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)]"
+/>
+          <select
+  name="service"
+  className="w-full rounded-2xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)]"
             <option>I want to automate workflows</option><option>I need an AI assistant/chatbot</option><option>I need sales/lead automation</option><option>I need data dashboards/insights</option><option>I'm not sure yet</option>
           </select>
-          <textarea rows="4" placeholder="What would you like AI to help with?" className="w-full rounded-2xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)] resize-none"></textarea>
+         <textarea
+  name="message"
+  rows="4"
+  placeholder="What would you like AI to help with?"
+  className="w-full rounded-2xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)] resize-none"
+></textarea>
           <button className="w-full rounded-2xl bg-[var(--green)] text-white font-semibold px-6 py-4 hover:bg-[var(--green-dark)] transition">Send request</button>
         </form>}
       </div>
