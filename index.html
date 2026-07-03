@@ -18,18 +18,18 @@
 
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Cognityl — Practical AI Solutions for Growing Businesses</title>
+<title>Cognityl — AI Opportunity Discovery Engine</title>
   <link rel="icon" href="favicon.png" type="image/png">
 <link rel="shortcut icon" href="favicon.png">
 <link rel="apple-touch-icon" href="favicon.png">
-<meta name="description" content="Cognityl builds AI assistants, workflow automations, and data intelligence tools that help businesses save time, convert more leads, and make faster decisions." />
+<meta name="description" content="Cognityl scans public business signals, detects high-value AI opportunities, and turns them into prioritized automation roadmaps." />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#ffffff;
@@ -37,7 +37,7 @@
     --muted:#66736d;
     --soft:#f6f8f5;
     --soft-2:#eef5ee;
-    --line:#e3e8df;
+    --line:#c9d0c4;
     --green:#13944a;
     --green-dark:#0e6f37;
     --green-light:#dff5e6;
@@ -46,16 +46,15 @@
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;overflow-x:hidden;}
-  .font-display{font-family:'Inter Tight',sans-serif;}
+  .font-display{font-family:'IBM Plex Sans',sans-serif;letter-spacing:-0.03em;}
+  .font-mono{font-family:'IBM Plex Mono',monospace;}
   .glass{background:rgba(255,255,255,.84);backdrop-filter:blur(18px);}
   .grid-bg{background-image:linear-gradient(to right, rgba(16,20,18,.06) 1px, transparent 1px),linear-gradient(to bottom, rgba(16,20,18,.06) 1px, transparent 1px);background-size:44px 44px;}
   .gradient-text{background:linear-gradient(90deg,var(--green),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent;}
-  .shadow-soft{box-shadow:0 24px 80px rgba(15, 92, 44, .10);}
-  .card{border:1px solid var(--line);background:#fff;border-radius:24px;transition:.22s ease;}
-  .card:hover{transform:translateY(-4px);box-shadow:0 18px 48px rgba(16,20,18,.08);border-color:#cbd8ca;}
+  .shadow-soft{box-shadow:4px 4px 0 rgba(16,20,18,.9);}
+  .card{border:1.5px solid var(--line);background:#fff;border-radius:0px;transition:.15s ease;}
+  .card:hover{border-color:var(--ink);box-shadow:3px 3px 0 rgba(16,20,18,.9);}
   .focus-ring:focus-visible{outline:3px solid var(--green-light);outline-offset:3px;}
-  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-  .float{animation:float 4s ease-in-out infinite;}
   @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
   .fade-up{animation:fadeUp .7s ease both;}
 </style>
@@ -78,76 +77,102 @@ const Icon = ({name, className="w-5 h-5"}) => {
     users:"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm13 10v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
     plug:"M12 22v-5M9 8V2m6 6V2M7 8h10v4a5 5 0 0 1-10 0V8z",
     clock:"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zm0-14v5l3 2",
+    lock:"M6 11V7a6 6 0 1 1 12 0v4M5 11h14v10H5V11z",
+    pause:"M9 5v14M15 5v14",
+    doc:"M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6zM14 3v6h6",
+    building:"M4 21V6l8-4 8 4v15M9 9h.01M9 13h.01M15 9h.01M15 13h.01M9 21v-5h6v5",
   };
   return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={icons[name]} /></svg>;
 };
 
 function Nav(){
   const [open,setOpen]=useState(false);
-  const links=[['Solutions','solutions'],['Process','process'],['Use cases','use-cases'],['FAQ','faq']];
+  const links=[['Report','report'],['Engine','engine'],['Use cases','use-cases'],['Process','process'],['Security','security'],['Governance','governance'],['FAQ','faq']];
   return <header className="fixed top-0 inset-x-0 z-50 border-b border-[var(--line)] glass">
     <div className="max-w-7xl mx-auto px-5 lg:px-8 h-16 flex items-center justify-between">
-      <a href="#top" className="flex items-center gap-3 focus-ring rounded-lg">
-  <div className="w-14 h-14 rounded-2xl bg-[#1F8B41] text-white flex items-center justify-center font-display text-3xl font-bold">
+      <a href="#top" className="flex items-center gap-3 focus-ring rounded-none">
+  <div className="w-9 h-9 rounded-none bg-[#1F8B41] text-white flex items-center justify-center font-display text-lg font-bold">
     C
   </div>
-  <span className="font-display text-3xl font-bold tracking-tight text-[var(--ink)]">
+  <span className="font-display text-xl font-bold tracking-tight text-[var(--ink)]">
     Cognityl
   </span>
       </a>
       <nav className="hidden md:flex items-center gap-8 text-sm text-[var(--muted)]">
-        {links.map(([label,id])=><a key={id} href={`#${id}`} className="hover:text-[var(--ink)] transition focus-ring rounded">{label}</a>)}
+        {links.map(([label,id])=><a key={id} href={`#${id}`} className="hover:text-[var(--ink)] transition focus-ring rounded-none">{label}</a>)}
       </nav>
-      <a href="#contact" className="hidden md:inline-flex items-center gap-2 rounded-full bg-[var(--ink)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--green-dark)] transition focus-ring">Book free call <Icon name="arrow" className="w-4 h-4"/></a>
-      <button className="md:hidden focus-ring rounded" onClick={()=>setOpen(!open)} aria-label="Toggle menu">☰</button>
+      <div className="hidden md:flex items-center gap-5">
+        <a href="#contact" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition focus-ring rounded-none">Analyze my business</a>
+        <a href="#contact" className="inline-flex items-center gap-2 rounded-none bg-[var(--ink)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--green-dark)] transition focus-ring">Get AI Opportunity Report <Icon name="arrow" className="w-4 h-4"/></a>
+      </div>
+      <button className="md:hidden focus-ring rounded-none" onClick={()=>setOpen(!open)} aria-label="Toggle menu">☰</button>
     </div>
     {open && <div className="md:hidden px-5 py-4 border-t border-[var(--line)] bg-white flex flex-col gap-4">
       {links.map(([label,id])=><a key={id} href={`#${id}`} onClick={()=>setOpen(false)}>{label}</a>)}
-      <a href="#contact" onClick={()=>setOpen(false)} className="font-semibold">Book free call →</a>
+      <a href="#contact" onClick={()=>setOpen(false)} className="font-semibold">Get AI Opportunity Report →</a>
     </div>}
   </header>
 }
 
+function CertStrip(){
+  const certs=[
+    ['SOC2','SOC 2 Type II','Audited annually'],
+    ['ISO','ISO 27001','Certified'],
+    ['GDPR','GDPR / CCPA','Compliant by design'],
+    ['VPC','Private deployment','VPC & on-prem options'],
+  ];
+  return <div className="flex flex-wrap gap-0 rounded-none border border-[var(--line)] bg-white overflow-hidden">
+    {certs.map(([tag,title,sub],i)=><div key={tag} className={`flex items-center gap-3 px-5 py-4 flex-1 min-w-[180px] ${i>0?'border-l border-[var(--line)]':''}`}>
+      <span className="w-9 h-9 rounded-full border border-[var(--green)] text-[var(--green)] flex items-center justify-center font-mono text-[9px] font-semibold flex-shrink-0">{tag}</span>
+      <div className="leading-tight">
+        <p className="font-semibold text-sm">{title}</p>
+        <p className="text-xs text-[var(--muted)]">{sub}</p>
+      </div>
+    </div>)}
+  </div>
+}
+
 function Hero(){
   return <section id="top" className="relative pt-36 lg:pt-44 pb-20 lg:pb-28 grid-bg overflow-hidden">
-    <div className="absolute -top-24 right-[-8rem] w-[34rem] h-[34rem] rounded-full bg-[var(--green-light)] blur-3xl opacity-70" />
     <div className="relative max-w-7xl mx-auto px-5 lg:px-8 grid lg:grid-cols-[1.05fr_.95fr] gap-12 items-center">
       <div className="fade-up">
-        <div className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-white px-4 py-2 text-sm text-[var(--muted)] mb-7 shadow-soft">
-          <Icon name="spark" className="w-4 h-4 text-[var(--green)]"/> Practical AI solutions for modern teams
+        <div className="inline-flex items-center gap-2 rounded-none border border-[var(--line)] bg-white px-4 py-2 text-sm text-[var(--muted)] mb-7 shadow-soft">
+          <Icon name="spark" className="w-4 h-4 text-[var(--green)]"/> AI opportunity discovery for modern businesses
         </div>
-        <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold tracking-[-.045em] leading-[.95] max-w-3xl">
-          Turn AI into real business results.
+        <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold tracking-[-.055em] leading-[.95] max-w-3xl">
+          Find the AI opportunities your competitors haven’t.
         </h1>
         <p className="mt-7 text-lg lg:text-xl text-[var(--muted)] leading-relaxed max-w-2xl">
-          Cognityl builds AI assistants, workflow automations and data tools that help your team save time, qualify leads, support customers and make faster decisions.
+          Cognityl scans your public business presence, detects visible sales, support and workflow bottlenecks, then turns them into a prioritized AI automation roadmap.
         </p>
         <div className="mt-9 flex flex-col sm:flex-row gap-4">
-          <a href="#contact" className="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--green)] text-white px-7 py-4 font-semibold hover:bg-[var(--green-dark)] transition focus-ring">Book a free AI consultation <Icon name="arrow" className="w-4 h-4"/></a>
-          <a href="#solutions" className="inline-flex items-center justify-center rounded-full bg-white border border-[var(--line)] px-7 py-4 font-semibold hover:border-[var(--green)] transition focus-ring">Explore solutions</a>
+          <a href="#contact" className="inline-flex items-center justify-center gap-2 rounded-none bg-[var(--green)] text-white px-7 py-4 font-semibold hover:bg-[var(--green-dark)] transition focus-ring">Get my AI Opportunity Report <Icon name="arrow" className="w-4 h-4"/></a>
+          <a href="#security" className="inline-flex items-center justify-center rounded-none bg-white border border-[var(--line)] px-7 py-4 font-semibold hover:border-[var(--green)] transition focus-ring">See how it works</a>
         </div>
-        <div className="mt-8 flex flex-wrap gap-3 text-sm text-[var(--muted)]">
-          {['No in-house AI team required','Fast first prototype','Built around your tools'].map(t=><span key={t} className="inline-flex items-center gap-2"><Icon name="check" className="w-4 h-4 text-[var(--green)]"/>{t}</span>)}
+        <p className="mt-4 text-sm text-[var(--muted)]">Start with a focused report: what to automate first, why it matters, and how to test it safely.</p>
+
+        <div className="mt-8">
+          <CertStrip/>
         </div>
       </div>
       <div className="relative fade-up" style={{animationDelay:'.15s'}}>
-        <div className="card shadow-soft p-5 lg:p-7 float">
+        <div className="card shadow-soft p-5 lg:p-7">
           <div className="flex items-center justify-between mb-5">
             <div>
-              <p className="text-sm text-[var(--muted)]">AI Opportunity Map</p>
-              <h3 className="font-display text-2xl font-bold">Where AI can help first</h3>
+              <p className="text-sm text-[var(--muted)]">Discovery Engine</p>
+              <h3 className="font-display text-2xl font-bold">Live opportunity scan</h3>
             </div>
-            <span className="w-12 h-12 rounded-2xl bg-[var(--green-light)] text-[var(--green)] flex items-center justify-center"><Icon name="spark"/></span>
+            <span className="w-12 h-12 rounded-none bg-[var(--green-light)] text-[var(--green)] flex items-center justify-center"><Icon name="spark"/></span>
           </div>
           {[
-            ['Lead qualification','Automate intake, scoring and follow-ups','High impact'],
-            ['Customer support','Answer repeated questions instantly','Save time'],
-            ['Internal knowledge','Search policies, docs and SOPs with AI','Faster work'],
-            ['Reporting','Turn scattered data into useful dashboards','Better decisions']
-          ].map((r,i)=><div key={r[0]} className="flex gap-4 items-start p-4 rounded-2xl border border-[var(--line)] mb-3 bg-[var(--soft)]">
+            ['Website analyzed','Public pages, forms, catalogues and content mapped','Complete'],
+            ['Funnel gaps detected','Lead capture and quote friction identified','High value'],
+            ['AI opportunities ranked','Support, sales and workflow use cases scored','87/100'],
+            ['Roadmap generated','First automation project recommended','Ready']
+          ].map((r,i)=><div key={r[0]} className="flex gap-4 items-start p-4 rounded-none border border-[var(--line)] mb-3 bg-[var(--soft)]">
             <span className="w-8 h-8 rounded-full bg-white border border-[var(--line)] flex items-center justify-center text-sm font-bold">{i+1}</span>
             <div className="flex-1"><h4 className="font-semibold">{r[0]}</h4><p className="text-sm text-[var(--muted)] mt-1">{r[1]}</p></div>
-            <span className="hidden sm:block text-xs bg-white border border-[var(--line)] rounded-full px-3 py-1 text-[var(--green-dark)]">{r[2]}</span>
+            <span className="hidden sm:block text-xs bg-white border border-[var(--line)] rounded-none px-3 py-1 text-[var(--green-dark)]">{r[2]}</span>
           </div>)}
         </div>
       </div>
@@ -155,37 +180,82 @@ function Hero(){
   </section>
 }
 
-function Trust(){
-  return <section className="py-10 border-y border-[var(--line)] bg-[var(--soft)]">
-    <div className="max-w-7xl mx-auto px-5 lg:px-8 grid md:grid-cols-4 gap-6 text-center">
-      {[
-        ['10–30 hrs/week','of repetitive work can be automated'],
-        ['24/7','AI assistants for customers or teams'],
-        ['CRM + email + website','connected into one workflow'],
-        ['Prototype first','so you see value before scaling']
-      ].map(s=><div key={s[0]}><p className="font-display text-2xl font-bold">{s[0]}</p><p className="text-sm text-[var(--muted)] mt-1">{s[1]}</p></div>)}
+function Report(){
+  const findings=[
+    ['Website intelligence','32 pages, 4 forms, 1 catalogue mapped','Complete'],
+    ['AI readiness score','Based on funnel structure, response signals, tooling','74/100'],
+    ['Problem map','3 visible gaps in sales and support flow','3 found'],
+    ['Priority roadmap','First project ranked by impact vs. effort','Ready'],
+  ];
+  return <section id="report" className="py-24 lg:py-32 max-w-7xl mx-auto px-5 lg:px-8">
+    <div className="grid lg:grid-cols-[.85fr_1.15fr] gap-14 items-center">
+      <div>
+        <p className="text-[var(--green)] font-semibold mb-3">AI Opportunity Report</p>
+        <h2 className="font-display text-3xl lg:text-4xl font-bold tracking-tight">Give prospects something useful before the first meeting.</h2>
+        <p className="mt-4 text-[var(--muted)] leading-relaxed">Cognityl turns public signals into a focused report that explains what the company could automate, why it matters, and which project should come first — sent before anyone gets on a call.</p>
+        <div className="mt-7 flex flex-col gap-3">
+          {['No login or private data required to generate it','Delivered as a one-page PDF, ready to forward internally','Every finding traces back to a public, verifiable signal'].map(t=><p key={t} className="flex items-start gap-3 text-sm text-[var(--muted)]"><Icon name="check" className="w-4 h-4 text-[var(--green)] mt-0.5 flex-shrink-0"/>{t}</p>)}
+        </div>
+      </div>
+
+      <div className="card shadow-soft overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--line)] bg-[var(--soft)]">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 bg-[var(--line)]"></span>
+            <span className="w-2.5 h-2.5 bg-[var(--line)]"></span>
+            <span className="w-2.5 h-2.5 bg-[var(--line)]"></span>
+          </div>
+          <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-[var(--muted)]">AI Opportunity Report · Preview</span>
+        </div>
+        <div className="p-6 lg:p-7">
+          <div className="flex items-start justify-between mb-6">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-[var(--muted)] mb-1">Prepared for</p>
+              <h3 className="font-display text-xl font-bold">Northgate Supply Co.</h3>
+            </div>
+            <div className="text-right flex-shrink-0">
+              <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-[var(--muted)] mb-1">Readiness score</p>
+              <p className="font-display text-3xl font-bold text-[var(--green)]">74<span className="text-base text-[var(--muted)]">/100</span></p>
+            </div>
+          </div>
+          {findings.map((r,i)=><div key={r[0]} className="flex gap-4 items-start p-4 border border-[var(--line)] mb-3 bg-white">
+            <span className="w-7 h-7 rounded-full bg-[var(--soft)] border border-[var(--line)] flex items-center justify-center text-xs font-bold flex-shrink-0">{i+1}</span>
+            <div className="flex-1"><h4 className="font-semibold text-sm">{r[0]}</h4><p className="text-xs text-[var(--muted)] mt-1">{r[1]}</p></div>
+            <span className="flex-shrink-0 text-xs bg-[var(--green-light)] border border-[var(--green)]/30 px-2.5 py-1 text-[var(--green-dark)] font-medium">{r[2]}</span>
+          </div>)}
+        </div>
+      </div>
     </div>
   </section>
 }
 
-function Solutions(){
+function Engine(){
   const items=[
-    ['bot','AI Assistants','Customer support bots, internal knowledge assistants and sales copilots that answer questions, guide users and reduce manual work.'],
-    ['flow','Workflow Automation','Automate repetitive tasks across email, CRM, spreadsheets, forms and internal tools so your team can focus on higher-value work.'],
-    ['chart','Data Intelligence','Dashboards, reporting and AI-powered insights that turn messy business data into clear next steps.'],
-    ['plug','AI Integrations','Connect AI to your existing tools: website, CRM, Google Workspace, Notion, Slack, databases and custom systems.'],
-    ['users','Sales & Lead Systems','Lead capture, qualification, enrichment and follow-up automations designed for B2B sales teams.'],
-    ['shield','AI Consulting','We identify practical AI opportunities, create a roadmap and help you launch without wasting budget on the wrong tools.'],
+    ['spark','Website Intelligence','Crawls public pages, product content, forms, FAQs, PDFs and contact flows to understand how the business currently operates.'],
+    ['chart','Problem Detection','Flags visible bottlenecks such as weak lead capture, missing support automation, slow quote flows or complex product discovery.'],
+    ['flow','Opportunity Scoring','Ranks AI projects by likely business impact, speed to implement and operational complexity.'],
+    ['doc','Report Generation','Creates a clear AI Opportunity Report with findings, recommended automations and a practical first-step roadmap.'],
+    ['mail','Outreach Engine','Turns detected problems into personalized email angles your team can approve and send to qualified prospects.'],
+    ['shield','Governed Deployment','Once a project is approved, Cognityl builds agents with access control, logs and human approval checkpoints.'],
   ];
-  return <section id="solutions" className="py-24 lg:py-32 max-w-7xl mx-auto px-5 lg:px-8">
-    <div className="max-w-2xl mb-14">
-      <p className="text-[var(--green)] font-semibold mb-3">Solutions</p>
-      <h2 className="font-display text-4xl lg:text-5xl font-bold tracking-tight">AI that solves clear business problems.</h2>
-      <p className="mt-5 text-lg text-[var(--muted)] leading-relaxed">No vague AI hype. We design systems around the exact tasks, workflows and decisions your business needs to improve.</p>
+  return <section id="engine" className="py-24 lg:py-32 max-w-7xl mx-auto px-5 lg:px-8">
+    <div className="grid lg:grid-cols-[.9fr_1.1fr] gap-12 items-start mb-14">
+      <div>
+        <p className="text-[var(--green)] font-semibold mb-3">Cognityl Discovery Engine</p>
+        <h2 className="font-display text-4xl lg:text-5xl font-bold tracking-tight">A software engine that searches for business problems AI can solve.</h2>
+        <p className="mt-5 text-lg text-[var(--muted)] leading-relaxed">Instead of starting with a generic AI pitch, Cognityl starts with evidence. The engine analyzes public business signals, detects visible friction, and shows which AI agents are worth building first.</p>
+      </div>
+      <div className="card p-7 shadow-soft bg-[var(--soft)]">
+        <p className="font-mono text-xs uppercase tracking-[0.08em] text-[var(--muted)] mb-5">Engine workflow</p>
+        {['Company URL','Public website scan','Business signal extraction','Problem detection','AI opportunity score','Report + outreach angle'].map((step,i)=><div key={step} className="flex items-center gap-4 py-3 border-b border-[var(--line)] last:border-b-0">
+          <span className="w-8 h-8 rounded-full bg-white border border-[var(--line)] flex items-center justify-center text-sm font-bold">{i+1}</span>
+          <span className="font-semibold">{step}</span>
+        </div>)}
+      </div>
     </div>
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
       {items.map(([icon,title,desc])=><div key={title} className="card p-7">
-        <span className="w-12 h-12 rounded-2xl bg-[var(--green-light)] text-[var(--green)] flex items-center justify-center mb-6"><Icon name={icon}/></span>
+        <span className="w-12 h-12 rounded-none bg-[var(--green-light)] text-[var(--green)] flex items-center justify-center mb-6"><Icon name={icon}/></span>
         <h3 className="font-display text-xl font-bold mb-3">{title}</h3>
         <p className="text-[var(--muted)] leading-relaxed">{desc}</p>
       </div>)}
@@ -204,11 +274,11 @@ function UseCases(){
     <div className="max-w-7xl mx-auto px-5 lg:px-8 grid lg:grid-cols-[.8fr_1.2fr] gap-12 items-start">
       <div>
         <p className="text-[var(--green-light)] font-semibold mb-3">Use cases</p>
-        <h2 className="font-display text-4xl lg:text-5xl font-bold tracking-tight">Built for the teams that need speed.</h2>
-        <p className="mt-5 text-white/65 leading-relaxed">Cognityl helps businesses start with one high-impact workflow, prove value, and then expand AI across the company.</p>
+        <h2 className="font-display text-4xl lg:text-5xl font-bold tracking-tight">Where operations, security and speed finally agree.</h2>
+        <p className="mt-5 text-white/65 leading-relaxed">Cognityl starts with one high-impact workflow, proves the model in production, and scales AI across the enterprise from there.</p>
       </div>
       <div className="grid sm:grid-cols-2 gap-5">
-        {cases.map(([title,desc])=><div key={title} className="rounded-3xl border border-white/10 bg-white/[.04] p-7">
+        {cases.map(([title,desc])=><div key={title} className="rounded-none border border-white/10 bg-white/[.04] p-7">
           <h3 className="font-display text-xl font-bold mb-3">{title}</h3>
           <p className="text-white/65 leading-relaxed">{desc}</p>
         </div>)}
@@ -217,24 +287,134 @@ function UseCases(){
   </section>
 }
 
+function Preview(){
+  return <section className="py-20 lg:py-24 max-w-7xl mx-auto px-5 lg:px-8">
+    <div className="card p-8 lg:p-12 grid lg:grid-cols-[1fr_1fr] gap-10 items-center">
+      <div>
+        <Icon name="spark" className="w-8 h-8 text-[var(--green)] mb-5"/>
+        <h2 className="font-display text-3xl lg:text-4xl font-bold tracking-tight">From website signal to sales angle.</h2>
+        <p className="mt-5 text-[var(--muted)] leading-relaxed">The engine does not need private analytics to start. It uses public information to detect likely bottlenecks, then creates a credible outreach angle your team can review before sending.</p>
+      </div>
+      <div className="bg-[var(--soft)] rounded-none p-6 border border-[var(--line)]">
+        <p className="font-mono text-xs uppercase tracking-[0.08em] text-[var(--muted)] mb-4">Example finding</p>
+        {[['Company type','Locker supplier'],['Visible gap','Catalogue + quote-heavy sales'],['Recommended agent','Quote generation assistant'],['Outreach angle','Reduce manual quoting time']].map(([k,v])=><div key={k} className="flex justify-between gap-5 py-3 border-t border-[var(--line)] first:border-t-0 text-sm">
+          <span className="text-[var(--muted)]">{k}</span><span className="font-semibold text-right">{v}</span>
+        </div>)}
+      </div>
+    </div>
+  </section>
+}
+
 function Process(){
   const steps=[
-    ['01','Discover','We review your business goals, tools and repetitive workflows.'],
-    ['02','Map','We identify the highest-value AI opportunities and define a simple scope.'],
-    ['03','Build','We create a prototype, connect your tools and test it with real workflows.'],
-    ['04','Launch','We deploy, train your team and improve the system based on usage.'],
+    ['01','Scan','We analyze public business signals: pages, forms, catalogues, FAQs, support content and visible tech.'],
+    ['02','Detect','The engine identifies likely bottlenecks and matches each one to a practical AI use case.'],
+    ['03','Prioritize','Opportunities are ranked by expected impact, speed to implement and confidence level.'],
+    ['04','Deploy','Approved opportunities become AI agents, workflows or automation systems with human oversight.'],
   ];
   return <section id="process" className="py-24 lg:py-32 max-w-7xl mx-auto px-5 lg:px-8">
-    <div className="max-w-2xl mb-14">
+    <div className="max-w-2xl mb-16">
       <p className="text-[var(--green)] font-semibold mb-3">Process</p>
-      <h2 className="font-display text-4xl lg:text-5xl font-bold tracking-tight">From idea to working AI system.</h2>
+      <h2 className="font-display text-4xl lg:text-5xl font-bold tracking-tight">From public signal to implemented AI system.</h2>
     </div>
-    <div className="grid md:grid-cols-4 gap-5">
-      {steps.map(([n,title,desc])=><div key={n} className="card p-7">
-        <p className="text-sm text-[var(--green)] font-bold mb-8">{n}</p>
-        <h3 className="font-display text-xl font-bold mb-3">{title}</h3>
-        <p className="text-[var(--muted)] leading-relaxed">{desc}</p>
+    <div className="relative grid md:grid-cols-4 gap-8 md:gap-5">
+      <div className="hidden md:block absolute top-6 left-0 right-0 h-px bg-[var(--line)]" style={{marginLeft:'12.5%',marginRight:'12.5%'}}></div>
+      {steps.map(([n,title,desc],i)=><div key={n} className="relative">
+        <div className="flex items-center gap-3 mb-5">
+          <span className="w-12 h-12 rounded-full bg-white border-2 border-[var(--ink)] flex items-center justify-center font-display font-bold text-lg flex-shrink-0 relative z-10">{n}</span>
+          {i<steps.length-1 && <span className="md:hidden flex-1 h-px bg-[var(--line)]"></span>}
+        </div>
+        <h3 className="font-display text-xl font-bold mb-2">{title}</h3>
+        <p className="text-[var(--muted)] leading-relaxed text-sm">{desc}</p>
       </div>)}
+    </div>
+  </section>
+}
+
+function Security(){
+  const items=[
+    ['lock','Data handling','Your data is never used to train shared models. Customer data stays scoped to your workspace.'],
+    ['shield','Access control','Role-based access and full audit logs on every agent action, exportable for your compliance team.'],
+    ['check','Certifications','SOC 2 Type II audited annually. ISO 27001 certified. GDPR and CCPA compliant by design.'],
+    ['plug','Deployment options','Run in our managed cloud, your VPC, or fully on-prem — same governance controls either way.'],
+  ];
+  return <section id="security" className="py-24 lg:py-32 bg-[var(--soft)] border-y border-[var(--line)]">
+    <div className="max-w-7xl mx-auto px-5 lg:px-8">
+      <div className="max-w-2xl mb-14">
+        <p className="text-[var(--green)] font-semibold mb-3">Security</p>
+        <h2 className="font-display text-4xl lg:text-5xl font-bold tracking-tight">Built to pass your security review, not just your demo.</h2>
+        <p className="mt-5 text-lg text-[var(--muted)] leading-relaxed">Every engagement includes a security review before go-live as standard scope — not an upsell.</p>
+      </div>
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
+        {items.map(([icon,title,desc])=><div key={title} className="bg-white card p-7">
+          <span className="w-12 h-12 rounded-none bg-[var(--green-light)] text-[var(--green)] flex items-center justify-center mb-6"><Icon name={icon}/></span>
+          <h3 className="font-display text-lg font-bold mb-3">{title}</h3>
+          <p className="text-[var(--muted)] text-sm leading-relaxed">{desc}</p>
+        </div>)}
+      </div>
+      <div className="bg-white rounded-none border-2 border-[var(--green)] p-7 lg:p-8 flex flex-col lg:flex-row items-start lg:items-center gap-6">
+        <span className="w-14 h-14 rounded-none bg-[var(--green-light)] text-[var(--green)] flex items-center justify-center flex-shrink-0"><Icon name="pause" className="w-6 h-6"/></span>
+        <div className="flex-1">
+          <h3 className="font-display text-xl font-bold mb-2">Every agent has a manual override.</h3>
+          <p className="text-[var(--muted)] leading-relaxed">Your team can pause or fully disable any agent instantly, without waiting on us. No agent takes an irreversible action without a defined checkpoint, and every override is logged.</p>
+        </div>
+        <a href="#contact" className="flex-shrink-0 inline-flex items-center gap-2 rounded-none border border-[var(--line)] px-5 py-3 text-sm font-semibold hover:border-[var(--green)] transition focus-ring">See it in a demo <Icon name="arrow" className="w-4 h-4"/></a>
+      </div>
+    </div>
+  </section>
+}
+
+function Governance(){
+  const items=[
+    ['users','Named accountability','Every agent has a defined business owner on your side — never an anonymous automated process.'],
+    ['check','Human-in-the-loop checkpoints','You choose which actions require human sign-off and which can run autonomously, workflow by workflow.'],
+    ['flow','Escalation paths','Agents that hit ambiguous or high-stakes decisions route to a person automatically, not fail silently.'],
+    ['doc','Exportable audit trail','Every decision and data access is logged and exportable in a format your risk team can actually review.'],
+  ];
+  return <section id="governance" className="py-24 lg:py-32 max-w-7xl mx-auto px-5 lg:px-8">
+    <div className="max-w-2xl mb-14">
+      <p className="text-[var(--green)] font-semibold mb-3">Governance</p>
+      <h2 className="font-display text-4xl lg:text-5xl font-bold tracking-tight">Security answers "can it be hacked." This answers "who's accountable."</h2>
+      <p className="mt-5 text-lg text-[var(--muted)] leading-relaxed">Most enterprises deploying AI agents still lack a formal supervision plan. We build the accountability structure in from day one, not after something goes wrong.</p>
+    </div>
+    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+      {items.map(([icon,title,desc])=><div key={title} className="card p-7">
+        <span className="w-12 h-12 rounded-none bg-[var(--soft)] text-[var(--ink)] flex items-center justify-center mb-6 border border-[var(--line)]"><Icon name={icon}/></span>
+        <h3 className="font-display text-lg font-bold mb-3">{title}</h3>
+        <p className="text-[var(--muted)] text-sm leading-relaxed">{desc}</p>
+      </div>)}
+    </div>
+  </section>
+}
+
+function Integrations(){
+  const infra=['AWS','Microsoft Azure','Google Cloud','Snowflake'];
+  const apps=['Slack','HubSpot','Google Workspace','Salesforce','Notion','n8n'];
+  return <section className="py-16 border-y border-[var(--line)] bg-[var(--soft)]">
+    <div className="max-w-7xl mx-auto px-5 lg:px-8">
+      <p className="text-center font-mono text-xs tracking-[0.08em] uppercase text-[var(--muted)] mb-6">Infrastructure partners</p>
+      <div className="flex flex-wrap justify-center gap-x-12 gap-y-4 mb-12">
+        {infra.map(l=><span key={l} className="font-display text-lg font-semibold text-[var(--ink)]/70">{l}</span>)}
+      </div>
+      <p className="text-center font-mono text-xs tracking-[0.08em] uppercase text-[var(--muted)] mb-6">Connects to the tools you already run</p>
+      <div className="flex flex-wrap justify-center gap-x-10 gap-y-4">
+        {apps.map(l=><span key={l} className="text-sm text-[var(--muted)] font-medium">{l}</span>)}
+      </div>
+    </div>
+  </section>
+}
+
+function Resources(){
+  return <section id="resources" className="py-20 max-w-7xl mx-auto px-5 lg:px-8">
+    <div className="card p-8 lg:p-10 grid lg:grid-cols-[1fr_auto] gap-8 items-center">
+      <div className="flex items-start gap-5">
+        <span className="w-12 h-12 rounded-none bg-[var(--green-light)] text-[var(--green)] flex items-center justify-center flex-shrink-0"><Icon name="building"/></span>
+        <div>
+          <h3 className="font-display text-xl lg:text-2xl font-bold mb-2">Start with a free public-signal AI opportunity scan</h3>
+          <p className="text-[var(--muted)] leading-relaxed max-w-2xl">We review public signals from your website and identify the strongest automation opportunities before proposing any implementation work.</p>
+        </div>
+      </div>
+      <a href="#contact" className="inline-flex items-center justify-center gap-2 rounded-none bg-[var(--ink)] text-white px-6 py-4 font-semibold hover:bg-[var(--green-dark)] transition focus-ring whitespace-nowrap">Analyze my website <Icon name="arrow" className="w-4 h-4"/></a>
     </div>
   </section>
 }
@@ -246,34 +426,32 @@ function FAQ(){
     ['Can you connect AI to our existing tools?','Yes. We can work with CRMs, websites, Google Workspace, spreadsheets, databases, Slack, Notion and many other tools.'],
     ['What should we automate first?','Usually the best starting point is a repetitive task with clear rules, high volume, or direct revenue impact, such as lead qualification, support replies or reporting.'],
     ['Is this only for large companies?','No. Small and growing companies can benefit most because AI can replace manual tasks before hiring more staff.'],
+    ['How do you handle security review?','A named security review is part of every engagement\'s standard scope, run before anything goes to production — not billed separately.'],
   ];
-  return <section id="faq" className="py-24 lg:py-32 bg-[var(--soft)] border-y border-[var(--line)]">
-    <div className="max-w-5xl mx-auto px-5 lg:px-8">
+  return <section id="faq" className="py-24 lg:py-32 max-w-5xl mx-auto px-5 lg:px-8">
       <div className="text-center mb-12"><p className="text-[var(--green)] font-semibold mb-3">FAQ</p><h2 className="font-display text-4xl lg:text-5xl font-bold tracking-tight">Questions clients usually ask</h2></div>
-      <div className="bg-white rounded-3xl border border-[var(--line)] overflow-hidden">
+      <div className="bg-white rounded-none border border-[var(--line)] overflow-hidden">
         {faqs.map(([q,a],i)=><div key={q} className="border-b border-[var(--line)] last:border-b-0">
           <button onClick={()=>setOpen(open===i?-1:i)} className="w-full text-left px-6 py-5 flex items-center justify-between gap-5 focus-ring"><span className="font-semibold text-lg">{q}</span><span className="text-2xl text-[var(--green)]">{open===i?'−':'+'}</span></button>
           {open===i && <p className="px-6 pb-6 text-[var(--muted)] leading-relaxed">{a}</p>}
         </div>)}
       </div>
-    </div>
   </section>
 }
 
 function Contact(){
   const [sent,setSent]=useState(false);
   return <section id="contact" className="py-24 lg:py-32 max-w-7xl mx-auto px-5 lg:px-8">
-    <div className="rounded-[2rem] bg-[var(--ink)] text-white p-8 lg:p-14 grid lg:grid-cols-2 gap-10 items-start overflow-hidden relative">
-      <div className="absolute right-[-8rem] top-[-8rem] w-96 h-96 bg-[var(--green)] rounded-full blur-3xl opacity-30" />
+    <div className="rounded-none bg-[var(--ink)] text-white p-8 lg:p-14 grid lg:grid-cols-2 gap-10 items-start overflow-hidden relative">
       <div className="relative">
-        <p className="text-[var(--green-light)] font-semibold mb-3">Start with a free consultation</p>
-        <h2 className="font-display text-4xl lg:text-5xl font-bold tracking-tight">Let's find where AI can create value for your business.</h2>
-        <p className="mt-5 text-white/65 leading-relaxed max-w-md">Tell us what you want to improve. We'll suggest practical AI solutions and the fastest way to test them.</p>
+        <p className="text-[var(--green-light)] font-semibold mb-3">Get your AI Opportunity Report</p>
+        <h2 className="font-display text-4xl lg:text-5xl font-bold tracking-tight">See what your business should automate first.</h2>
+        <p className="mt-5 text-white/65 leading-relaxed max-w-md">Share your company website and we’ll identify visible AI opportunities, prioritize the strongest use cases, and suggest the safest first automation project.</p>
         <div className="mt-8 space-y-3 text-white/80">
-          {['Clear use-case recommendations','No generic sales pitch','Prototype-focused approach'].map(t=><p key={t} className="flex items-center gap-3"><Icon name="check" className="w-5 h-5 text-[var(--green-light)]"/>{t}</p>)}
+          {['AI readiness score','Priority automation roadmap','Clear first project recommendation'].map(t=><p key={t} className="flex items-center gap-3"><Icon name="check" className="w-5 h-5 text-[var(--green-light)]"/>{t}</p>)}
         </div>
       </div>
-      <div className="relative bg-white text-[var(--ink)] rounded-3xl p-6 lg:p-8">
+      <div className="relative bg-white text-[var(--ink)] rounded-none p-6 lg:p-8">
         {sent ? <div className="py-16 text-center"><div className="mx-auto mb-5 w-14 h-14 rounded-full bg-[var(--green-light)] text-[var(--green)] flex items-center justify-center"><Icon name="check"/></div><h3 className="font-display text-2xl font-bold">Message sent</h3><p className="text-[var(--muted)] mt-2">We'll get back to you soon.</p></div> :
        <form
   action="https://formspree.io/f/mwvdrvdw"
@@ -285,33 +463,33 @@ function Contact(){
   required
   name="name"
   placeholder="Your name"
-  className="rounded-2xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)]"
+  className="rounded-none border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)]"
 />
             <input
   required
   name="email"
   type="email"
   placeholder="Work email"
-  className="rounded-2xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)]"
+  className="rounded-none border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)]"
 />
           </div>
          <input
   name="website"
   placeholder="Company website"
-  className="w-full rounded-2xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)]"
+  className="w-full rounded-none border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)]"
 />
           <select
   name="service"
-  className="w-full rounded-2xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)]">
-            <option>I want to automate workflows</option><option>I need an AI assistant/chatbot</option><option>I need sales/lead automation</option><option>I need data dashboards/insights</option><option>I'm not sure yet</option>
+  className="w-full rounded-none border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)]">
+            <option>I want to automate workflows</option><option>I need an AI assistant/chatbot</option><option>I need sales/lead automation</option><option>I need data dashboards/insights</option><option>I need a security/compliance review first</option><option>I'm not sure yet</option>
           </select>
          <textarea
   name="message"
   rows="4"
-  placeholder="What would you like AI to help with?"
-  className="w-full rounded-2xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)] resize-none"
+  placeholder="Company website or short description"
+  className="w-full rounded-none border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)] resize-none"
 ></textarea>
-          <button className="w-full rounded-2xl bg-[var(--green)] text-white font-semibold px-6 py-4 hover:bg-[var(--green-dark)] transition">Send request</button>
+          <button className="w-full rounded-none bg-[var(--green)] text-white font-semibold px-6 py-4 hover:bg-[var(--green-dark)] transition">Request analysis</button>
         </form>}
       </div>
     </div>
@@ -323,16 +501,18 @@ function Footer(){
     <div className="max-w-7xl mx-auto px-5 lg:px-8 flex flex-col md:flex-row justify-between gap-6 text-sm text-[var(--muted)]">
       <div>
         <div className="flex items-center gap-2 mb-3">
-        <span className="w-8 h-8 rounded-xl bg-[#1F8B41] text-white flex items-center justify-center font-bold">C</span>
+        <span className="w-8 h-8 rounded-none bg-[#1F8B41] text-white flex items-center justify-center font-bold">C</span>
           <span className="font-display text-lg font-bold text-[var(--ink)]">Cognityl</span>
         </div>
-        <p>Practical AI solutions for growing businesses.</p>
+        <p>The operating layer for enterprise AI.</p>
       </div>
 
       <div className="flex flex-wrap gap-5">
-        <a href="#solutions">Solutions</a>
+        <a href="#engine">Engine</a>
         <a href="#process">Process</a>
         <a href="#use-cases">Use cases</a>
+        <a href="#security">Security</a>
+        <a href="#governance">Governance</a>
         <a href="#contact">Contact</a>
         <a href="privacy.html">Privacy Policy</a>
             <a href="terms.html">Terms of Service</a>
@@ -340,7 +520,7 @@ function Footer(){
     </div>
   </footer>
 }
-function App(){return <><Nav/><main><Hero/><Trust/><Solutions/><UseCases/><Process/><FAQ/><Contact/></main><Footer/></>}
+function App(){return <><Nav/><main><Hero/><Report/><Engine/><UseCases/><Preview/><Process/><Security/><Governance/><Integrations/><Resources/><FAQ/><Contact/></main><Footer/></>}
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
