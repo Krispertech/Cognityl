@@ -1,174 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" href="favicon.png" type="image/png">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="favicon.png" type="image/png">
 <link rel="shortcut icon" href="favicon.png">
 <link rel="apple-touch-icon" href="favicon.png">
-  <title>Terms of Service — Cognityl</title>
-  <meta name="description" content="Terms of Service, an AI consulting and custom development company." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root{--bg:#fff;--ink:#101412;--muted:#66736d;--soft:#f6f8f5;--line:#e3e8df;--green:#1F8B41;}
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,sans-serif;line-height:1.7}
-    .font-display{font-family:"Inter Tight",sans-serif}
-  header{
-  position:sticky;
-  top:0;
-  z-index:1000;
-  background:rgba(255,255,255,.92);
-  backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--line);
-}
 
-.nav{
-  max-width:1200px;
-  margin:auto;
-  padding:18px 24px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
+<title>Terms of Service — Cognityl</title>
+<meta name="description" content="Terms of Service for Cognityl, an AI consulting and agent systems company." />
 
-.brand{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  text-decoration:none;
-}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-.logo-box{
-  width:48px;
-  height:48px;
-  border-radius:16px;
-  background:#1F8B41;
-  color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:800;
-  font-size:24px;
-}
+<style>
+  :root{
+    --bg:#ffffff;
+    --ink:#101412;
+    --muted:#66736d;
+    --soft:#f6f8f5;
+    --soft-2:#eef5ee;
+    --line:#c9d0c4;
+    --green:#13944a;
+    --green-dark:#0e6f37;
+    --green-light:#dff5e6;
+    --blue:#1d6fff;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.7;}
+  .font-display{font-family:'IBM Plex Sans',sans-serif;letter-spacing:-0.03em;}
+  .font-mono{font-family:'IBM Plex Mono',monospace;}
+  .glass{background:rgba(255,255,255,.86);backdrop-filter:blur(18px);}
+  .grid-bg{background-image:linear-gradient(to right, rgba(16,20,18,.06) 1px, transparent 1px),linear-gradient(to bottom, rgba(16,20,18,.06) 1px, transparent 1px);background-size:44px 44px;}
+  .shadow-soft{box-shadow:4px 4px 0 rgba(16,20,18,.9);}
+  .card{border:1.5px solid var(--line);background:#fff;border-radius:0;}
 
-.logo-text{
-  color:#101412;
-  font-family:"Inter Tight",sans-serif;
-  font-size:22px;
-  font-weight:800;
-}
+  header{position:sticky;top:0;z-index:1000;border-bottom:1px solid var(--line);}
+  .nav{max-width:1120px;margin:0 auto;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;height:64px;}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none;}
+  .logo-box{width:36px;height:36px;border-radius:0;background:#1F8B41;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;font-family:'IBM Plex Sans',sans-serif;flex-shrink:0;}
+  .logo-text{color:var(--ink);font-family:'IBM Plex Sans',sans-serif;font-size:20px;font-weight:700;letter-spacing:-0.03em;}
+  .menu{display:flex;gap:32px;}
+  .menu a{text-decoration:none;color:var(--muted);font-weight:500;font-size:14px;transition:.15s ease;}
+  .menu a:hover{color:var(--ink);}
+  .back{color:var(--muted);text-decoration:none;font-weight:600;font-size:14px;border:1px solid var(--line);padding:9px 16px;transition:.15s ease;}
+  .back:hover{border-color:var(--ink);color:var(--ink);}
+  @media (max-width:900px){ .menu{display:none;} }
 
-.menu{
-  display:flex;
-  gap:42px;
-}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;padding:7px 14px;font-size:13px;color:var(--muted);box-shadow:4px 4px 0 rgba(16,20,18,.9);}
+  .eyebrow .dot{width:7px;height:7px;background:var(--green);flex-shrink:0;}
 
-.menu a{
-  text-decoration:none;
-  color:#66736d;
-  font-weight:500;
-}
-
-.back{
-  color:#66736d;
-  text-decoration:none;
-  font-weight:500;
-}
-    main{max-width:850px;margin:0 auto;padding:72px 24px}
-    h1{font-size:52px;line-height:1;letter-spacing:-.04em;margin:0 0 16px}
-    h2{font-size:26px;margin-top:48px;margin-bottom:12px}
-    p,li{color:var(--muted);font-size:16px}
-    .updated{color:var(--green);font-weight:600;margin-bottom:40px}
-    .box{background:var(--soft);border:1px solid var(--line);border-radius:24px;padding:24px;margin:32px 0}
-    footer{border-top:1px solid var(--line);padding:32px 24px;text-align:center;color:var(--muted);font-size:14px}
-    a{color:var(--green)}
-  </style>
+  main{max-width:820px;margin:0 auto;padding:0 24px 96px;}
+  .hero{padding:64px 24px 40px;}
+  .hero-inner{max-width:820px;margin:0 auto;}
+  h1{font-size:48px;line-height:1;letter-spacing:-.045em;margin:20px 0 14px;}
+  h2{font-size:23px;letter-spacing:-.02em;margin-top:44px;margin-bottom:12px;padding-top:20px;border-top:1px solid var(--line);}
+  main h2:first-of-type{border-top:none;padding-top:0;}
+  p,li{color:var(--muted);font-size:16px;}
+  ul{padding-left:20px;margin:12px 0;}
+  li{margin-bottom:6px;}
+  strong{color:var(--ink);}
+  .updated{font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--green-dark);font-weight:600;}
+  .box{background:var(--soft);border:1.5px solid var(--line);padding:24px;margin:32px 0;}
+  .box p:last-child{margin-bottom:0;}
+  a{color:var(--green-dark);text-decoration:underline;text-underline-offset:2px;}
+  footer{border-top:1px solid var(--line);background:var(--soft);}
+  .footer-inner{max-width:1120px;margin:0 auto;padding:40px 24px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px;align-items:center;}
+  footer p{margin:0;font-size:14px;}
+  .footer-links{display:flex;gap:20px;flex-wrap:wrap;}
+  .footer-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;}
+  .footer-links a:hover{color:var(--ink);}
+</style>
 </head>
 <body>
-<header>
+
+<header class="glass">
   <div class="nav">
     <a class="brand" href="index.html">
       <div class="logo-box">C</div>
       <span class="logo-text">Cognityl</span>
     </a>
-
     <nav class="menu">
-      <a href="index.html#solutions">Solutions</a>
-      <a href="index.html#process">Process</a>
+      <a href="index.html#engine">Engine</a>
       <a href="index.html#use-cases">Use cases</a>
+      <a href="index.html#process">Process</a>
+      <a href="index.html#security">Security</a>
+      <a href="index.html#governance">Governance</a>
       <a href="index.html#faq">FAQ</a>
     </nav>
-
     <a class="back" href="index.html">← Back to website</a>
   </div>
 </header>
 
-<main>
-  <h1 class="font-display">Terms of Service</h1>
-  <p class="updated">Last updated: July 2026</p>
+<section class="hero grid-bg">
+  <div class="hero-inner">
+    <span class="eyebrow"><span class="dot"></span>Legal</span>
+    <h1 class="font-display">Terms of Service</h1>
+    <span class="updated">Last updated: July 2026</span>
+  </div>
+</section>
 
+<main>
   <div class="box">
-    <p>This terms of service explains how Cognityl collects, uses, stores, and protects personal information when you visit our website, contact us, or work with us for AI consulting and custom development services.</p>
+    <p>These Terms of Service ("Terms") govern your access to the Cognityl website and your use of Cognityl's AI consulting, agent systems, and related services. By using our website or engaging us for services, you agree to these Terms.</p>
   </div>
 
-  <h2>1. Who We Are</h2>
-  <p>Cognityl provides AI consulting, workflow automation, data intelligence, AI integration, and custom software development services for businesses. Our website is available at cognityl.com.</p>
-  <p>For privacy questions, contact us at <a href="mailto:kristaps@cognityl.com">kristaps@cognityl.com</a>.</p>
+  <h2 class="font-display">1. Who We Are</h2>
+  <p>Cognityl provides AI consulting, agent systems, workflow automation, and data intelligence services for businesses. Our website is available at cognityl.com. For questions about these Terms, contact us at <a href="mailto:kristaps@cognityl.com">kristaps@cognityl.com</a>.</p>
 
-  <h2>2. Information We Collect</h2>
-  <p>When you submit our contact form, we may collect your name, email address, company website, selected service interest, and the message you provide.</p>
-  <p>We may also collect business communication data, such as emails, meeting notes, project requirements, technical documentation, and information you voluntarily share with us during a consultation or project.</p>
-  <p>When you visit our website, basic technical data may be processed by our hosting and infrastructure providers, such as IP address, browser type, device information, pages visited, and access times.</p>
+  <h2 class="font-display">2. Acceptance of Terms</h2>
+  <p>By visiting our website, submitting a contact form, or entering into a services agreement with us, you confirm that you are authorized to act on behalf of the business you represent and that you accept these Terms. If you do not agree, please do not use our website or services.</p>
 
-  <h2>3. How We Use Information</h2>
-  <p>We use information to respond to inquiries, schedule consultations, understand your business needs, prepare proposals, deliver AI consulting and development services, improve our website, prevent abuse, and comply with legal obligations.</p>
+  <h2 class="font-display">3. Description of Services</h2>
+  <p>Cognityl offers AI consulting, discovery and opportunity assessment, and the design, development, and deployment of AI agents and automation systems. The specific scope, deliverables, timeline, and fees for any engagement are set out separately in a proposal, statement of work, or signed agreement between Cognityl and the client, which takes precedence over these Terms for that engagement.</p>
 
-  <h2>4. Contact Forms</h2>
-  <p>Our contact form is processed through Formspree. When you submit the form, your information is sent to Formspree and made available to Cognityl so we can respond to your request.</p>
-  <p>Please do not submit sensitive personal data, passwords, payment card numbers, government IDs, or confidential business secrets through the public contact form.</p>
+  <h2 class="font-display">4. Website Use</h2>
+  <p>Our website, including its content, design, and the AI Opportunity Report and Discovery Engine features, is provided for informational and business-development purposes. You agree not to misuse the website, attempt to disrupt its operation, or use automated means to scrape or extract data beyond normal browsing.</p>
 
-  <h2>5. AI Consulting and Client Data</h2>
-  <p>During consulting or custom development work, clients may provide business data, documents, workflows, system information, or technical requirements. We use this information only to evaluate, design, build, test, and support the requested services.</p>
-  <p>If a project requires the use of third-party AI providers, cloud platforms, APIs, or automation tools, we will use those services only as necessary for the project and in line with the agreed scope.</p>
+  <h2 class="font-display">5. Contact Forms and Inquiries</h2>
+  <p>Our contact form is processed through Formspree. Submitting the form does not create a services agreement; it is an inquiry that we will respond to at our discretion. Please do not submit sensitive personal data, passwords, payment card numbers, government IDs, or confidential business secrets through the public contact form.</p>
 
-  <h2>6. Legal Basis for Processing</h2>
-  <p>If you are in the EU or EEA, we process personal data based on contract performance, legitimate interests, consent where required, and legal obligations.</p>
+  <h2 class="font-display">6. Client Responsibilities</h2>
+  <p>Where we are engaged for consulting or agent development work, the client agrees to:</p>
+  <ul>
+    <li>Provide accurate and timely information, access, and feedback needed to deliver the services;</li>
+    <li>Ensure it has the necessary rights to any data, systems, or content it shares with us;</li>
+    <li>Review and approve agent configurations, automation scope, and human-oversight checkpoints before go-live;</li>
+    <li>Maintain its own legal and regulatory compliance obligations relevant to its use of any delivered system.</li>
+  </ul>
 
-  <h2>7. Service Providers</h2>
-  <p>We may use trusted service providers to operate our website and business, including Vercel for hosting, GitHub for code storage, Formspree for contact form processing, and email providers for business communication.</p>
-  <p>We do not sell personal information.</p>
+  <h2 class="font-display">7. Fees and Payment</h2>
+  <p>Fees, payment schedules, and invoicing terms for any engagement are set out in the applicable proposal or agreement. Unless otherwise agreed in writing, invoices are due within the period stated on the invoice, and late payments may result in a pause of ongoing work.</p>
 
-  <h2>8. Cookies</h2>
-  <p>Our website may use essential technologies required for basic functionality. If we later add analytics, advertising pixels, or tracking tools, we will update this policy and provide appropriate notice or consent options where required.</p>
+  <h2 class="font-display">8. Intellectual Property</h2>
+  <p>Unless otherwise agreed in a signed statement of work, Cognityl retains ownership of its pre-existing tools, frameworks, and proprietary methods used to deliver services. Deliverables created specifically for a client under a paid engagement are owned by the client upon full payment, excluding any underlying Cognityl tooling, which is licensed to the client for its intended use.</p>
 
-  <h2>9. Data Retention</h2>
-  <p>We keep inquiry and communication data for as long as necessary to respond to you, manage business relationships, provide services, resolve disputes, and meet legal or accounting requirements.</p>
+  <h2 class="font-display">9. AI Systems and Human Oversight</h2>
+  <p>AI agents and automations we build are designed to include human-in-the-loop checkpoints and manual override controls as agreed with the client. The client is responsible for configuring and using these controls appropriately, and for supervising any agent's actions within its own business systems after deployment.</p>
 
-  <h2>10. Security</h2>
-  <p>We use reasonable technical and organizational safeguards to protect information, including HTTPS, limited access, secure service providers, and careful handling of client information. However, no system is completely secure.</p>
+  <h2 class="font-display">10. Confidentiality</h2>
+  <p>Each party agrees to keep confidential any non-public business, technical, or client information shared during an engagement, and to use it only for the purposes of that engagement, except as required by law or as separately agreed in writing.</p>
 
-  <h2>11. International Transfers</h2>
-  <p>Some service providers may process data outside your country, including outside the EU or EEA. Where required, appropriate safeguards such as Standard Contractual Clauses may be used.</p>
+  <h2 class="font-display">11. Disclaimers</h2>
+  <p>Our website, reports, and opportunity scores are provided "as is" for informational purposes and do not constitute a guarantee of specific business outcomes. AI systems we build are tested and reviewed as part of the agreed scope, but no software or AI system can be guaranteed to be error-free.</p>
 
-  <h2>12. Your Rights</h2>
-  <p>Depending on your location, you may have the right to access, correct, delete, restrict, object to processing, withdraw consent, or request a copy of your personal data.</p>
-  <p>To exercise your rights, contact <a href="mailto:kristaps@cognityl.com">kristaps@cognityl.com</a>.</p>
+  <h2 class="font-display">12. Limitation of Liability</h2>
+  <p>To the maximum extent permitted by law, Cognityl's total liability arising from any engagement is limited to the fees paid by the client for the specific services giving rise to the claim in the preceding twelve months. Cognityl is not liable for indirect, incidental, or consequential damages.</p>
 
-  <h2>13. Children’s Privacy</h2>
-  <p>Our services are intended for businesses and are not directed to children. We do not knowingly collect personal information from children.</p>
+  <h2 class="font-display">13. Termination</h2>
+  <p>Either party may terminate an ongoing engagement in accordance with the terms of the applicable signed agreement. Sections relating to intellectual property, confidentiality, payment for work performed, and limitation of liability survive termination.</p>
 
-  <h2>14. Changes to This Policy</h2>
-  <p>We may update this Privacy Policy from time to time. The “Last updated” date shows when this page was last revised.</p>
+  <h2 class="font-display">14. Governing Law</h2>
+  <p>These Terms are governed by the laws applicable at Cognityl's place of business, without regard to conflict-of-law principles, unless a signed client agreement specifies otherwise.</p>
 
-  <h2>15. Contact</h2>
-  <p>For privacy questions or data requests, contact Cognityl at <a href="mailto:kristaps@cognityl.com">kristaps@cognityl.com</a>.</p>
+  <h2 class="font-display">15. Changes to These Terms</h2>
+  <p>We may update these Terms from time to time. The "Last updated" date shows when this page was last revised. Continued use of our website or services after changes take effect constitutes acceptance of the updated Terms.</p>
+
+  <h2 class="font-display">16. Contact</h2>
+  <p>For questions about these Terms, contact Cognityl at <a href="mailto:kristaps@cognityl.com">kristaps@cognityl.com</a>. For privacy-specific questions, see our <a href="privacy.html">Privacy Policy</a>.</p>
 </main>
 
 <footer>
-  © 2026 Cognityl. All rights reserved.
+  <div class="footer-inner">
+    <p>© 2026 Cognityl. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="index.html#engine">Engine</a>
+      <a href="index.html#security">Security</a>
+      <a href="index.html#governance">Governance</a>
+      <a href="index.html#contact">Contact</a>
+      <a href="privacy.html">Privacy Policy</a>
+    </div>
+  </div>
 </footer>
+
 </body>
 </html>
