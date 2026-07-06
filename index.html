@@ -7,7 +7,7 @@
   style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
   font-src https://fonts.gstatic.com;
   img-src 'self' data: https:;
-  connect-src 'self';
+  connect-src 'self' https://formspree.io;
   frame-ancestors 'none';
   base-uri 'self';
  form-action 'self' https://formspree.io;
@@ -442,11 +442,39 @@ function Governance(){
 }
 
 function DataPolicy(){
+  const [optOutSent,setOptOutSent]=useState(false);
+  const [optOutError,setOptOutError]=useState(false);
+
+  const handleOptOutSubmit = async (event) => {
+    event.preventDefault();
+    setOptOutError(false);
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    try {
+      const response = await fetch(form.action, {
+        method: "POST",
+        body: formData,
+        headers: { Accept: "application/json" }
+      });
+
+      if (response.ok) {
+        form.reset();
+        setOptOutSent(true);
+      } else {
+        setOptOutError(true);
+      }
+    } catch (error) {
+      setOptOutError(true);
+    }
+  };
+
   const items=[
     ['scan','Public sources only','The Discovery Engine reads what a person could already see by visiting your website: pages, forms, catalogues, FAQs and published content. It does not access private systems, logins or internal data.'],
     ['users','No personal or sensitive data','We look for business signals — site structure, content, funnel gaps — not personal details about individuals. Business contact information used for outreach is limited to what a company has published publicly.'],
     ['shield','GDPR / CCPA aligned by design','Our data-handling practices follow GDPR and CCPA principles: data is used only for the stated purpose, kept only as long as necessary, and never sold to third parties.'],
-    ['pause','You can opt out anytime',"If you'd rather your business website not be scanned or included in outreach, email us and we'll exclude your domain and remove any related records — no back and forth required."],
+    ['pause','You can opt out anytime',"If you'd rather your business website not be scanned or included in outreach, submit the form below and we'll exclude your domain and remove any related records — no back and forth required."],
   ];
   return <section id="data-policy" className="py-24 lg:py-32 max-w-7xl mx-auto px-5 lg:px-8">
     <div className="max-w-2xl mb-14">
@@ -461,9 +489,80 @@ function DataPolicy(){
         <p className="text-[var(--muted)] text-sm leading-relaxed">{desc}</p>
       </div>)}
     </div>
-    <div className="mt-5 bg-[var(--soft)] border border-[var(--line)] p-7 flex flex-col sm:flex-row items-start sm:items-center gap-5 justify-between">
-      <p className="text-sm text-[var(--muted)] max-w-xl">Want your domain excluded from scans and outreach, or want to see what information we hold about your business? Just ask.</p>
-      <a href="mailto:kristaps@cognityl.com?subject=Data%20opt-out%20request" className="flex-shrink-0 inline-flex items-center gap-2 rounded-none border border-[var(--line)] px-5 py-3 text-sm font-semibold hover:border-[var(--green)] transition focus-ring">Request opt-out <Icon name="arrow" className="w-4 h-4"/></a>
+
+    <div className="mt-5 bg-[var(--soft)] border border-[var(--line)] p-7 grid lg:grid-cols-[.85fr_1.15fr] gap-7 items-start">
+      <div>
+        <h3 className="font-display text-2xl font-bold tracking-tight mb-3">Request opt-out</h3>
+        <p className="text-sm text-[var(--muted)] leading-relaxed">Want your domain excluded from scans and outreach, or want to see what information we hold about your business? Submit this request and we’ll handle it manually from your Formspree email.</p>
+      </div>
+
+      {optOutSent ? (
+        <div className="bg-white border border-[var(--line)] p-6">
+          <div className="mb-4 w-12 h-12 rounded-full bg-[var(--green-light)] text-[var(--green)] flex items-center justify-center"><Icon name="check"/></div>
+          <h4 className="font-display text-xl font-bold mb-2">Request received</h4>
+          <p className="text-sm text-[var(--muted)] leading-relaxed">Thank you. Your opt-out request has been submitted.</p>
+          <button onClick={()=>setOptOutSent(false)} className="mt-5 inline-flex items-center gap-2 rounded-none border border-[var(--line)] px-4 py-2 text-sm font-semibold hover:border-[var(--green)] transition focus-ring">Submit another request</button>
+        </div>
+      ) : (
+        <form
+          action="https://formspree.io/f/mwvdrvdw"
+          method="POST"
+          onSubmit={handleOptOutSubmit}
+          className="bg-white border border-[var(--line)] p-6 space-y-4"
+        >
+          <input type="hidden" name="_subject" value="Cognityl Opt-Out Request" />
+
+          <div className="grid sm:grid-cols-2 gap-4">
+            <label className="block text-sm font-semibold">
+              Domain to exclude
+              <input
+                required
+                name="domain"
+                placeholder="example.com"
+                className="mt-2 w-full rounded-none border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)] font-normal"
+              />
+            </label>
+
+            <label className="block text-sm font-semibold">
+              Your email
+              <input
+                required
+                name="email"
+                type="email"
+                placeholder="you@company.com"
+                className="mt-2 w-full rounded-none border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)] font-normal"
+              />
+            </label>
+          </div>
+
+          <label className="block text-sm font-semibold">
+            Request type
+            <select
+              name="request_type"
+              required
+              className="mt-2 w-full rounded-none border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)] font-normal"
+            >
+              <option value="exclude_from_scans">Exclude this domain from scans</option>
+              <option value="show_data_held">Show what data is held</option>
+              <option value="both">Both</option>
+            </select>
+          </label>
+
+          <label className="block text-sm font-semibold">
+            Optional message
+            <textarea
+              name="message"
+              rows="4"
+              placeholder="Add any extra details here..."
+              className="mt-2 w-full rounded-none border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)] resize-none font-normal"
+            ></textarea>
+          </label>
+
+          {optOutError && <p className="text-sm text-red-700">Something went wrong. Please try again or email us directly.</p>}
+
+          <button className="w-full rounded-none bg-[var(--green)] text-white font-semibold px-6 py-4 hover:bg-[var(--green-dark)] transition">Submit opt-out request</button>
+        </form>
+      )}
     </div>
   </section>
 }
