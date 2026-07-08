@@ -57,7 +57,7 @@
   body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;overflow-x:hidden;}
   .font-display{font-family:'IBM Plex Sans',sans-serif;letter-spacing:-0.03em;}
   .font-mono{font-family:'IBM Plex Mono',monospace;}
-  .glass{background:rgba(255,255,255,.84);backdrop-filter:blur(18px);}
+  .glass{background:rgba(255,255,255,.84);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);}
   .grid-bg{background-image:linear-gradient(to right, rgba(16,20,18,.06) 1px, transparent 1px),linear-gradient(to bottom, rgba(16,20,18,.06) 1px, transparent 1px);background-size:44px 44px;}
   .gradient-text{background:linear-gradient(135deg, var(--green), var(--blue), var(--green));-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% 200%;animation:gradient-shift 4s ease-in-out infinite;}
   @keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
@@ -67,6 +67,23 @@
   .focus-ring:focus-visible{outline:3px solid var(--green-light);outline-offset:3px;}
   @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
   .fade-up{animation:fadeUp .7s ease both;}
+
+  /* Nav link fixes */
+  .nav-link {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    font-size: 0.875rem;
+    padding: 0.25rem 0;
+    border-bottom: 2px solid transparent;
+  }
+  .nav-link:hover {
+    color: var(--ink);
+  }
+  .nav-link.active {
+    color: var(--ink);
+    border-bottom-color: var(--green);
+  }
 
   /* Terminal / Code display */
   .terminal-window {
@@ -102,12 +119,15 @@
     padding: 16px 20px;
     min-height: 260px;
     background: #0d1110;
+    position: relative;
   }
   .terminal-line {
     color: #b8c4b8;
     font-size: 12px;
     line-height: 1.8;
     letter-spacing: 0.02em;
+    white-space: pre-wrap;
+    word-break: break-word;
   }
   .terminal-line .prompt {
     color: #13944a;
@@ -147,14 +167,55 @@
     letter-spacing: 0.08em;
     margin-right: 6px;
   }
+  .terminal-status {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #1f2421;
+    display: flex;
+    gap: 20px;
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    flex-wrap: wrap;
+  }
+  .terminal-status .status-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .terminal-status .status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+  .terminal-status .status-dot.green { background: #28c840; }
+  .terminal-status .status-dot.yellow { background: #febc2e; }
+  .terminal-status .status-dot.blue { background: #13944a; }
+  .terminal-status .status-label {
+    color: #b8c4b8;
+  }
+  .terminal-status .status-value {
+    color: #66736d;
+  }
 
   /* Marquee styles */
   .marquee{position:relative;overflow:hidden;width:100%;}
-  .marquee-track{display:flex;animation:marquee-scroll 40s linear infinite;width:max-content;}
-  .marquee-showcase .marquee-track{animation-duration:80s;}
+  .marquee-track{display:flex;animation:marquee-scroll 40s linear infinite;width:max-content;will-change:transform;}
+  .marquee-showcase .marquee-track{animation-duration:90s;}
+  /* Pause the scroll when the visitor hovers or tabs into it, so they can study a mockup */
+  .marquee:hover .marquee-track,
+  .marquee:focus-within .marquee-track{animation-play-state:paused;}
   .fade-x{-webkit-mask-image:linear-gradient(to right,transparent,black 12%,black 88%,transparent);mask-image:linear-gradient(to right,transparent,black 12%,black 88%,transparent);}
   @keyframes marquee-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
   .tilt{transform:rotate(var(--r));}
+
+  /* Respect users who ask for less motion: stop the auto-scroll and let them swipe/scroll the strip by hand */
+  @media (prefers-reduced-motion: reduce){
+    .marquee-track{animation:none;transform:none;}
+    .marquee{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    .marquee-showcase .marquee-track > :nth-child(n+6){display:none;}
+    .tilt{transform:none;}
+  }
 
   /* Our Work Showcase */
   .work-grid-item {
@@ -443,31 +504,98 @@ const Icon = ({name, className="w-5 h-5"}) => {
 };
 
 // ==================== NAVIGATION ====================
+function NavDropdown({label, items}){
+  return (
+    <div className="relative group h-[72px] flex items-center">
+      <button
+        className="px-3 h-[72px] inline-flex items-center gap-1.5 text-sm text-[var(--muted)] group-hover:text-[var(--ink)] group-focus-within:text-[var(--ink)] transition focus-ring"
+        aria-haspopup="true"
+      >
+        {label}
+        <svg className="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180 group-focus-within:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      {/* pt-2 forms an invisible bridge so the panel doesn't close between button and menu */}
+      <div className="absolute left-0 top-full min-w-[264px] pt-2 z-50 opacity-0 invisible -translate-y-1 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-focus-within:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 transition-all duration-200">
+        <div className="bg-white border border-[var(--line)] shadow-[4px_4px_0_rgba(16,20,18,0.9)]">
+          {items.map(([lbl,id,desc])=>(
+            <a key={id} href={`#${id}`} className="block px-4 py-3 border-b border-[var(--line)] last:border-b-0 hover:bg-[var(--soft)] transition focus-ring">
+              <span className="block text-sm font-semibold text-[var(--ink)]">{lbl}</span>
+              <span className="block text-xs text-[var(--muted)] mt-0.5 leading-snug">{desc}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Nav(){
   const [open,setOpen]=useState(false);
-  const links=[['Showcase','showcase'],['Report','report'],['Engine','engine'],['Use cases','use-cases'],['Process','process'],['Security','security'],['Governance','governance'],['Data policy','data-policy'],['Our Work','work'],['FAQ','faq']];
+
+  const platform=[
+    ['Engine','engine','How the Discovery Engine works'],
+    ['Report','report','The AI Opportunity Report'],
+    ['Process','process','Scan to deployment, step by step'],
+    ['Use cases','use-cases','Where teams put it to work'],
+    ['Showcase','showcase','Tools we design and ship'],
+  ];
+  const trust=[
+    ['Security','security','Data handling & access control'],
+    ['Governance','governance','Accountability & human oversight'],
+    ['Data policy','data-policy','What we scan, and how to opt out'],
+  ];
+  const direct=[['Our Work','work'],['FAQ','faq']];
+
+  const closeMobile=()=>setOpen(false);
+
   return <header className="fixed top-0 inset-x-0 z-50 border-b border-[var(--line)] glass">
-    <div className="max-w-7xl mx-auto px-5 lg:px-8 h-16 flex items-center justify-between">
-      <a href="#top" className="flex items-center gap-3 focus-ring rounded-none">
-  <div className="w-9 h-9 rounded-none bg-[#1F8B41] text-white flex items-center justify-center font-display text-lg font-bold">
-    C
-  </div>
-  <span className="font-display text-xl font-bold tracking-tight text-[var(--ink)]">
-    Cognityl
-  </span>
+    <div className="max-w-7xl mx-auto px-5 lg:px-8 h-[72px] flex items-center justify-between gap-4">
+      {/* Logo */}
+      <a href="#top" className="flex items-center gap-2.5 mr-2 focus-ring">
+        <div className="w-9 h-9 rounded-none bg-[#1F8B41] text-white flex items-center justify-center font-display text-lg font-bold">C</div>
+        <span className="font-display text-xl font-bold tracking-tight text-[var(--ink)]">Cognityl</span>
       </a>
-      <nav className="hidden md:flex items-center gap-8 text-sm text-[var(--muted)]">
-        {links.map(([label,id])=><a key={id} href={`#${id}`} className="hover:text-[var(--ink)] transition focus-ring rounded-none">{label}</a>)}
+
+      {/* Desktop nav */}
+      <nav className="hidden lg:flex items-center gap-1">
+        <NavDropdown label="Platform" items={platform}/>
+        <NavDropdown label="Trust & security" items={trust}/>
+        {direct.map(([label,id])=>(
+          <a key={id} href={`#${id}`} className="px-3 h-[72px] flex items-center text-sm text-[var(--muted)] hover:text-[var(--ink)] transition focus-ring">{label}</a>
+        ))}
       </nav>
-      <div className="hidden md:flex items-center gap-5">
-        <a href="#contact" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition focus-ring rounded-none">Analyze my business</a>
-        <a href="#contact" className="inline-flex items-center gap-2 rounded-none bg-[var(--ink)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--green-dark)] transition focus-ring">Get AI Opportunity Report <Icon name="arrow" className="w-4 h-4"/></a>
+
+      {/* Desktop CTA */}
+      <div className="hidden lg:flex items-center flex-shrink-0">
+        <a href="#contact" className="inline-flex items-center gap-2 rounded-none bg-[var(--ink)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--green-dark)] transition focus-ring whitespace-nowrap">Get AI Opportunity Report <Icon name="arrow" className="w-4 h-4"/></a>
       </div>
-      <button className="md:hidden focus-ring rounded-none" onClick={()=>setOpen(!open)} aria-label="Toggle menu">☰</button>
+
+      {/* Mobile toggle */}
+      <button className="lg:hidden w-10 h-10 flex items-center justify-center focus-ring" onClick={()=>setOpen(!open)} aria-label="Toggle menu" aria-expanded={open}>
+        {open ? <Icon name="x" className="w-6 h-6"/> : <span className="text-2xl leading-none">☰</span>}
+      </button>
     </div>
-    {open && <div className="md:hidden px-5 py-4 border-t border-[var(--line)] bg-white flex flex-col gap-4">
-      {links.map(([label,id])=><a key={id} href={`#${id}`} onClick={()=>setOpen(false)}>{label}</a>)}
-      <a href="#contact" onClick={()=>setOpen(false)} className="font-semibold">Get AI Opportunity Report →</a>
+
+    {/* Mobile menu */}
+    {open && <div className="lg:hidden border-t border-[var(--line)] bg-white max-h-[calc(100vh-72px)] overflow-y-auto">
+      <div className="px-5 py-5 space-y-6">
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--muted)] mb-1">Platform</p>
+          <div className="flex flex-col">
+            {platform.map(([label,id])=><a key={id} href={`#${id}`} onClick={closeMobile} className="py-2 text-[15px] font-medium text-[var(--ink)]">{label}</a>)}
+          </div>
+        </div>
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--muted)] mb-1">Trust &amp; security</p>
+          <div className="flex flex-col">
+            {trust.map(([label,id])=><a key={id} href={`#${id}`} onClick={closeMobile} className="py-2 text-[15px] font-medium text-[var(--ink)]">{label}</a>)}
+          </div>
+        </div>
+        <div className="flex flex-col border-t border-[var(--line)] pt-4">
+          {direct.map(([label,id])=><a key={id} href={`#${id}`} onClick={closeMobile} className="py-2 text-[15px] font-medium text-[var(--ink)]">{label}</a>)}
+        </div>
+        <a href="#contact" onClick={closeMobile} className="flex items-center justify-center gap-2 rounded-none bg-[var(--ink)] text-white px-5 py-3.5 text-sm font-semibold hover:bg-[var(--green-dark)] transition">Get AI Opportunity Report <Icon name="arrow" className="w-4 h-4"/></a>
+      </div>
     </div>}
   </header>
 }
@@ -491,68 +619,136 @@ function CertStrip(){
   </div>
 }
 
+// ==================== TERMINAL WITH TYPING ANIMATION ====================
+function TerminalDisplay() {
+  // The full sequence the "engine" types out, then loops.
+  const script = [
+    { cmd: 'crawl',  rest: ' reading public pages, forms, catalogues...' },
+    { cmd: 'detect', rest: ' weak lead capture on /contact — no follow-up path' },
+    { cmd: 'detect', rest: ' quote request friction — 3 clicks to submit' },
+    { cmd: 'score',  rest: ' automation opportunities [support: 87, sales: 92, ops: 71]' },
+    { cmd: '→',      rest: ' Report ready · 1-page PDF', final: true },
+  ];
+
+  const TYPE_MS = 28;        // per-character typing speed
+  const LINE_PAUSE_MS = 450; // pause after a line finishes typing
+  const RESTART_MS = 4200;   // hold on the finished block, then loop
+
+  const fullText = (l) => '> ' + l.cmd + l.rest;
+
+  const [lineIdx, setLineIdx] = useState(0);   // line currently being typed
+  const [charCount, setCharCount] = useState(0); // chars shown of that line
+
+  // Single self-scheduling timer: advance one character, one line, or restart.
+  useEffect(() => {
+    let t;
+    if (lineIdx >= script.length) {
+      t = setTimeout(() => { setLineIdx(0); setCharCount(0); }, RESTART_MS);
+      return () => clearTimeout(t);
+    }
+    const full = fullText(script[lineIdx]);
+    if (charCount < full.length) {
+      t = setTimeout(() => setCharCount((c) => c + 1), TYPE_MS);
+    } else {
+      t = setTimeout(() => { setLineIdx((i) => i + 1); setCharCount(0); }, LINE_PAUSE_MS);
+    }
+    return () => clearTimeout(t);
+  }, [lineIdx, charCount]);
+
+  // Split a (possibly partial) line into styled spans: prompt / command / rest.
+  const renderSpans = (text, isFinal) => {
+    if (!text.startsWith('>')) return <span className="dim">{text}</span>;
+    const afterPrompt = text.slice(2);
+    const sp = afterPrompt.indexOf(' ');
+    const cmd = sp === -1 ? afterPrompt : afterPrompt.slice(0, sp);
+    const rest = sp === -1 ? '' : afterPrompt.slice(sp);
+    return (
+      <React.Fragment>
+        <span className="prompt">{'> '}</span>
+        <span className={isFinal ? 'arrow' : 'highlight'}>{cmd}</span>
+        <span className="dim">{rest}</span>
+      </React.Fragment>
+    );
+  };
+
+  const finished = lineIdx >= script.length;
+  const completedCount = finished ? script.length : lineIdx;
+
+  return (
+    <div className="card shadow-soft overflow-hidden">
+      <div className="terminal-window">
+        <div className="terminal-header">
+          <span className="terminal-dot red"></span>
+          <span className="terminal-dot yellow"></span>
+          <span className="terminal-dot green"></span>
+          <span className="terminal-title">COGNITYL · DISCOVERY ENGINE</span>
+          <span className="ml-auto text-[8px] text-[#28c840] font-mono bg-[#28c84022] px-2 py-0.5 border border-[#28c84044]">LIVE</span>
+        </div>
+        <div className="terminal-body">
+          {script.slice(0, completedCount).map((l, i) => (
+            <div key={i} className="terminal-line">
+              {renderSpans(fullText(l), l.final)}
+              {finished && i === completedCount - 1 && <span className="typing-cursor"></span>}
+            </div>
+          ))}
+          {!finished && (
+            <div key="typing" className="terminal-line">
+              {renderSpans(fullText(script[lineIdx]).slice(0, charCount), script[lineIdx].final)}
+              <span className="typing-cursor"></span>
+            </div>
+          )}
+          <div className="terminal-status">
+            <span className="status-item">
+              <span className="status-dot green"></span>
+              <span className="status-label">SIGNALS</span>
+              <span className="status-value">public only</span>
+            </span>
+            <span className="status-item">
+              <span className="status-dot yellow"></span>
+              <span className="status-label">LOGINS</span>
+              <span className="status-value">0 required</span>
+            </span>
+            <span className="status-item">
+              <span className="status-dot blue"></span>
+              <span className="status-label">OUTPUT</span>
+              <span className="status-value">1-page PDF</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ==================== HERO ====================
 function Hero(){
   return <section id="top" className="relative pt-36 lg:pt-44 pb-12 lg:pb-16 grid-bg overflow-hidden">
     <div className="relative max-w-7xl mx-auto px-5 lg:px-8 grid lg:grid-cols-[1.05fr_.95fr] gap-12 items-center">
       <div className="fade-up">
         <div className="inline-flex items-center gap-2 rounded-none border border-[var(--line)] bg-white px-4 py-2 text-sm text-[var(--muted)] mb-7 shadow-soft">
-          <Icon name="spark" className="w-4 h-4 text-[var(--green)]"/> AI opportunity discovery for modern businesses
+          <Icon name="spark" className="w-4 h-4 text-[var(--green)]"/> Evidence first, pitch second
         </div>
         <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold tracking-[-.055em] leading-[.95] max-w-3xl">
-          <span className="gradient-text">Everyone says "use AI."</span><br />
-          <span className="text-[var(--ink)]">Nobody says where.</span>
+          <span className="text-[var(--ink)]">You've been told to use AI.</span><br />
+          <span className="gradient-text">Nobody's shown you where it pays off.</span>
         </h1>
         <p className="mt-7 text-lg lg:text-xl text-[var(--muted)] leading-relaxed max-w-2xl">
-          Cognityl scans your public business presence, detects visible sales, support and workflow bottlenecks, and turns them into a prioritized AI automation roadmap — evidence first, pitch second.
+          Cognityl reads what your business already shows the world — your site, forms, catalogues and support pages — and finds the specific places AI would save time or win revenue. You get a ranked plan, not a sales pitch.
         </p>
         <div className="mt-9 flex flex-col sm:flex-row gap-4">
-          <a href="#contact" className="inline-flex items-center justify-center gap-2 rounded-none bg-[var(--green)] text-white px-7 py-4 font-semibold hover:bg-[var(--green-dark)] transition focus-ring">Get my AI Opportunity Report <Icon name="arrow" className="w-4 h-4"/></a>
-          <a href="#security" className="inline-flex items-center justify-center rounded-none bg-white border border-[var(--line)] px-7 py-4 font-semibold hover:border-[var(--green)] transition focus-ring">See how it works</a>
+          <a href="#contact" className="inline-flex items-center justify-center gap-2 rounded-none bg-[var(--green)] text-white px-7 py-4 font-semibold hover:bg-[var(--green-dark)] transition focus-ring">Get your free opportunity report <Icon name="arrow" className="w-4 h-4"/></a>
+          <a href="#agent-demo" className="inline-flex items-center justify-center rounded-none bg-white border border-[var(--line)] px-7 py-4 font-semibold hover:border-[var(--green)] transition focus-ring">See how it works</a>
         </div>
-        <p className="mt-4 text-sm text-[var(--muted)]">Start with a focused report: what to automate first, why it matters, and how to test it safely.</p>
+        <p className="mt-4 text-sm text-[var(--muted)]">Free to start. Built from public signals only — no login, and no access to your internal systems.</p>
 
         <div className="mt-8">
           <CertStrip/>
         </div>
       </div>
 
-      {/* Right side - Terminal / Live Engine Display */}
+      {/* Right side - Terminal with typing animation */}
       <div className="relative fade-up" style={{animationDelay:'.15s'}}>
-        <div className="card shadow-soft overflow-hidden">
-          <div className="terminal-window">
-            <div className="terminal-header">
-              <span className="terminal-dot red"></span>
-              <span className="terminal-dot yellow"></span>
-              <span className="terminal-dot green"></span>
-              <span className="terminal-title">COGNITYL · DISCOVERY ENGINE</span>
-              <span className="ml-auto text-[8px] text-[#28c840] font-mono bg-[#28c84022] px-2 py-0.5 border border-[#28c84044]">LIVE</span>
-            </div>
-            <div className="terminal-body">
-              <div className="terminal-line">
-                <span className="prompt">></span> <span className="highlight">crawl</span> reading public pages, forms, catalogues...
-              </div>
-              <div className="terminal-line">
-                <span className="prompt">></span> <span className="highlight">detect</span> weak lead capture on <span className="dim">/contact</span> — no follow-up path
-              </div>
-              <div className="terminal-line">
-                <span className="prompt">></span> <span className="highlight">detect</span> quote request friction — 3 clicks to submit
-              </div>
-              <div className="terminal-line">
-                <span className="prompt">></span> <span className="highlight">score</span> automation opportunities <span className="dim">[support: 87, sales: 92, ops: 71]</span>
-              </div>
-              <div className="terminal-line mt-2 pt-2 border-t border-[#1f2421]">
-                <span className="prompt">></span> <span className="arrow">→</span> <span className="highlight">Report ready</span> <span className="dim">· 1-page PDF</span>
-                <span className="typing-cursor"></span>
-              </div>
-              <div className="mt-3 flex gap-4 text-[10px] font-mono">
-                <span className="text-[#28c840]">● SIGNALS <span className="text-[#66736d]">public only</span></span>
-                <span className="text-[#febc2e]">● LOGINS <span className="text-[#66736d]">0 required</span></span>
-                <span className="text-[#13944a]">● OUTPUT <span className="text-[#66736d]">1-page PDF</span></span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <TerminalDisplay />
       </div>
     </div>
   </section>
@@ -601,25 +797,24 @@ function AgentWorkflowDemo(){
   </section>;
 }
 
-// ==================== SHOWCASE MARQUEE (Claude's Design) ====================
+// ==================== SHOWCASE MARQUEE ====================
 function SiteFrame({tilt, url, children}){
-  return <div className="tilt flex-shrink-0 w-[350px] sm:w-[430px] mx-4 sm:mx-5 rounded-xl bg-[#141613] p-2 shadow-[0_22px_50px_-22px_rgba(19,21,16,.65)]" style={{'--r':tilt}}>
+  return <div className="tilt flex-shrink-0 w-[350px] sm:w-[430px] mx-4 sm:mx-5 bg-[#141613] p-2 border border-[var(--line)] shadow-[6px_6px_0_rgba(16,20,18,0.9)]" style={{'--r':tilt}}>
     <div className="flex items-center gap-1.5 px-2 pb-2 pt-0.5">
       <span className="w-2 h-2 rounded-full bg-[#ff5f57]"></span>
       <span className="w-2 h-2 rounded-full bg-[#febc2e]"></span>
       <span className="w-2 h-2 rounded-full bg-[#28c840]"></span>
-      <span className="ml-2 flex-1 bg-white/10 rounded-full px-3 py-[3px] text-[9px] text-white/55 font-mono flex items-center gap-1.5">
+      <span className="ml-2 flex-1 bg-white/10 px-3 py-[3px] text-[9px] text-white/55 font-mono flex items-center gap-1.5">
         <svg className="w-2 h-2 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M6 11V7a6 6 0 1 1 12 0v4M5 11h14v10H5V11z"/></svg>
         {url}
       </span>
     </div>
-    <div className="rounded-lg overflow-hidden bg-white h-[252px] relative">{children}</div>
+    <div className="overflow-hidden bg-white h-[252px] relative">{children}</div>
   </div>;
 }
 
 function ShowcaseSites(){
   return <React.Fragment>
-    {/* 1 — product configurator */}
     <SiteFrame tilt="-2deg" url="baltecstorage.com/configure">
       <div className="flex items-center justify-between px-4 py-2 border-b border-[#ecebe4] bg-white">
         <span className="flex items-center gap-1.5"><span className="w-3.5 h-3.5 bg-[var(--green)]"></span><span className="font-display text-[11px] font-bold tracking-tight">BALTEC</span></span>
@@ -657,7 +852,6 @@ function ShowcaseSites(){
       </div>
     </SiteFrame>
 
-    {/* 2 — dark SaaS hero */}
     <SiteFrame tilt="1.5deg" url="flowbase.io">
       <div className="h-full text-white flex flex-col" style={{background:'linear-gradient(160deg,#101410 0%, #0b0e0b 60%, #0d1a11 100%)'}}>
         <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10">
@@ -689,7 +883,6 @@ function ShowcaseSites(){
       </div>
     </SiteFrame>
 
-    {/* 3 — support portal */}
     <SiteFrame tilt="-1.5deg" url="support.arvela.com">
       <div className="h-full bg-[#f7f6f0] flex flex-col">
         <div className="px-5 pt-4 pb-8 text-white" style={{background:'linear-gradient(120deg,#0e6f37,#13944a 60%,#1cab58)'}}>
@@ -719,7 +912,6 @@ function ShowcaseSites(){
       </div>
     </SiteFrame>
 
-    {/* 4 — Cognityl agent dashboard */}
     <SiteFrame tilt="2deg" url="app.cognityl.com/agents">
       <div className="h-full flex bg-[#f7f6f0]">
         <div className="w-[86px] bg-[#141613] py-3 px-2.5 flex flex-col gap-[3px]">
@@ -751,7 +943,6 @@ function ShowcaseSites(){
       </div>
     </SiteFrame>
 
-    {/* 5 — quote review */}
     <SiteFrame tilt="-2.5deg" url="quotes.baltec.eu/482">
       <div className="h-full bg-white flex flex-col">
         <div className="px-4 py-2.5 border-b border-[#ecebe4] flex items-center justify-between">
@@ -1178,7 +1369,7 @@ function DataPolicy(){
             ></textarea>
           </label>
 
-          {optOutError && <p className="text-sm text-red-700">Something went wrong. Please try again or email us directly.</p>}
+          {optOutError && <p className="text-sm text-red-700">Something went wrong. Please try again or email us directly at <a href="mailto:kristaps@cognityl.com" className="underline font-semibold">kristaps@cognityl.com</a>.</p>}
 
           <button className="w-full rounded-none bg-[var(--green)] text-white font-semibold px-6 py-4 hover:bg-[var(--green-dark)] transition">Submit opt-out request</button>
         </form>
@@ -1428,7 +1619,8 @@ function Footer(){
         <div className="flex flex-col items-start md:items-end gap-4">
           <div className="text-left md:text-right">
             <p className="text-sm font-semibold">Contact</p>
-            <a href="mailto:hello@cognityl.com" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">hello@cognityl.com</a>
+            <a href="mailto:kristaps@cognityl.com" className="block text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">kristaps@cognityl.com</a>
+            <a href="mailto:hello@cognityl.com" className="block text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">hello@cognityl.com</a>
           </div>
           <button onClick={scrollToTop} className="back-to-top">
             <span className="arrow-up">↑</span> BACK TO TOP
