@@ -1,16 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-SG5YL8L8SD"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-SG5YL8L8SD');
+  </script>
+
   <meta http-equiv="Content-Security-Policy" content="
   default-src 'self';
-  script-src 'self' https://cdnjs.cloudflare.com https://cdn.tailwindcss.com 'unsafe-inline' 'unsafe-eval';
+  script-src 'self' https://cdnjs.cloudflare.com https://cdn.tailwindcss.com https://www.googletagmanager.com https://www.google-analytics.com 'unsafe-inline' 'unsafe-eval';
   style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
   font-src https://fonts.gstatic.com;
   img-src 'self' data: https:;
-  connect-src 'self' https://formspree.io;
+  connect-src 'self' https://formspree.io https://www.google-analytics.com;
   frame-ancestors 'none';
   base-uri 'self';
- form-action 'self' https://formspree.io;
+  form-action 'self' https://formspree.io;
 ">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
@@ -50,19 +59,363 @@
   .font-mono{font-family:'IBM Plex Mono',monospace;}
   .glass{background:rgba(255,255,255,.84);backdrop-filter:blur(18px);}
   .grid-bg{background-image:linear-gradient(to right, rgba(16,20,18,.06) 1px, transparent 1px),linear-gradient(to bottom, rgba(16,20,18,.06) 1px, transparent 1px);background-size:44px 44px;}
-  .gradient-text{background:linear-gradient(90deg,var(--green),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .gradient-text{background:linear-gradient(135deg, var(--green), var(--blue), var(--green));-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% 200%;animation:gradient-shift 4s ease-in-out infinite;}
+  @keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
   .shadow-soft{box-shadow:4px 4px 0 rgba(16,20,18,.9);}
   .card{border:1.5px solid var(--line);background:#fff;border-radius:0px;transition:.15s ease;}
   .card:hover{border-color:var(--ink);box-shadow:3px 3px 0 rgba(16,20,18,.9);}
   .focus-ring:focus-visible{outline:3px solid var(--green-light);outline-offset:3px;}
   @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
   .fade-up{animation:fadeUp .7s ease both;}
+
+  /* Terminal / Code display */
+  .terminal-window {
+    background: #0d1110;
+    border-radius: 0px;
+    border: 1.5px solid var(--line);
+    overflow: hidden;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .terminal-header {
+    padding: 10px 16px;
+    background: #161a18;
+    border-bottom: 1px solid #1f2421;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .terminal-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .terminal-dot.red { background: #ff5f57; }
+  .terminal-dot.yellow { background: #febc2e; }
+  .terminal-dot.green { background: #28c840; }
+  .terminal-title {
+    font-size: 10px;
+    color: #66736d;
+    margin-left: 8px;
+    letter-spacing: 0.05em;
+  }
+  .terminal-body {
+    padding: 16px 20px;
+    min-height: 260px;
+    background: #0d1110;
+  }
+  .terminal-line {
+    color: #b8c4b8;
+    font-size: 12px;
+    line-height: 1.8;
+    letter-spacing: 0.02em;
+  }
+  .terminal-line .prompt {
+    color: #13944a;
+    font-weight: 500;
+  }
+  .terminal-line .highlight {
+    color: #7ee2a8;
+  }
+  .terminal-line .dim {
+    color: #66736d;
+  }
+  .terminal-line .error {
+    color: #ff6b6b;
+  }
+  .terminal-line .arrow {
+    color: #febc2e;
+  }
+  .typing-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    background: #13944a;
+    animation: blink 1s step-end infinite;
+    vertical-align: text-bottom;
+    margin-left: 2px;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  .terminal-line .live-tag {
+    background: #13944a22;
+    color: #13944a;
+    border: 1px solid #13944a44;
+    padding: 0 8px;
+    font-size: 8px;
+    letter-spacing: 0.08em;
+    margin-right: 6px;
+  }
+
+  /* Marquee styles */
+  .marquee{position:relative;overflow:hidden;width:100%;}
+  .marquee-track{display:flex;animation:marquee-scroll 40s linear infinite;width:max-content;}
+  .marquee-showcase .marquee-track{animation-duration:80s;}
+  .fade-x{-webkit-mask-image:linear-gradient(to right,transparent,black 12%,black 88%,transparent);mask-image:linear-gradient(to right,transparent,black 12%,black 88%,transparent);}
+  @keyframes marquee-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+  .tilt{transform:rotate(var(--r));}
+
+  /* Our Work Showcase */
+  .work-grid-item {
+    position: relative;
+    overflow: hidden;
+    border: 1.5px solid var(--line);
+    background: white;
+    transition: all 0.3s ease;
+  }
+  .work-grid-item:hover {
+    border-color: var(--ink);
+    box-shadow: 4px 4px 0 rgba(16,20,18,0.9);
+    transform: translateY(-4px);
+  }
+  .work-grid-item .work-number {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+  .work-grid-item .work-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--green);
+    background: var(--green-light);
+    padding: 2px 10px;
+    border: 1px solid rgba(19,148,74,0.2);
+  }
+
+  /* Footer Back to Top */
+  .back-to-top {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    cursor: pointer;
+  }
+  .back-to-top:hover {
+    color: var(--ink);
+  }
+  .back-to-top .arrow-up {
+    display: inline-block;
+    animation: bob 1.8s ease-in-out infinite;
+    font-size: 18px;
+    line-height: 1;
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  /* Chatbot styles */
+  .chatbot-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1000;
+    width: 380px;
+    max-width: calc(100vw - 48px);
+    max-height: 600px;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border: 1.5px solid var(--line);
+    box-shadow: 0 20px 60px rgba(16,20,18,0.2);
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .chatbot-container.closed {
+    width: auto;
+    max-height: none;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+  .chatbot-toggle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--green);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(19,148,74,0.3);
+    transition: all 0.2s ease;
+  }
+  .chatbot-toggle:hover {
+    transform: scale(1.05);
+    background: var(--green-dark);
+  }
+  .chatbot-header {
+    padding: 16px 20px;
+    background: var(--ink);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .chatbot-header button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 20px;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+  .chatbot-header button:hover {
+    opacity: 1;
+  }
+  .chatbot-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 200px;
+    max-height: 350px;
+    background: #fafafa;
+  }
+  .chatbot-message {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.5;
+    word-wrap: break-word;
+  }
+  .chatbot-message.bot {
+    background: white;
+    border: 1px solid var(--line);
+    align-self: flex-start;
+  }
+  .chatbot-message.user {
+    background: var(--green);
+    color: white;
+    align-self: flex-end;
+  }
+  .chatbot-input {
+    padding: 12px 16px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    background: white;
+  }
+  .chatbot-input input {
+    flex: 1;
+    border: 1px solid var(--line);
+    padding: 8px 12px;
+    outline: none;
+    font-size: 14px;
+    border-radius: 4px;
+  }
+  .chatbot-input input:focus {
+    border-color: var(--green);
+  }
+  .chatbot-input button {
+    background: var(--green);
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s ease;
+    border-radius: 4px;
+  }
+  .chatbot-input button:hover {
+    background: var(--green-dark);
+  }
+  .chatbot-input button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .typing-indicator {
+    padding: 10px 14px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    align-self: flex-start;
+    display: flex;
+    gap: 4px;
+  }
+  .typing-indicator span {
+    width: 6px;
+    height: 6px;
+    background: var(--muted);
+    border-radius: 50%;
+    animation: typing 1.4s infinite both;
+  }
+  .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typing {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+  }
+  .chatbot-suggestion {
+    padding: 6px 12px;
+    background: var(--soft);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--muted);
+    transition: all 0.15s ease;
+  }
+  .chatbot-suggestion:hover {
+    background: var(--green-light);
+    border-color: var(--green);
+    color: var(--ink);
+  }
+
+  /* Agent workflow demo */
+  .agent-demo-step {
+    position: relative;
+    padding: 1.5rem;
+    border: 1.5px solid var(--line);
+    background: white;
+    transition: all 0.3s ease;
+  }
+  .agent-demo-step:hover {
+    border-color: var(--green);
+    box-shadow: 3px 3px 0 rgba(16,20,18,0.9);
+  }
+  .agent-demo-step .step-number {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--green-light);
+    line-height: 1;
+  }
+  .agent-demo-arrow {
+    font-size: 24px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  @media (max-width: 768px) {
+    .agent-demo-arrow {
+      transform: rotate(90deg);
+    }
+  }
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel" data-presets="react">
-const {useState} = React;
+const {useState, useEffect, useRef} = React;
 
 const Icon = ({name, className="w-5 h-5"}) => {
   const icons = {
@@ -84,13 +437,15 @@ const Icon = ({name, className="w-5 h-5"}) => {
     scan:"M4 7V4h3M17 4h3v3M20 17v3h-3M7 20H4v-3M9 9h6v6H9z",
     activity:"M22 12h-4l-3 9L9 3l-3 9H2",
     layers:"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5",
+    x:"M18 6L6 18M6 6l12 12",
   };
   return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={icons[name]} /></svg>;
 };
 
+// ==================== NAVIGATION ====================
 function Nav(){
   const [open,setOpen]=useState(false);
-  const links=[['Report','report'],['Engine','engine'],['Use cases','use-cases'],['Process','process'],['Security','security'],['Governance','governance'],['Data policy','data-policy'],['FAQ','faq']];
+  const links=[['Showcase','showcase'],['Report','report'],['Engine','engine'],['Use cases','use-cases'],['Process','process'],['Security','security'],['Governance','governance'],['Data policy','data-policy'],['Our Work','work'],['FAQ','faq']];
   return <header className="fixed top-0 inset-x-0 z-50 border-b border-[var(--line)] glass">
     <div className="max-w-7xl mx-auto px-5 lg:px-8 h-16 flex items-center justify-between">
       <a href="#top" className="flex items-center gap-3 focus-ring rounded-none">
@@ -117,6 +472,7 @@ function Nav(){
   </header>
 }
 
+// ==================== CERT STRIP ====================
 function CertStrip(){
   const certs=[
     ['SOC2','SOC 2 Type II','In progress'],
@@ -135,18 +491,20 @@ function CertStrip(){
   </div>
 }
 
+// ==================== HERO ====================
 function Hero(){
-  return <section id="top" className="relative pt-36 lg:pt-44 pb-20 lg:pb-28 grid-bg overflow-hidden">
+  return <section id="top" className="relative pt-36 lg:pt-44 pb-12 lg:pb-16 grid-bg overflow-hidden">
     <div className="relative max-w-7xl mx-auto px-5 lg:px-8 grid lg:grid-cols-[1.05fr_.95fr] gap-12 items-center">
       <div className="fade-up">
         <div className="inline-flex items-center gap-2 rounded-none border border-[var(--line)] bg-white px-4 py-2 text-sm text-[var(--muted)] mb-7 shadow-soft">
           <Icon name="spark" className="w-4 h-4 text-[var(--green)]"/> AI opportunity discovery for modern businesses
         </div>
         <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold tracking-[-.055em] leading-[.95] max-w-3xl">
-          Find the AI opportunities your competitors haven’t.
+          <span className="gradient-text">Everyone says "use AI."</span><br />
+          <span className="text-[var(--ink)]">Nobody says where.</span>
         </h1>
         <p className="mt-7 text-lg lg:text-xl text-[var(--muted)] leading-relaxed max-w-2xl">
-          Cognityl scans your public business presence, detects visible sales, support and workflow bottlenecks, then turns them into a prioritized AI automation roadmap.
+          Cognityl scans your public business presence, detects visible sales, support and workflow bottlenecks, and turns them into a prioritized AI automation roadmap — evidence first, pitch second.
         </p>
         <div className="mt-9 flex flex-col sm:flex-row gap-4">
           <a href="#contact" className="inline-flex items-center justify-center gap-2 rounded-none bg-[var(--green)] text-white px-7 py-4 font-semibold hover:bg-[var(--green-dark)] transition focus-ring">Get my AI Opportunity Report <Icon name="arrow" className="w-4 h-4"/></a>
@@ -158,31 +516,284 @@ function Hero(){
           <CertStrip/>
         </div>
       </div>
+
+      {/* Right side - Terminal / Live Engine Display */}
       <div className="relative fade-up" style={{animationDelay:'.15s'}}>
-        <div className="card shadow-soft p-5 lg:p-7">
-          <div className="flex items-center justify-between mb-5">
-            <div>
-              <p className="text-sm text-[var(--muted)]">Discovery Engine</p>
-              <h3 className="font-display text-2xl font-bold">Live opportunity scan</h3>
+        <div className="card shadow-soft overflow-hidden">
+          <div className="terminal-window">
+            <div className="terminal-header">
+              <span className="terminal-dot red"></span>
+              <span className="terminal-dot yellow"></span>
+              <span className="terminal-dot green"></span>
+              <span className="terminal-title">COGNITYL · DISCOVERY ENGINE</span>
+              <span className="ml-auto text-[8px] text-[#28c840] font-mono bg-[#28c84022] px-2 py-0.5 border border-[#28c84044]">LIVE</span>
             </div>
-            <span className="w-12 h-12 rounded-none bg-[var(--green-light)] text-[var(--green)] flex items-center justify-center"><Icon name="spark"/></span>
+            <div className="terminal-body">
+              <div className="terminal-line">
+                <span className="prompt">></span> <span className="highlight">crawl</span> reading public pages, forms, catalogues...
+              </div>
+              <div className="terminal-line">
+                <span className="prompt">></span> <span className="highlight">detect</span> weak lead capture on <span className="dim">/contact</span> — no follow-up path
+              </div>
+              <div className="terminal-line">
+                <span className="prompt">></span> <span className="highlight">detect</span> quote request friction — 3 clicks to submit
+              </div>
+              <div className="terminal-line">
+                <span className="prompt">></span> <span className="highlight">score</span> automation opportunities <span className="dim">[support: 87, sales: 92, ops: 71]</span>
+              </div>
+              <div className="terminal-line mt-2 pt-2 border-t border-[#1f2421]">
+                <span className="prompt">></span> <span className="arrow">→</span> <span className="highlight">Report ready</span> <span className="dim">· 1-page PDF</span>
+                <span className="typing-cursor"></span>
+              </div>
+              <div className="mt-3 flex gap-4 text-[10px] font-mono">
+                <span className="text-[#28c840]">● SIGNALS <span className="text-[#66736d]">public only</span></span>
+                <span className="text-[#febc2e]">● LOGINS <span className="text-[#66736d]">0 required</span></span>
+                <span className="text-[#13944a]">● OUTPUT <span className="text-[#66736d]">1-page PDF</span></span>
+              </div>
+            </div>
           </div>
-          {[
-            ['Website analyzed','Public pages, forms, catalogues and content mapped','Complete'],
-            ['Funnel gaps detected','Lead capture and quote friction identified','High value'],
-            ['AI opportunities ranked','Support, sales and workflow use cases scored','87/100'],
-            ['Roadmap generated','First automation project recommended','Ready']
-          ].map((r,i)=><div key={r[0]} className="flex gap-4 items-start p-4 rounded-none border border-[var(--line)] mb-3 bg-[var(--soft)]">
-            <span className="w-8 h-8 rounded-full bg-white border border-[var(--line)] flex items-center justify-center text-sm font-bold">{i+1}</span>
-            <div className="flex-1"><h4 className="font-semibold">{r[0]}</h4><p className="text-sm text-[var(--muted)] mt-1">{r[1]}</p></div>
-            <span className="hidden sm:block text-xs bg-white border border-[var(--line)] rounded-none px-3 py-1 text-[var(--green-dark)]">{r[2]}</span>
-          </div>)}
         </div>
       </div>
     </div>
   </section>
 }
 
+// ==================== AGENT WORKFLOW DEMO ====================
+function AgentWorkflowDemo(){
+  const steps = [
+    { number: '01', title: 'Scan', description: 'Cognityl scans your public website — pages, forms, catalogues, FAQs, and support content.' },
+    { number: '02', title: 'Detect', description: 'The engine identifies visible bottlenecks: weak lead capture, slow quoting, repetitive support questions.' },
+    { number: '03', title: 'Score', description: 'Each opportunity is ranked by business impact, implementation speed, and confidence level.' },
+    { number: '04', title: 'Deploy', description: 'Approved opportunities become AI agents with human checkpoints, audit logs, and manual overrides.' },
+  ];
+
+  return <section id="agent-demo" className="py-16 lg:py-20 max-w-7xl mx-auto px-5 lg:px-8">
+    <div className="text-center mb-12">
+      <p className="text-[var(--green)] font-semibold mb-2">How it works</p>
+      <h2 className="font-display text-3xl lg:text-4xl font-bold tracking-tight">From public signal to AI agent in 4 steps</h2>
+      <p className="mt-3 text-[var(--muted)] max-w-2xl mx-auto">Cognityl turns your website's public signals into a working AI agent — with governance built in from day one.</p>
+    </div>
+
+    <div className="flex flex-col md:flex-row items-center gap-0 md:gap-2">
+      {steps.map((step, index) => (
+        <React.Fragment key={step.number}>
+          <div className="agent-demo-step flex-1 w-full">
+            <div className="flex items-start gap-4">
+              <span className="step-number">{step.number}</span>
+              <div>
+                <h3 className="font-display text-lg font-bold">{step.title}</h3>
+                <p className="text-sm text-[var(--muted)] leading-relaxed">{step.description}</p>
+              </div>
+            </div>
+          </div>
+          {index < steps.length - 1 && (
+            <div className="agent-demo-arrow">→</div>
+          )}
+        </React.Fragment>
+      ))}
+    </div>
+
+    <div className="mt-8 flex justify-center">
+      <a href="#contact" className="inline-flex items-center gap-2 rounded-none bg-[var(--green)] text-white px-6 py-3 font-semibold hover:bg-[var(--green-dark)] transition focus-ring">
+        Try it with your website →
+      </a>
+    </div>
+  </section>;
+}
+
+// ==================== SHOWCASE MARQUEE (Claude's Design) ====================
+function SiteFrame({tilt, url, children}){
+  return <div className="tilt flex-shrink-0 w-[350px] sm:w-[430px] mx-4 sm:mx-5 rounded-xl bg-[#141613] p-2 shadow-[0_22px_50px_-22px_rgba(19,21,16,.65)]" style={{'--r':tilt}}>
+    <div className="flex items-center gap-1.5 px-2 pb-2 pt-0.5">
+      <span className="w-2 h-2 rounded-full bg-[#ff5f57]"></span>
+      <span className="w-2 h-2 rounded-full bg-[#febc2e]"></span>
+      <span className="w-2 h-2 rounded-full bg-[#28c840]"></span>
+      <span className="ml-2 flex-1 bg-white/10 rounded-full px-3 py-[3px] text-[9px] text-white/55 font-mono flex items-center gap-1.5">
+        <svg className="w-2 h-2 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M6 11V7a6 6 0 1 1 12 0v4M5 11h14v10H5V11z"/></svg>
+        {url}
+      </span>
+    </div>
+    <div className="rounded-lg overflow-hidden bg-white h-[252px] relative">{children}</div>
+  </div>;
+}
+
+function ShowcaseSites(){
+  return <React.Fragment>
+    {/* 1 — product configurator */}
+    <SiteFrame tilt="-2deg" url="baltecstorage.com/configure">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-[#ecebe4] bg-white">
+        <span className="flex items-center gap-1.5"><span className="w-3.5 h-3.5 bg-[var(--green)]"></span><span className="font-display text-[11px] font-bold tracking-tight">BALTEC</span></span>
+        <div className="hidden sm:flex gap-3 text-[8.5px] text-[#767a70] font-medium"><span>Products</span><span className="text-[var(--ink)] font-bold border-b-2 border-[var(--green)] pb-0.5">Configurator</span><span>Dealers</span><span>Contact</span></div>
+        <span className="bg-[#141613] text-white text-[8px] font-bold px-2.5 py-1">REQUEST QUOTE</span>
+      </div>
+      <div className="grid grid-cols-[1.05fr_.95fr] h-[calc(100%-34px)]">
+        <div className="relative flex items-center justify-center p-4" style={{background:'radial-gradient(circle at 50% 35%, #fbfaf5, #ecebe1 75%)'}}>
+          <div>
+            <div className="flex gap-[3px]">
+              {[0,1,2].map(i=><div key={i} className="relative w-[34px] h-[92px] border border-[#0c3a1e]/40" style={{background:'linear-gradient(135deg, #1cab58 0%, #13944a 45%, #0e6f37 100%)'}}>
+                <div className="absolute top-2 left-1.5 right-1.5 space-y-[3px]">{[0,1,2].map(v=><div key={v} className="h-[2px] bg-black/25"></div>)}</div>
+                <span className="absolute top-1/2 right-[4px] w-[3px] h-[10px] bg-[#0a2e18] rounded-sm"></span>
+                <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[6px] font-bold text-white/90">{i+1}</span>
+              </div>)}
+            </div>
+            <div className="mx-auto mt-2 w-[80%] h-[7px] rounded-[50%] bg-black/15 blur-[2px]"></div>
+          </div>
+          <span className="absolute bottom-2.5 left-3 bg-white/90 border border-[#dcd9cc] px-2 py-[3px] text-[7.5px] font-mono text-[#55584f]">RAL 6029 · 3 columns · 1800mm</span>
+        </div>
+        <div className="p-3 flex flex-col bg-white border-l border-[#ecebe4]">
+          <div className="flex items-center justify-between mb-1"><p className="text-[8px] font-bold uppercase tracking-wide text-[#767a70]">Step 2 of 3 — Finish</p><span className="text-[8px] text-[#767a70]">66%</span></div>
+          <div className="h-[3px] bg-[#ecebe4] mb-2.5"><div className="h-full w-2/3 bg-[var(--green)]"></div></div>
+          <p className="text-[9px] font-semibold mb-1">Color</p>
+          <div className="flex gap-1.5 mb-2.5">{[['#2f332f',0],['#13944a',1],['#cbc4ae',0],['#1d6fff',0]].map(([c,sel],i)=><span key={i} className={`w-[18px] h-[18px] rounded-full border border-black/10 ${sel?'ring-2 ring-[var(--green)] ring-offset-1':''}`} style={{background:c}}></span>)}</div>
+          <p className="text-[9px] font-semibold mb-1">Smart locks</p>
+          <div className="flex gap-1.5 mb-2">{['None','Keypad','RFID'].map((n,i)=><span key={n} className={`px-2 py-[3px] text-[8px] font-bold border ${i===1?'bg-[#141613] text-white border-[#141613]':'border-[#dcd9cc] text-[#55584f]'}`}>{n}</span>)}</div>
+          <div className="mt-auto pt-2 border-t border-[#ecebe4] text-[8.5px] space-y-[3px]">
+            <div className="flex justify-between text-[#767a70]"><span>Base unit (M)</span><span>€1,240</span></div>
+            <div className="flex justify-between text-[#767a70]"><span>Keypad locks ×3</span><span>€420</span></div>
+            <div className="flex justify-between font-bold text-[10px] text-[var(--ink)] pt-[2px]"><span>Total excl. VAT</span><span className="text-[var(--green-dark)]">€1,660</span></div>
+          </div>
+          <span className="mt-2 bg-[var(--green)] text-white text-center text-[8.5px] font-bold py-[7px]">ADD TO QUOTE →</span>
+        </div>
+      </div>
+    </SiteFrame>
+
+    {/* 2 — dark SaaS hero */}
+    <SiteFrame tilt="1.5deg" url="flowbase.io">
+      <div className="h-full text-white flex flex-col" style={{background:'linear-gradient(160deg,#101410 0%, #0b0e0b 60%, #0d1a11 100%)'}}>
+        <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10">
+          <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-[var(--green)]"></span><span className="font-display text-[11px] font-bold">flowbase</span></span>
+          <div className="hidden sm:flex gap-3 text-[8.5px] text-white/45"><span>Platform</span><span>Customers</span><span>Pricing</span><span>Docs</span></div>
+          <span className="bg-[var(--green)] text-[8px] font-bold px-2.5 py-1">START FREE</span>
+        </div>
+        <div className="flex-1 grid grid-cols-[1.05fr_.95fr] items-center gap-2 px-4">
+          <div>
+            <span className="inline-block text-[7px] font-mono uppercase tracking-[0.14em] text-[#7ee2a8] border border-[var(--green)]/40 px-2 py-[3px] mb-2">Quote automation for B2B</span>
+            <p className="font-display text-[17px] font-bold leading-[1.12]">Send quotes in minutes, not days.</p>
+            <p className="text-[8.5px] text-white/50 leading-relaxed mt-1.5 pr-2">Flowbase drafts, prices and tracks every quote from your catalogue — your team just approves.</p>
+            <div className="flex gap-2 mt-2.5">
+              <span className="bg-white text-[#101410] text-[8px] font-bold px-2.5 py-[6px]">BOOK A DEMO</span>
+              <span className="border border-white/25 text-[8px] font-bold px-2.5 py-[6px]">WATCH 2-MIN TOUR</span>
+            </div>
+          </div>
+          <div className="bg-[#161a16] border border-white/10 rounded-md p-2.5 shadow-2xl">
+            <div className="flex items-center justify-between mb-1.5"><span className="text-[8px] font-bold text-white/80">Open quotes</span><span className="text-[7px] text-[#7ee2a8]">↑ 32% this week</span></div>
+            {[['Northgate Supply','€31,922','Sent'],['Verde Logistics','€8,140','Draft'],['Atlas Fitout','€12,600','Approved']].map(([n,p,s])=><div key={n} className="flex items-center justify-between py-[5px] border-t border-white/5 text-[8px]">
+              <span className="text-white/75 flex-1 truncate">{n}</span><span className="text-white/50 w-12 text-right">{p}</span>
+              <span className={`ml-2 px-1.5 py-[1px] text-[6.5px] font-bold ${s==='Approved'?'bg-[var(--green)]/25 text-[#7ee2a8]':s==='Sent'?'bg-white/10 text-white/60':'bg-[#febc2e]/15 text-[#e8c56a]'}`}>{s}</span>
+            </div>)}
+            <svg viewBox="0 0 100 24" className="w-full h-6 mt-1.5" preserveAspectRatio="none">
+              <polyline points="0,20 14,16 28,17 42,11 56,13 70,7 84,9 100,3" fill="none" stroke="#13944a" strokeWidth="2"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </SiteFrame>
+
+    {/* 3 — support portal */}
+    <SiteFrame tilt="-1.5deg" url="support.arvela.com">
+      <div className="h-full bg-[#f7f6f0] flex flex-col">
+        <div className="px-5 pt-4 pb-8 text-white" style={{background:'linear-gradient(120deg,#0e6f37,#13944a 60%,#1cab58)'}}>
+          <div className="flex items-center justify-between mb-3">
+            <span className="font-display text-[11px] font-bold">arvela support</span>
+            <span className="text-[8px] text-white/75">My tickets · Sign in</span>
+          </div>
+          <p className="font-display text-[15px] font-bold text-center">Hi, how can we help?</p>
+          <div className="mt-2 mx-auto max-w-[240px] bg-white rounded-full px-3 py-[7px] flex items-center gap-2 shadow-md">
+            <svg className="w-2.5 h-2.5 text-[#767a70]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            <span className="text-[9px] text-[#9a9d93]">Search 240+ articles…</span>
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-2 px-4 -mt-4">
+          {[['Orders','32 articles'],['Returns','18 articles'],['Billing','21 articles']].map(([t,c])=><div key={t} className="bg-white border border-[#e6e4d9] p-2.5 shadow-sm">
+            <span className="block w-4 h-4 bg-[var(--green-light)] border border-[var(--green)]/30 mb-1.5"></span>
+            <p className="text-[9px] font-bold">{t}</p><p className="text-[7.5px] text-[#9a9d93]">{c}</p>
+          </div>)}
+        </div>
+        <div className="absolute bottom-2.5 right-2.5 flex flex-col items-end gap-1.5">
+          <div className="bg-[var(--ink)] text-white px-2.5 py-1.5 max-w-[150px] text-[8px] leading-snug">How do returns work for bulk orders?</div>
+          <div className="bg-white border border-[#dcd9cc] px-2.5 py-1.5 max-w-[170px] text-[8px] leading-snug shadow-md">Found it — bulk orders have a 30-day window. Want the full policy, or a human?</div>
+          <span className="w-8 h-8 rounded-full bg-[var(--green)] text-white flex items-center justify-center shadow-lg">
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </span>
+        </div>
+      </div>
+    </SiteFrame>
+
+    {/* 4 — Cognityl agent dashboard */}
+    <SiteFrame tilt="2deg" url="app.cognityl.com/agents">
+      <div className="h-full flex bg-[#f7f6f0]">
+        <div className="w-[86px] bg-[#141613] py-3 px-2.5 flex flex-col gap-[3px]">
+          <span className="flex items-center gap-1.5 mb-2.5"><span className="w-3.5 h-3.5 bg-[#1F8B41]"></span><span className="text-white font-display text-[9px] font-bold">Cognityl</span></span>
+          {[['Overview',1],['Agents',0],['Approvals',0],['Logs',0],['Settings',0]].map(([t,a])=><span key={t} className={`text-[8px] px-2 py-[5px] ${a?'bg-white/10 text-white font-bold':'text-white/45'}`}>{t}</span>)}
+        </div>
+        <div className="flex-1 p-3">
+          <div className="flex items-center justify-between mb-2">
+            <div><p className="text-[7.5px] text-[#9a9d93]">Agents / QUOTE-GEN-01</p><p className="font-display text-[12px] font-bold">Quote Generation Agent</p></div>
+            <span className="flex items-center gap-1 text-[7.5px] font-bold text-[var(--green-dark)] bg-[var(--green-light)] border border-[var(--green)]/30 px-2 py-[3px]"><span className="w-1.5 h-1.5 rounded-full bg-[var(--green)] animate-pulse"></span>RUNNING</span>
+          </div>
+          <div className="grid grid-cols-3 gap-1.5 mb-2">
+            {[['142','tasks today','+12%'],['96.4%','approval rate','+1.8%'],['31h','saved this week','+4h']].map(([v,k,d])=><div key={k} className="bg-white border border-[#e6e4d9] p-2">
+              <p className="font-display text-[13px] font-bold leading-none">{v}</p>
+              <p className="text-[7px] text-[#9a9d93] mt-[3px]">{k}</p>
+              <p className="text-[7px] font-bold text-[var(--green-dark)]">{d}</p>
+            </div>)}
+          </div>
+          <div className="bg-white border border-[#e6e4d9] p-2">
+            <p className="text-[7.5px] font-bold mb-1">Drafts vs approvals · 7 days</p>
+            <svg viewBox="0 0 200 46" className="w-full h-[46px]" preserveAspectRatio="none">
+              <polyline points="0,40 28,34 56,36 84,26 112,29 140,18 168,21 200,10" fill="none" stroke="#c8c4b1" strokeWidth="1.5"/>
+              <polygon points="0,42 28,37 56,38 84,30 112,32 140,22 168,24 200,14 200,46 0,46" fill="#13944a22"/>
+              <polyline points="0,42 28,37 56,38 84,30 112,32 140,22 168,24 200,14" fill="none" stroke="#13944a" strokeWidth="2"/>
+            </svg>
+            <div className="flex justify-between text-[6.5px] text-[#9a9d93]"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+          </div>
+        </div>
+      </div>
+    </SiteFrame>
+
+    {/* 5 — quote review */}
+    <SiteFrame tilt="-2.5deg" url="quotes.baltec.eu/482">
+      <div className="h-full bg-white flex flex-col">
+        <div className="px-4 py-2.5 border-b border-[#ecebe4] flex items-center justify-between">
+          <div className="flex items-center gap-2"><span className="w-3.5 h-3.5 bg-[var(--green)]"></span><div><p className="font-display text-[10px] font-bold leading-none">Quote #482</p><p className="text-[7px] text-[#9a9d93]">Northgate Supply Co. · 08 Jul 2026</p></div></div>
+          <span className="text-[7px] font-mono uppercase font-bold bg-[#fdf3e2] text-[#a06a1b] px-2 py-[3px] border border-[#e8d3ab]">Awaiting review</span>
+        </div>
+        <div className="flex items-center gap-0 px-4 py-2 border-b border-[#ecebe4] text-[7.5px]">
+          {[['Drafted by agent',1],['Human review',2],['Sent',0]].map(([t,s],i)=><React.Fragment key={t}>
+            <span className={`flex items-center gap-1 font-bold ${s===1?'text-[var(--green-dark)]':s===2?'text-[var(--ink)]':'text-[#b6b3a4]'}`}>
+              <span className={`w-3 h-3 rounded-full flex items-center justify-center text-[6px] ${s===1?'bg-[var(--green)] text-white':s===2?'border-2 border-[var(--ink)]':'border border-[#d5d2c3]'}`}>{s===1?'✓':''}</span>{t}
+            </span>
+            {i<2 && <span className="flex-1 h-px bg-[#e6e4d9] mx-1.5"></span>}
+          </React.Fragment>)}
+        </div>
+        <div className="px-4 py-1.5 flex-1">
+          <div className="flex text-[7px] font-bold uppercase text-[#9a9d93] py-1 border-b border-[#ecebe4]"><span className="flex-1">Item</span><span className="w-10">Qty</span><span className="w-14 text-right">Amount</span></div>
+          {[['Industrial locker · RAL 6029 · 1800mm','24','€29,760'],['Keypad smart locks','72','€3,240'],['Numbered plates','24','€312'],['Delivery & installation','1','€1,850']].map(([a,b,c])=><div key={a} className="flex items-center py-[4.5px] border-b border-[#f4f2ea] text-[8px]">
+            <span className="font-semibold flex-1 truncate pr-2">{a}</span><span className="text-[#9a9d93] w-10">{b}</span><span className="font-bold w-14 text-right">{c}</span>
+          </div>)}
+          <div className="flex justify-end gap-4 pt-1.5 text-[8px]"><span className="text-[#9a9d93]">Total excl. VAT</span><span className="font-display font-bold text-[10px] text-[var(--green-dark)]">€35,162</span></div>
+        </div>
+        <div className="p-3 pt-0 flex gap-2">
+          <span className="flex-1 bg-[var(--green)] text-white text-center text-[8.5px] font-bold py-[7px]">APPROVE & SEND</span>
+          <span className="flex-1 border border-[#141613] text-center text-[8.5px] font-bold py-[7px]">EDIT LINE ITEMS</span>
+        </div>
+      </div>
+    </SiteFrame>
+  </React.Fragment>;
+}
+
+function ShowcaseMarquee(){
+  return <section id="showcase" className="py-14 lg:py-16 overflow-hidden">
+    <p className="text-center font-mono text-xs uppercase tracking-[0.1em] text-[var(--muted)] mb-8 px-5" data-reveal>Configurators, agents & dashboards — the kind of tools we design and ship</p>
+    <div className="marquee marquee-showcase fade-x">
+      <div className="marquee-track items-center py-5">
+        <ShowcaseSites/><ShowcaseSites/>
+      </div>
+    </div>
+  </section>;
+}
+
+// ==================== REPORT ====================
 function Report(){
   const findings=[
     ['Website intelligence','32 pages, 4 forms, 1 catalogue mapped','Complete'],
@@ -233,6 +844,7 @@ function Report(){
   </section>
 }
 
+// ==================== ENGINE ====================
 function Engine(){
   const items=[
     ['spark','Website Intelligence','Crawls public pages, product content, forms, FAQs, PDFs and contact flows to understand how the business currently operates.'],
@@ -267,6 +879,7 @@ function Engine(){
   </section>
 }
 
+// ==================== USE CASES ====================
 function UseCases(){
   const cases=[
     ['For sales teams','Qualify inbound leads, write follow-ups, summarize calls and update CRM fields automatically.'],
@@ -291,6 +904,7 @@ function UseCases(){
   </section>
 }
 
+// ==================== PREVIEW ====================
 function Preview(){
   return <section className="py-20 lg:py-24 max-w-7xl mx-auto px-5 lg:px-8">
     <div className="card p-8 lg:p-12 grid lg:grid-cols-[1fr_1fr] gap-10 items-center">
@@ -309,6 +923,7 @@ function Preview(){
   </section>
 }
 
+// ==================== PROCESS ====================
 function Process(){
   const steps=[
     ['01','Scan','We analyze public business signals: pages, forms, catalogues, FAQs, support content and visible tech.'],
@@ -335,6 +950,7 @@ function Process(){
   </section>
 }
 
+// ==================== ENGAGEMENT MODEL ====================
 function EngagementModel(){
   const tiers=[
     ['01','Discovery scan','1–2 weeks','A free scan of your public business signals plus a short readiness report: what to automate first and why. No commitment required to see it.'],
@@ -362,6 +978,7 @@ function EngagementModel(){
   </section>
 }
 
+// ==================== WHY COGNITYL ====================
 function WhyCognityl(){
   const points=[
     ['users','Senior attention, not a bench','You work directly with the person building your system — no account manager layer, no junior handoff.'],
@@ -385,6 +1002,7 @@ function WhyCognityl(){
   </section>
 }
 
+// ==================== SECURITY ====================
 function Security(){
   const items=[
     ['lock','Data handling','Your data is never used to train shared or third-party models. Client data stays scoped to your project.'],
@@ -418,6 +1036,7 @@ function Security(){
   </section>
 }
 
+// ==================== GOVERNANCE ====================
 function Governance(){
   const items=[
     ['users','Named accountability','Every agent has a defined business owner on your side — never an anonymous automated process.'],
@@ -441,6 +1060,7 @@ function Governance(){
   </section>
 }
 
+// ==================== DATA POLICY ====================
 function DataPolicy(){
   const [optOutSent,setOptOutSent]=useState(false);
   const [optOutError,setOptOutError]=useState(false);
@@ -493,7 +1113,7 @@ function DataPolicy(){
     <div className="mt-5 bg-[var(--soft)] border border-[var(--line)] p-7 grid lg:grid-cols-[.85fr_1.15fr] gap-7 items-start">
       <div>
         <h3 className="font-display text-2xl font-bold tracking-tight mb-3">Request opt-out</h3>
-        <p className="text-sm text-[var(--muted)] leading-relaxed">Want your domain excluded from scans and outreach, or want to see what information we hold about your business? Submit this request and we’ll handle it manually from your Formspree email.</p>
+        <p className="text-sm text-[var(--muted)] leading-relaxed">Want your domain excluded from scans and outreach, or want to see what information we hold about your business? Submit this request and we'll handle it manually from your Formspree email.</p>
       </div>
 
       {optOutSent ? (
@@ -567,6 +1187,7 @@ function DataPolicy(){
   </section>
 }
 
+// ==================== AFTER LAUNCH ====================
 function AfterLaunch(){
   const items=[
     ['activity','Monitoring','Every deployed agent is checked for uptime and unexpected behavior, with issues flagged before they compound.'],
@@ -591,6 +1212,7 @@ function AfterLaunch(){
   </section>
 }
 
+// ==================== INTEGRATIONS ====================
 function Integrations(){
   const infra=['AWS','Microsoft Azure','Google Cloud','Snowflake'];
   const apps=['Slack','HubSpot','Google Workspace','Salesforce','Notion','n8n'];
@@ -608,21 +1230,82 @@ function Integrations(){
   </section>
 }
 
-function Resources(){
-  return <section id="resources" className="py-20 max-w-7xl mx-auto px-5 lg:px-8">
-    <div className="card p-8 lg:p-10 grid lg:grid-cols-[1fr_auto] gap-8 items-center">
-      <div className="flex items-start gap-5">
-        <span className="w-12 h-12 rounded-none bg-[var(--green-light)] text-[var(--green)] flex items-center justify-center flex-shrink-0"><Icon name="building"/></span>
-        <div>
-          <h3 className="font-display text-xl lg:text-2xl font-bold mb-2">Start with a free public-signal AI opportunity scan</h3>
-          <p className="text-[var(--muted)] leading-relaxed max-w-2xl">We review public signals from your website and identify the strongest automation opportunities before proposing any implementation work.</p>
-        </div>
+// ==================== OUR WORK SHOWCASE ====================
+function OurWork(){
+  const workItems = [
+    {
+      number: '01',
+      tag: 'Lead Capture Flows',
+      title: 'Lead Capture Flows',
+      description: 'Intelligent lead capture that qualifies prospects before they ever speak to sales.'
+    },
+    {
+      number: '02',
+      tag: 'Product Configurator',
+      title: 'Product Configurator',
+      description: 'Let customers configure complex products and get instant pricing with AI-driven recommendations.'
+    },
+    {
+      number: '03',
+      tag: 'Manufacturer Website',
+      title: 'Manufacturer Website',
+      description: 'A modern site built around your products — not a brochure, a sales tool your channel actually uses.'
+    },
+    {
+      number: '04',
+      tag: 'Spec Sheet Generator',
+      title: 'Spec Sheet Generator',
+      description: 'Generate dynamic spec sheets from product data, ready for download or client sharing in seconds.'
+    },
+    {
+      number: '05',
+      tag: 'Quote Engine',
+      title: 'Quote Engine',
+      description: 'AI-powered quoting that reduces manual work and accelerates the sales cycle.'
+    },
+    {
+      number: '06',
+      tag: 'Process Automation',
+      title: 'Process Automation',
+      description: 'End-to-end workflow automation that eliminates manual data entry and approval bottlenecks.'
+    }
+  ];
+
+  return <section id="work" className="py-24 lg:py-32 max-w-7xl mx-auto px-5 lg:px-8">
+    <div className="flex items-center justify-between mb-12">
+      <div>
+        <p className="text-[var(--green)] font-semibold mb-2">Our Work</p>
+        <h2 className="font-display text-4xl lg:text-5xl font-bold tracking-tight">Tools we've built for manufacturers</h2>
+        <p className="mt-3 text-[var(--muted)] text-lg max-w-2xl">Configurators and digital tools that turn product complexity into a competitive advantage.</p>
       </div>
-      <a href="#contact" className="inline-flex items-center justify-center gap-2 rounded-none bg-[var(--ink)] text-white px-6 py-4 font-semibold hover:bg-[var(--green-dark)] transition focus-ring whitespace-nowrap">Analyze my website <Icon name="arrow" className="w-4 h-4"/></a>
+      <a href="#contact" className="hidden lg:inline-flex items-center gap-2 rounded-none bg-[var(--ink)] text-white px-6 py-3 text-sm font-semibold hover:bg-[var(--green-dark)] transition focus-ring whitespace-nowrap">Get a free concept <Icon name="arrow" className="w-4 h-4"/></a>
     </div>
-  </section>
+
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+      {workItems.map((item) => (
+        <div key={item.number} className="work-grid-item p-6 flex flex-col">
+          <div className="flex items-center justify-between mb-3">
+            <span className="work-number">{item.number}</span>
+            <span className="work-tag">{item.tag}</span>
+          </div>
+          <h3 className="font-display text-xl font-bold tracking-tight mb-2">{item.title}</h3>
+          <p className="text-[var(--muted)] text-sm leading-relaxed flex-1">{item.description}</p>
+          <div className="mt-4 pt-4 border-t border-[var(--line)]">
+            <a href="#contact" className="text-sm font-semibold text-[var(--green)] hover:text-[var(--green-dark)] transition inline-flex items-center gap-1">
+              Learn more →
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div className="mt-8 text-center lg:hidden">
+      <a href="#contact" className="inline-flex items-center gap-2 rounded-none bg-[var(--ink)] text-white px-6 py-3 text-sm font-semibold hover:bg-[var(--green-dark)] transition focus-ring">Get a free concept <Icon name="arrow" className="w-4 h-4"/></a>
+    </div>
+  </section>;
 }
 
+// ==================== FAQ ====================
 function FAQ(){
   const [open,setOpen]=useState(0);
   const faqs=[
@@ -645,6 +1328,7 @@ function FAQ(){
   </section>
 }
 
+// ==================== CONTACT ====================
 function Contact(){
   const [sent,setSent]=useState(false);
   return <section id="contact" className="py-24 lg:py-32 max-w-7xl mx-auto px-5 lg:px-8">
@@ -652,7 +1336,7 @@ function Contact(){
       <div className="relative">
         <p className="text-[var(--green-light)] font-semibold mb-3">Get your AI Opportunity Report</p>
         <h2 className="font-display text-4xl lg:text-5xl font-bold tracking-tight">See what your business should automate first.</h2>
-        <p className="mt-5 text-white/65 leading-relaxed max-w-md">Share your company website and we’ll identify visible AI opportunities, prioritize the strongest use cases, and suggest the safest first automation project.</p>
+        <p className="mt-5 text-white/65 leading-relaxed max-w-md">Share your company website and we'll identify visible AI opportunities, prioritize the strongest use cases, and suggest the safest first automation project.</p>
         <div className="mt-8 space-y-3 text-white/80">
           {['AI readiness score','Priority automation roadmap','Clear first project recommendation'].map(t=><p key={t} className="flex items-center gap-3"><Icon name="check" className="w-5 h-5 text-[var(--green-light)]"/>{t}</p>)}
         </div>
@@ -663,6 +1347,7 @@ function Contact(){
   action="https://formspree.io/f/mwvdrvdw"
   method="POST"
   className="space-y-4"
+  onSubmit={(e) => { e.preventDefault(); setSent(true); }}
 >
           <div className="grid sm:grid-cols-2 gap-4">
            <input
@@ -702,32 +1387,231 @@ function Contact(){
   </section>
 }
 
+// ==================== FOOTER ====================
 function Footer(){
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return <footer className="border-t border-[var(--line)] bg-white py-10">
-    <div className="max-w-7xl mx-auto px-5 lg:px-8 flex flex-col md:flex-row justify-between gap-6 text-sm text-[var(--muted)]">
-      <div>
-        <div className="flex items-center gap-2 mb-3">
-        <span className="w-8 h-8 rounded-none bg-[#1F8B41] text-white flex items-center justify-center font-bold">C</span>
-          <span className="font-display text-lg font-bold text-[var(--ink)]">Cognityl</span>
+    <div className="max-w-7xl mx-auto px-5 lg:px-8">
+      <div className="flex flex-col md:flex-row justify-between gap-8">
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="w-8 h-8 rounded-none bg-[#1F8B41] text-white flex items-center justify-center font-bold">C</span>
+            <span className="font-display text-lg font-bold text-[var(--ink)]">Cognityl</span>
+          </div>
+          <p className="text-sm text-[var(--muted)]">Configurators and digital tools for AI-driven business automation.</p>
         </div>
-        <p>The operating layer for enterprise AI.</p>
+
+        <div className="flex flex-wrap gap-x-8 gap-y-2">
+          <div className="flex flex-col gap-1">
+            <span className="text-xs uppercase tracking-wider text-[var(--muted)] font-semibold">Product</span>
+            <a href="#engine" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Engine</a>
+            <a href="#process" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Process</a>
+            <a href="#use-cases" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Use cases</a>
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-xs uppercase tracking-wider text-[var(--muted)] font-semibold">Company</span>
+            <a href="#work" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Our Work</a>
+            <a href="#security" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Security</a>
+            <a href="#governance" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Governance</a>
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-xs uppercase tracking-wider text-[var(--muted)] font-semibold">Legal</span>
+            <a href="privacy.html" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Privacy Policy</a>
+            <a href="terms.html" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Terms of Service</a>
+            <a href="#data-policy" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Data Policy</a>
+          </div>
+        </div>
+
+        <div className="flex flex-col items-start md:items-end gap-4">
+          <div className="text-left md:text-right">
+            <p className="text-sm font-semibold">Contact</p>
+            <a href="mailto:hello@cognityl.com" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">hello@cognityl.com</a>
+          </div>
+          <button onClick={scrollToTop} className="back-to-top">
+            <span className="arrow-up">↑</span> BACK TO TOP
+          </button>
+        </div>
       </div>
 
-      <div className="flex flex-wrap gap-5">
-        <a href="#engine">Engine</a>
-        <a href="#process">Process</a>
-        <a href="#use-cases">Use cases</a>
-        <a href="#security">Security</a>
-        <a href="#governance">Governance</a>
-        <a href="#data-policy">Data policy</a>
-        <a href="#contact">Contact</a>
-        <a href="privacy.html">Privacy Policy</a>
-            <a href="terms.html">Terms of Service</a>
+      <div className="mt-8 pt-6 border-t border-[var(--line)] flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-[var(--muted)]">
+        <p>© 2026 Cognityl. All rights reserved.</p>
+        <div className="flex gap-6">
+          <a href="privacy.html" className="hover:text-[var(--ink)] transition">Privacy</a>
+          <a href="terms.html" className="hover:text-[var(--ink)] transition">Terms</a>
+          <a href="#contact" className="hover:text-[var(--ink)] transition">Contact</a>
+        </div>
       </div>
     </div>
-  </footer>
+  </footer>;
 }
-function App(){return <><Nav/><main><Hero/><Report/><Engine/><UseCases/><Preview/><Process/><EngagementModel/><WhyCognityl/><Security/><Governance/><DataPolicy/><AfterLaunch/><Integrations/><Resources/><FAQ/><Contact/></main><Footer/></>}
+
+// ==================== CHATBOT ====================
+function ChatBot() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState([
+    { type: 'bot', text: "Hi there! I'm Cognityl's AI assistant. I can help you understand how we discover AI opportunities. What would you like to know?" }
+  ]);
+  const [input, setInput] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [hasCapturedLead, setHasCapturedLead] = useState(false);
+  const messagesEndRef = useRef(null);
+  
+  const suggestions = [
+    "How does the engine work?",
+    "What does a report include?",
+    "How much does it cost?",
+    "Is my data secure?"
+  ];
+  
+  const botResponses = {
+    "how does the engine work": "Our Discovery Engine scans publicly available business signals on your website — pages, forms, catalogues, FAQs, and support content. It identifies bottlenecks and matches them to practical AI use cases, then ranks them by impact and effort.",
+    "what does a report include": "The AI Opportunity Report includes: an AI readiness score, a map of visible business problems, ranked automation opportunities, and a specific first-step recommendation. It's delivered as a one-page PDF you can forward internally.",
+    "how much does it cost": "We start with a free Discovery Scan. From there, pilot projects typically run 4-8 weeks and are scoped narrowly to prove value before any larger commitment. Contact us for specific pricing tailored to your needs.",
+    "is my data secure": "Yes. We only use publicly available data. Your data is never used to train shared models. We follow GDPR/CCPA principles, and SOC 2 Type II / ISO 27001 certifications are in progress. Every agent has a manual override and audit trails.",
+    "default": "That's a great question. While I'm a demo assistant, our team would be happy to discuss this in detail. Would you like me to connect you with someone? Just ask to 'speak to a human' or submit the contact form."
+  };
+  
+  const getBotResponse = (userInput) => {
+    const lowerInput = userInput.toLowerCase();
+    for (const [key, response] of Object.entries(botResponses)) {
+      if (lowerInput.includes(key)) {
+        return response;
+      }
+    }
+    if (lowerInput.includes('human') || lowerInput.includes('talk') || lowerInput.includes('speak')) {
+      return "I'll connect you with our team right away! In the meantime, you can also fill out the contact form on this page and we'll get back to you within 24 hours.";
+    }
+    return botResponses.default;
+  };
+  
+  const handleSend = async () => {
+    if (!input.trim() || isTyping) return;
+    
+    const userMessage = input.trim();
+    setMessages(prev => [...prev, { type: 'user', text: userMessage }]);
+    setInput('');
+    setIsTyping(true);
+    
+    setTimeout(() => {
+      const response = getBotResponse(userMessage);
+      setMessages(prev => [...prev, { type: 'bot', text: response }]);
+      setIsTyping(false);
+      
+      if (messages.length >= 3 && !hasCapturedLead) {
+        setTimeout(() => {
+          setMessages(prev => [...prev, { 
+            type: 'bot', 
+            text: "By the way, if you'd like a personalized AI Opportunity Report for your business, just share your email and website and I'll get that started for you. Or fill out the contact form above!" 
+          }]);
+          setHasCapturedLead(true);
+        }, 1000);
+      }
+    }, 1000 + Math.random() * 1000);
+  };
+  
+  const handleSuggestion = (suggestion) => {
+    setInput(suggestion);
+    setTimeout(() => {
+      handleSend();
+    }, 200);
+  };
+  
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+  
+  return (
+    <div className={`chatbot-container ${!isOpen ? 'closed' : ''}`}>
+      {!isOpen ? (
+        <button onClick={() => setIsOpen(true)} className="chatbot-toggle" aria-label="Open chat">
+          <Icon name="bot" className="w-7 h-7" />
+        </button>
+      ) : (
+        <>
+          <div className="chatbot-header">
+            <div className="flex items-center gap-2">
+              <Icon name="bot" className="w-5 h-5" />
+              <span className="font-semibold">Cognityl Assistant</span>
+            </div>
+            <button onClick={() => setIsOpen(false)} aria-label="Close chat">✕</button>
+          </div>
+          
+          <div className="chatbot-messages">
+            {messages.map((msg, idx) => (
+              <div key={idx} className={`chatbot-message ${msg.type}`}>
+                {msg.text}
+              </div>
+            ))}
+            {isTyping && (
+              <div className="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+          
+          {messages.length < 4 && (
+            <div className="px-4 py-2 flex gap-2 flex-wrap border-t border-[var(--line)] bg-[var(--soft)]">
+              {suggestions.map(s => (
+                <button key={s} onClick={() => handleSuggestion(s)} className="chatbot-suggestion">
+                  {s}
+                </button>
+              ))}
+            </div>
+          )}
+          
+          <div className="chatbot-input">
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+              placeholder="Ask me anything..."
+              disabled={isTyping}
+            />
+            <button onClick={handleSend} disabled={isTyping}>
+              Send
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+// ==================== APP ====================
+function App(){
+  return <>
+    <Nav/>
+    <main>
+      <Hero/>
+      <AgentWorkflowDemo/>
+      <ShowcaseMarquee/>
+      <Report/>
+      <Engine/>
+      <UseCases/>
+      <Preview/>
+      <Process/>
+      <EngagementModel/>
+      <WhyCognityl/>
+      <Security/>
+      <Governance/>
+      <DataPolicy/>
+      <AfterLaunch/>
+      <Integrations/>
+      <OurWork/>
+      <FAQ/>
+      <Contact/>
+    </main>
+    <Footer/>
+    <ChatBot/>
+  </>;
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
