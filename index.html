@@ -590,11 +590,12 @@ function Nav(){
         {direct.map(([label,id])=>(
           <a key={id} href={`#${id}`} className="px-3 h-[72px] flex items-center text-sm text-[var(--muted)] hover:text-[var(--ink)] transition focus-ring">{label}</a>
         ))}
+        <a href="contact.html" className="px-3 h-[72px] flex items-center text-sm text-[var(--muted)] hover:text-[var(--ink)] transition focus-ring">Contact</a>
       </nav>
 
       {/* Desktop CTA */}
       <div className="hidden lg:flex items-center flex-shrink-0">
-        <a href="#contact" className="inline-flex items-center gap-2 rounded-none bg-[var(--ink)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--green-dark)] transition focus-ring whitespace-nowrap">Get AI Opportunity Report <Icon name="arrow" className="w-4 h-4"/></a>
+        <a href="contact.html" className="inline-flex items-center gap-2 rounded-none bg-[var(--ink)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--green-dark)] transition focus-ring whitespace-nowrap">Get AI Opportunity Report <Icon name="arrow" className="w-4 h-4"/></a>
       </div>
 
       {/* Mobile toggle */}
@@ -621,7 +622,7 @@ function Nav(){
         <div className="flex flex-col border-t border-[var(--line)] pt-4">
           {direct.map(([label,id])=><a key={id} href={`#${id}`} onClick={closeMobile} className="py-2 text-[15px] font-medium text-[var(--ink)]">{label}</a>)}
         </div>
-        <a href="#contact" onClick={closeMobile} className="flex items-center justify-center gap-2 rounded-none bg-[var(--ink)] text-white px-5 py-3.5 text-sm font-semibold hover:bg-[var(--green-dark)] transition">Get AI Opportunity Report <Icon name="arrow" className="w-4 h-4"/></a>
+        <a href="contact.html" onClick={closeMobile} className="flex items-center justify-center gap-2 rounded-none bg-[var(--ink)] text-white px-5 py-3.5 text-sm font-semibold hover:bg-[var(--green-dark)] transition">Get AI Opportunity Report <Icon name="arrow" className="w-4 h-4"/></a>
       </div>
     </div>}
   </header>
@@ -763,7 +764,7 @@ function Hero(){
           Cognityl reads what your business already shows the world — your site, forms, catalogues and support pages — and finds the specific places AI would save time or win revenue. You get a ranked plan, not a sales pitch.
         </p>
         <div className="mt-9 flex flex-col sm:flex-row gap-4">
-          <a href="#contact" className="inline-flex items-center justify-center gap-2 rounded-none bg-[var(--green)] text-white px-7 py-4 font-semibold hover:bg-[var(--green-dark)] transition focus-ring">Get your free opportunity report <Icon name="arrow" className="w-4 h-4"/></a>
+          <a href="contact.html" className="inline-flex items-center justify-center gap-2 rounded-none bg-[var(--green)] text-white px-7 py-4 font-semibold hover:bg-[var(--green-dark)] transition focus-ring">Get your free opportunity report <Icon name="arrow" className="w-4 h-4"/></a>
           <a href="#agent-demo" className="inline-flex items-center justify-center rounded-none bg-white border border-[var(--line)] px-7 py-4 font-semibold hover:border-[var(--green)] transition focus-ring">See how it works</a>
         </div>
         <p className="mt-4 text-sm text-[var(--muted)]">Free to start. Built from public signals only — no login, and no access to your internal systems.</p>
@@ -817,7 +818,7 @@ function AgentWorkflowDemo(){
     </div>
 
     <div className="mt-8 flex justify-center">
-      <a href="#contact" className="inline-flex items-center gap-2 rounded-none bg-[var(--green)] text-white px-6 py-3 font-semibold hover:bg-[var(--green-dark)] transition focus-ring">
+      <a href="contact.html" className="inline-flex items-center gap-2 rounded-none bg-[var(--green)] text-white px-6 py-3 font-semibold hover:bg-[var(--green-dark)] transition focus-ring">
         Try it with your website →
       </a>
     </div>
@@ -1127,7 +1128,7 @@ function InteractiveDemos(){
       </div>
 
       <div className="mt-8 flex justify-center">
-        <a href="#contact" className="inline-flex items-center gap-2 rounded-none bg-[var(--green)] text-white px-6 py-3 font-semibold hover:bg-[var(--green-dark)] transition focus-ring">Want one for your products? <Icon name="arrow" className="w-4 h-4"/></a>
+        <a href="contact.html" className="inline-flex items-center gap-2 rounded-none bg-[var(--green)] text-white px-6 py-3 font-semibold hover:bg-[var(--green-dark)] transition focus-ring">Want one for your products? <Icon name="arrow" className="w-4 h-4"/></a>
       </div>
     </section>
   );
@@ -1370,7 +1371,7 @@ function Security(){
           <h3 className="font-display text-xl font-bold mb-2">Every agent has a manual override.</h3>
           <p className="text-[var(--muted)] leading-relaxed">Your team can pause or fully disable any agent instantly, without waiting on us. No agent takes an irreversible action without a defined checkpoint, and every override is logged.</p>
         </div>
-        <a href="#contact" className="flex-shrink-0 inline-flex items-center gap-2 rounded-none border border-[var(--line)] px-5 py-3 text-sm font-semibold hover:border-[var(--green)] transition focus-ring">See it in a demo <Icon name="arrow" className="w-4 h-4"/></a>
+        <a href="contact.html" className="flex-shrink-0 inline-flex items-center gap-2 rounded-none border border-[var(--line)] px-5 py-3 text-sm font-semibold hover:border-[var(--green)] transition focus-ring">See it in a demo <Icon name="arrow" className="w-4 h-4"/></a>
       </div>
     </div>
   </section>
@@ -1618,7 +1619,7 @@ function OurWork(){
         <h2 className="font-display text-4xl lg:text-5xl font-bold tracking-tight">Tools we've built for manufacturers</h2>
         <p className="mt-3 text-[var(--muted)] text-lg max-w-2xl">Configurators and digital tools that turn product complexity into a competitive advantage.</p>
       </div>
-      <a href="#contact" className="hidden lg:inline-flex items-center gap-2 rounded-none bg-[var(--ink)] text-white px-6 py-3 text-sm font-semibold hover:bg-[var(--green-dark)] transition focus-ring whitespace-nowrap">Get a free concept <Icon name="arrow" className="w-4 h-4"/></a>
+      <a href="contact.html" className="hidden lg:inline-flex items-center gap-2 rounded-none bg-[var(--ink)] text-white px-6 py-3 text-sm font-semibold hover:bg-[var(--green-dark)] transition focus-ring whitespace-nowrap">Get a free concept <Icon name="arrow" className="w-4 h-4"/></a>
     </div>
 
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -1631,7 +1632,7 @@ function OurWork(){
           <h3 className="font-display text-xl font-bold tracking-tight mb-2">{item.title}</h3>
           <p className="text-[var(--muted)] text-sm leading-relaxed flex-1">{item.description}</p>
           <div className="mt-4 pt-4 border-t border-[var(--line)]">
-            <a href="#contact" className="text-sm font-semibold text-[var(--green)] hover:text-[var(--green-dark)] transition inline-flex items-center gap-1">
+            <a href="contact.html" className="text-sm font-semibold text-[var(--green)] hover:text-[var(--green-dark)] transition inline-flex items-center gap-1">
               Learn more →
             </a>
           </div>
@@ -1640,7 +1641,7 @@ function OurWork(){
     </div>
 
     <div className="mt-8 text-center lg:hidden">
-      <a href="#contact" className="inline-flex items-center gap-2 rounded-none bg-[var(--ink)] text-white px-6 py-3 text-sm font-semibold hover:bg-[var(--green-dark)] transition focus-ring">Get a free concept <Icon name="arrow" className="w-4 h-4"/></a>
+      <a href="contact.html" className="inline-flex items-center gap-2 rounded-none bg-[var(--ink)] text-white px-6 py-3 text-sm font-semibold hover:bg-[var(--green-dark)] transition focus-ring">Get a free concept <Icon name="arrow" className="w-4 h-4"/></a>
     </div>
   </section>;
 }
@@ -1782,7 +1783,7 @@ function Footer(){
         <div className="flex gap-6">
           <a href="privacy.html" className="hover:text-[var(--ink)] transition">Privacy</a>
           <a href="terms.html" className="hover:text-[var(--ink)] transition">Terms</a>
-          <a href="#contact" className="hover:text-[var(--ink)] transition">Contact</a>
+          <a href="contact.html" className="hover:text-[var(--ink)] transition">Contact</a>
         </div>
       </div>
     </div>
