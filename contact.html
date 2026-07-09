@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-SG5YL8L8SD"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-SG5YL8L8SD');
+  </script>
+
+  <meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' https://cdnjs.cloudflare.com https://cdn.tailwindcss.com https://www.googletagmanager.com https://www.google-analytics.com 'unsafe-inline' 'unsafe-eval';
+  style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
+  font-src https://fonts.gstatic.com;
+  img-src 'self' data: https:;
+  connect-src 'self' https://formspree.io https://www.google-analytics.com;
+  frame-ancestors 'none';
+  base-uri 'self';
+  form-action 'self' https://formspree.io;
+">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Contact — Cognityl</title>
+  <link rel="icon" href="favicon.png" type="image/png">
+<link rel="shortcut icon" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<meta name="description" content="Tell Cognityl about your business and we'll send back a free AI Opportunity Report — what to automate first, and why." />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff;
+    --ink:#101412;
+    --muted:#66736d;
+    --soft:#f6f8f5;
+    --soft-2:#eef5ee;
+    --line:#c9d0c4;
+    --green:#13944a;
+    --green-dark:#0e6f37;
+    --green-light:#dff5e6;
+    --blue:#1d6fff;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;overflow-x:hidden;}
+  .font-display{font-family:'IBM Plex Sans',sans-serif;letter-spacing:-0.03em;}
+  .font-mono{font-family:'IBM Plex Mono',monospace;}
+  .glass{background:rgba(255,255,255,.84);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);}
+  .grid-bg{background-image:linear-gradient(to right, rgba(16,20,18,.06) 1px, transparent 1px),linear-gradient(to bottom, rgba(16,20,18,.06) 1px, transparent 1px);background-size:44px 44px;}
+  .shadow-soft{box-shadow:4px 4px 0 rgba(16,20,18,.9);}
+  .card{border:1.5px solid var(--line);background:#fff;border-radius:0px;transition:.15s ease;}
+  .card:hover{border-color:var(--ink);box-shadow:3px 3px 0 rgba(16,20,18,.9);}
+  .focus-ring:focus-visible{outline:3px solid var(--green-light);outline-offset:3px;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  .fade-up{animation:fadeUp .7s ease both;}
+  .gradient-text{background:linear-gradient(135deg, var(--green), var(--blue), var(--green));-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% 200%;animation:gradient-shift 4s ease-in-out infinite;}
+  @keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+  /* Form fields */
+  .field{width:100%;border:1.5px solid var(--line);border-radius:0;padding:12px 14px;outline:none;
+    font-family:'Inter',sans-serif;font-size:14px;background:#fff;transition:.12s ease;color:var(--ink);}
+  .field:focus{border-color:var(--green);box-shadow:3px 3px 0 rgba(19,148,74,.18);}
+  .field::placeholder{color:#9aa39c;}
+  .field-label{display:block;font-size:11px;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;
+    letter-spacing:.08em;color:var(--muted);margin-bottom:7px;}
+  .section-eyebrow{font-size:11px;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;
+    letter-spacing:.1em;color:var(--green);font-weight:500;}
+
+  /* Selectable pills */
+  .pill{border:1.5px solid var(--line);background:#fff;border-radius:0;padding:8px 14px;font-size:13px;
+    font-weight:600;color:var(--muted);cursor:pointer;transition:.12s ease;font-family:'Inter',sans-serif;
+    line-height:1.2;}
+  .pill:hover{border-color:var(--ink);color:var(--ink);}
+  .pill[aria-pressed="true"]{background:var(--green);color:#fff;border-color:var(--green);
+    box-shadow:3px 3px 0 rgba(16,20,18,.9);}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const {useState} = React;
+
+const FORMSPREE = "https://formspree.io/f/mwvdrvdw";
+
+const Icon = ({name, className="w-5 h-5"}) => {
+  const icons = {
+    arrow:"M5 12h14m-6-6l6 6-6 6",
+    check:"M20 6L9 17l-5-5",
+    clock:"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zm0-14v5l3 2",
+    mail:"M4 6h16v12H4V6zm0 0l8 7 8-7",
+    users:"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm13 10v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
+    x:"M18 6L6 18M6 6l12 12",
+  };
+  return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={icons[name]} /></svg>;
+};
+
+// ==================== NAVIGATION ====================
+function NavDropdown({label, items}){
+  return (
+    <div className="relative group h-[72px] flex items-center">
+      <button
+        className="px-3 h-[72px] inline-flex items-center gap-1.5 text-sm text-[var(--muted)] group-hover:text-[var(--ink)] group-focus-within:text-[var(--ink)] transition focus-ring"
+        aria-haspopup="true"
+      >
+        {label}
+        <svg className="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180 group-focus-within:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div className="absolute left-0 top-full min-w-[264px] pt-2 z-50 opacity-0 invisible -translate-y-1 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-focus-within:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 transition-all duration-200">
+        <div className="bg-white border border-[var(--line)] shadow-[4px_4px_0_rgba(16,20,18,0.9)]">
+          {items.map(([lbl,href,desc])=>(
+            <a key={href} href={href} className="block px-4 py-3 border-b border-[var(--line)] last:border-b-0 hover:bg-[var(--soft)] transition focus-ring">
+              <span className="block text-sm font-semibold text-[var(--ink)]">{lbl}</span>
+              <span className="block text-xs text-[var(--muted)] mt-0.5 leading-snug">{desc}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Nav(){
+  const [open,setOpen]=useState(false);
+  // Links point back to the homepage sections (index.html#...) since this is a separate page.
+  const platform=[
+    ['Engine','index.html#engine','How the Discovery Engine works'],
+    ['Report','index.html#report','The AI Opportunity Report'],
+    ['Live demos','index.html#interactive-demos','Configurator & advisor you can try'],
+    ['Process','index.html#process','Scan to deployment, step by step'],
+    ['Use cases','index.html#use-cases','Where teams put it to work'],
+    ['Showcase','index.html#showcase','Tools we design and ship'],
+  ];
+  const trust=[
+    ['Security','index.html#security','Data handling & access control'],
+    ['Governance','index.html#governance','Accountability & human oversight'],
+    ['Data policy','index.html#data-policy','What we scan, and how to opt out'],
+  ];
+  const direct=[['Our Work','index.html#work'],['FAQ','index.html#faq']];
+  const closeMobile=()=>setOpen(false);
+
+  return <header className="fixed top-0 inset-x-0 z-50 border-b border-[var(--line)] glass">
+    <div className="max-w-7xl mx-auto px-5 lg:px-8 h-[72px] flex items-center justify-between gap-4">
+      <a href="index.html" className="flex items-center gap-2.5 mr-2 focus-ring">
+        <div className="w-9 h-9 rounded-none bg-[#1F8B41] text-white flex items-center justify-center font-display text-lg font-bold">C</div>
+        <span className="font-display text-xl font-bold tracking-tight text-[var(--ink)]">Cognityl</span>
+      </a>
+
+      <nav className="hidden lg:flex items-center gap-1">
+        <NavDropdown label="Platform" items={platform}/>
+        <NavDropdown label="Trust & security" items={trust}/>
+        {direct.map(([label,href])=>(
+          <a key={href} href={href} className="px-3 h-[72px] flex items-center text-sm text-[var(--muted)] hover:text-[var(--ink)] transition focus-ring">{label}</a>
+        ))}
+        <a href="#contact-form" className="px-3 h-[72px] flex items-center text-sm font-semibold text-[var(--ink)] border-b-2 border-[var(--green)] focus-ring">Contact</a>
+      </nav>
+
+      <div className="hidden lg:flex items-center flex-shrink-0">
+        <a href="#contact-form" className="inline-flex items-center gap-2 rounded-none bg-[var(--ink)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--green-dark)] transition focus-ring whitespace-nowrap">Get AI Opportunity Report <Icon name="arrow" className="w-4 h-4"/></a>
+      </div>
+
+      <button className="lg:hidden w-10 h-10 flex items-center justify-center focus-ring" onClick={()=>setOpen(!open)} aria-label="Toggle menu" aria-expanded={open}>
+        {open ? <Icon name="x" className="w-6 h-6"/> : <span className="text-2xl leading-none">☰</span>}
+      </button>
+    </div>
+
+    {open && <div className="lg:hidden border-t border-[var(--line)] bg-white max-h-[calc(100vh-72px)] overflow-y-auto">
+      <div className="px-5 py-5 space-y-6">
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--muted)] mb-1">Platform</p>
+          <div className="flex flex-col">
+            {platform.map(([label,href])=><a key={href} href={href} onClick={closeMobile} className="py-2 text-[15px] font-medium text-[var(--ink)]">{label}</a>)}
+          </div>
+        </div>
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--muted)] mb-1">Trust &amp; security</p>
+          <div className="flex flex-col">
+            {trust.map(([label,href])=><a key={href} href={href} onClick={closeMobile} className="py-2 text-[15px] font-medium text-[var(--ink)]">{label}</a>)}
+          </div>
+        </div>
+        <div className="flex flex-col border-t border-[var(--line)] pt-4">
+          {direct.map(([label,href])=><a key={href} href={href} onClick={closeMobile} className="py-2 text-[15px] font-medium text-[var(--ink)]">{label}</a>)}
+          <a href="#contact-form" onClick={closeMobile} className="py-2 text-[15px] font-semibold text-[var(--green-dark)]">Contact</a>
+        </div>
+        <a href="#contact-form" onClick={closeMobile} className="flex items-center justify-center gap-2 rounded-none bg-[var(--ink)] text-white px-5 py-3.5 text-sm font-semibold hover:bg-[var(--green-dark)] transition">Get AI Opportunity Report <Icon name="arrow" className="w-4 h-4"/></a>
+      </div>
+    </div>}
+  </header>
+}
+
+// ==================== CONTACT PAGE ====================
+const PRODUCT_DATA = ['Product catalogue','Technical datasheets','Pricing & lead times','CAD / BIM files','Spec documentation','CRM / ERP data','Quote system','Distributor pricing','Compliance certificates','Custom / API'];
+const LOOKING_FOR = ['Product configurator','Specification tool','Quote engine','Interactive catalogue','Website rebuild','Process automation','AI assistant / chatbot','Not sure yet'];
+
+function PillGroup({options, selected, onToggle, label, hint}){
+  return (
+    <div>
+      <p className="section-eyebrow mb-1">{label}</p>
+      {hint && <p className="text-sm text-[var(--muted)] mb-3">{hint}</p>}
+      <div className="flex flex-wrap gap-2">
+        {options.map(opt=>(
+          <button
+            type="button"
+            key={opt}
+            aria-pressed={selected.includes(opt)}
+            onClick={()=>onToggle(opt)}
+            className="pill focus-ring"
+          >{opt}</button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ContactForm(){
+  const [productData,setProductData]=useState([]);
+  const [lookingFor,setLookingFor]=useState([]);
+  const [status,setStatus]=useState('idle'); // idle | sending | sent | error
+
+  const toggle=(list,setList,value)=>{
+    setList(list.includes(value) ? list.filter(v=>v!==value) : [...list,value]);
+  };
+
+  const handleSubmit=async(e)=>{
+    e.preventDefault();
+    setStatus('sending');
+    const form=e.currentTarget;
+    const data=new FormData(form);
+    data.append('product_data', productData.join(', '));
+    data.append('looking_for', lookingFor.join(', '));
+    data.append('_subject', 'Cognityl — New contact enquiry');
+    try{
+      const res=await fetch(FORMSPREE,{method:'POST',body:data,headers:{Accept:'application/json'}});
+      if(res.ok){ form.reset(); setProductData([]); setLookingFor([]); setStatus('sent'); }
+      else setStatus('error');
+    }catch(err){ setStatus('error'); }
+  };
+
+  if(status==='sent'){
+    return (
+      <div className="card shadow-soft p-8 lg:p-10">
+        <div className="w-14 h-14 rounded-none bg-[var(--green-light)] text-[var(--green)] flex items-center justify-center mb-5"><Icon name="check" className="w-7 h-7"/></div>
+        <h3 className="font-display text-2xl font-bold mb-2">Thanks — message received.</h3>
+        <p className="text-[var(--muted)] leading-relaxed">We'll review what you sent and get back to you within one business day, usually with a first look at where AI could pay off for your business. If it's urgent, email <a href="mailto:kristaps@cognityl.com" className="text-[var(--green-dark)] font-semibold underline">kristaps@cognityl.com</a> directly.</p>
+        <button onClick={()=>setStatus('idle')} className="mt-6 inline-flex items-center gap-2 rounded-none border border-[var(--line)] px-4 py-2.5 text-sm font-semibold hover:border-[var(--green)] transition focus-ring">Send another message</button>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="card shadow-soft p-6 lg:p-8 space-y-8">
+      {/* About you */}
+      <div className="space-y-4">
+        <p className="section-eyebrow">About you</p>
+        <div className="grid sm:grid-cols-2 gap-4">
+          <label className="block">
+            <span className="field-label">Full name *</span>
+            <input required name="name" className="field" placeholder="Jane Doe" />
+          </label>
+          <label className="block">
+            <span className="field-label">Work email *</span>
+            <input required type="email" name="email" className="field" placeholder="jane@company.com" />
+          </label>
+          <label className="block">
+            <span className="field-label">Company name *</span>
+            <input required name="company" className="field" placeholder="Company Ltd" />
+          </label>
+          <label className="block">
+            <span className="field-label">Website URL</span>
+            <input name="website" className="field" placeholder="https://" />
+          </label>
+        </div>
+      </div>
+
+      {/* Your business */}
+      <div className="space-y-4">
+        <p className="section-eyebrow">Your business</p>
+        <div className="grid sm:grid-cols-2 gap-4">
+          <label className="block">
+            <span className="field-label">Industry</span>
+            <select name="industry" className="field" defaultValue="">
+              <option value="" disabled>Select an industry</option>
+              <option>Manufacturing</option>
+              <option>Industrial equipment</option>
+              <option>Building products / fit-out</option>
+              <option>Storage &amp; access</option>
+              <option>Distribution / wholesale</option>
+              <option>Other B2B</option>
+            </select>
+          </label>
+          <label className="block">
+            <span className="field-label">Company size</span>
+            <select name="company_size" className="field" defaultValue="">
+              <option value="" disabled>Number of employees</option>
+              <option>1–10</option>
+              <option>11–50</option>
+              <option>51–200</option>
+              <option>200+</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      {/* Product data */}
+      <PillGroup
+        label="What do you have to build from?"
+        hint="Pick anything you already have — it helps us scope faster. Optional."
+        options={PRODUCT_DATA}
+        selected={productData}
+        onToggle={(v)=>toggle(productData,setProductData,v)}
+      />
+
+      {/* Looking for */}
+      <PillGroup
+        label="What are you looking for?"
+        options={LOOKING_FOR}
+        selected={lookingFor}
+        onToggle={(v)=>toggle(lookingFor,setLookingFor,v)}
+      />
+
+      {/* Message */}
+      <label className="block">
+        <span className="section-eyebrow block mb-2">Anything else we should know?</span>
+        <textarea name="message" rows="5" className="field resize-none" placeholder="A sentence or two about what's slow, manual, or worth automating..."></textarea>
+      </label>
+
+      {status==='error' && (
+        <p className="text-sm text-red-700">Something went wrong sending that. Please try again, or email <a href="mailto:kristaps@cognityl.com" className="underline font-semibold">kristaps@cognityl.com</a>.</p>
+      )}
+
+      <button
+        disabled={status==='sending'}
+        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-none bg-[var(--green)] text-white font-semibold px-8 py-4 hover:bg-[var(--green-dark)] transition focus-ring disabled:opacity-60"
+      >
+        {status==='sending' ? 'Sending…' : <>Send message <Icon name="arrow" className="w-4 h-4"/></>}
+      </button>
+      <p className="text-xs text-[var(--muted)]">By sending this you agree to be contacted about your enquiry. We only use what you share to respond — see our <a href="privacy.html" className="underline hover:text-[var(--ink)]">Privacy Policy</a>.</p>
+    </form>
+  );
+}
+
+function Sidebar(){
+  return (
+    <div className="space-y-5">
+      {/* Response time */}
+      <div className="card p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <span className="w-11 h-11 rounded-none bg-[var(--green-light)] text-[var(--green)] flex items-center justify-center flex-shrink-0"><Icon name="clock"/></span>
+          <div className="leading-tight">
+            <p className="font-display text-lg font-bold">Within 1 business day</p>
+            <p className="text-sm text-[var(--muted)]">Typical response time</p>
+          </div>
+        </div>
+        <p className="text-sm text-[var(--muted)]">Prefer email? <a href="mailto:kristaps@cognityl.com" className="text-[var(--green-dark)] font-semibold underline">kristaps@cognityl.com</a></p>
+      </div>
+
+      {/* Founder-led note (honest — no fabricated testimonial) */}
+      <div className="card p-6 bg-[var(--green-light)] border-[var(--green)]/40">
+        <span className="w-11 h-11 rounded-none bg-white border border-[var(--green)]/30 text-[var(--green)] flex items-center justify-center mb-4"><Icon name="users"/></span>
+        <h3 className="font-display text-lg font-bold mb-2">You'll talk to the founder</h3>
+        <p className="text-sm text-[var(--muted)] leading-relaxed">Cognityl is a focused, founder-led practice. Your first reply comes from the person who'd actually build your system — not an account manager or a sales bench.</p>
+      </div>
+
+      {/* What to expect */}
+      <div className="p-6 bg-[var(--ink)] text-white shadow-soft">
+        <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--green-light)] mb-4">What to expect</p>
+        <ul className="space-y-3">
+          {[
+            'A free AI Opportunity Report for your business',
+            'No commitment to see what we find',
+            'A pilot scoped in weeks, not quarters — only if it fits',
+          ].map(t=>(
+            <li key={t} className="flex items-start gap-3 text-sm">
+              <span className="w-5 h-5 rounded-full bg-[var(--green)] text-white flex items-center justify-center flex-shrink-0 mt-0.5"><Icon name="check" className="w-3 h-3"/></span>
+              <span className="text-white/90 leading-snug">{t}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function ContactPage(){
+  return (
+    <main id="contact-form" className="pt-28 lg:pt-32">
+      {/* Hero */}
+      <section className="grid-bg bg-[var(--soft-2)] pb-10 lg:pb-14">
+        <div className="max-w-7xl mx-auto px-5 lg:px-8 fade-up">
+          <div className="inline-flex items-center gap-2 rounded-none border border-[var(--line)] bg-white px-4 py-2 text-sm text-[var(--muted)] mb-6 shadow-soft">
+            <span className="w-2 h-2 rounded-full bg-[var(--green)]"></span> Free report · no commitment
+          </div>
+          <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold tracking-[-.055em] leading-[.95]">
+            <span className="text-[var(--ink)]">Let's find your</span><br/>
+            <span className="gradient-text">first AI win.</span>
+          </h1>
+          <p className="mt-6 text-lg lg:text-xl text-[var(--muted)] leading-relaxed max-w-2xl">
+            Tell us a little about your business. We'll send back a free AI Opportunity Report — what's worth automating first, why, and the safest way to start.
+          </p>
+        </div>
+      </section>
+
+      {/* Form + sidebar */}
+      <section className="max-w-7xl mx-auto px-5 lg:px-8 pb-24 lg:pb-32">
+        <div className="grid lg:grid-cols-[1.6fr_1fr] gap-6 lg:gap-8 items-start">
+          <ContactForm/>
+          <Sidebar/>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+// ==================== FOOTER ====================
+function Footer(){
+  return <footer className="border-t border-[var(--line)] bg-white py-10">
+    <div className="max-w-7xl mx-auto px-5 lg:px-8">
+      <div className="flex flex-col md:flex-row justify-between gap-8">
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="w-8 h-8 rounded-none bg-[#1F8B41] text-white flex items-center justify-center font-bold">C</span>
+            <span className="font-display text-lg font-bold text-[var(--ink)]">Cognityl</span>
+          </div>
+          <p className="text-sm text-[var(--muted)]">Configurators and digital tools for AI-driven business automation.</p>
+        </div>
+
+        <div className="flex flex-wrap gap-x-8 gap-y-2">
+          <div className="flex flex-col gap-1">
+            <span className="text-xs uppercase tracking-wider text-[var(--muted)] font-semibold">Product</span>
+            <a href="index.html#engine" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Engine</a>
+            <a href="index.html#interactive-demos" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Live demos</a>
+            <a href="index.html#process" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Process</a>
+            <a href="index.html#use-cases" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Use cases</a>
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-xs uppercase tracking-wider text-[var(--muted)] font-semibold">Company</span>
+            <a href="index.html#work" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Our Work</a>
+            <a href="index.html#security" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Security</a>
+            <a href="index.html#governance" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Governance</a>
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-xs uppercase tracking-wider text-[var(--muted)] font-semibold">Legal</span>
+            <a href="privacy.html" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Privacy Policy</a>
+            <a href="terms.html" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Terms of Service</a>
+            <a href="index.html#data-policy" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Data Policy</a>
+          </div>
+        </div>
+
+        <div className="flex flex-col items-start md:items-end gap-4">
+          <div className="text-left md:text-right">
+            <p className="text-sm font-semibold">Contact</p>
+            <a href="mailto:kristaps@cognityl.com" className="block text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">kristaps@cognityl.com</a>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-8 pt-6 border-t border-[var(--line)] flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-[var(--muted)]">
+        <p>© 2026 Cognityl. All rights reserved.</p>
+        <div className="flex gap-6">
+          <a href="privacy.html" className="hover:text-[var(--ink)] transition">Privacy</a>
+          <a href="terms.html" className="hover:text-[var(--ink)] transition">Terms</a>
+          <a href="index.html" className="hover:text-[var(--ink)] transition">Home</a>
+        </div>
+      </div>
+    </div>
+  </footer>;
+}
+
+function App(){
+  return <>
+    <Nav/>
+    <ContactPage/>
+    <Footer/>
+  </>;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
