@@ -471,6 +471,32 @@
       transform: rotate(90deg);
     }
   }
+
+  /* Interactive demos (configurator + product advisor) */
+  .seg{display:flex;flex-wrap:wrap;gap:0;border:1.5px solid var(--line);width:100%;}
+  .seg button{flex:1;min-width:0;padding:9px 8px;font-size:12px;font-weight:600;
+    background:#fff;color:var(--muted);border:0;border-left:1.5px solid var(--line);
+    cursor:pointer;transition:.12s ease;white-space:nowrap;font-family:'Inter',sans-serif;}
+  .seg button:first-child{border-left:0;}
+  .seg button:hover{color:var(--ink);background:var(--soft);}
+  .seg button[aria-pressed="true"]{background:var(--ink);color:#fff;}
+  .sku-bar{background:#0d1110;border:1.5px solid var(--line);padding:14px 16px;
+    font-family:'IBM Plex Mono',monospace;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .sku-bar .arrow{color:#febc2e;}
+  .sku-bar .label{color:#66736d;font-size:11px;letter-spacing:.06em;}
+  .sku-bar .value{color:#7ee2a8;font-size:15px;font-weight:500;letter-spacing:.04em;}
+  .bubble{max-width:88%;padding:11px 14px;font-size:13px;line-height:1.5;border-radius:0;}
+  .bubble.user{background:var(--ink);color:#fff;align-self:flex-end;}
+  .bubble.bot{background:#fff;border:1.5px solid var(--line);align-self:flex-start;box-shadow:3px 3px 0 rgba(16,20,18,.9);}
+  .bubble.bot .rec{color:var(--green-dark);font-weight:600;}
+  .chip{padding:7px 12px;background:var(--soft);border:1.5px solid var(--line);cursor:pointer;
+    font-size:12px;color:var(--muted);transition:.12s ease;text-align:left;line-height:1.35;font-family:'Inter',sans-serif;}
+  .chip:hover{background:var(--green-light);border-color:var(--green);color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--green-light);border-color:var(--green);color:var(--ink);font-weight:600;}
+  .demo-dots span{width:5px;height:5px;background:var(--muted);border-radius:50%;display:inline-block;animation:demo-blink 1.4s infinite both;}
+  .demo-dots span:nth-child(2){animation-delay:.2s;} .demo-dots span:nth-child(3){animation-delay:.4s;}
+  @keyframes demo-blink{0%,80%,100%{opacity:.2;transform:scale(.8);}40%{opacity:1;transform:scale(1);}}
+  @media (prefers-reduced-motion: reduce){.demo-dots span{animation:none;opacity:.6;}}
 </style>
 </head>
 <body>
@@ -535,6 +561,7 @@ function Nav(){
   const platform=[
     ['Engine','engine','How the Discovery Engine works'],
     ['Report','report','The AI Opportunity Report'],
+    ['Live demos','interactive-demos','Configurator & advisor you can try'],
     ['Process','process','Scan to deployment, step by step'],
     ['Use cases','use-cases','Where teams put it to work'],
     ['Showcase','showcase','Tools we design and ship'],
@@ -982,6 +1009,128 @@ function ShowcaseMarquee(){
       </div>
     </div>
   </section>;
+}
+
+// ==================== INTERACTIVE DEMOS ====================
+function InteractiveDemos(){
+  // --- Configurator state ---
+  const materials = [["Powder-coated steel","PCW"],["316 stainless","SST"],["Galvanized","GLV"]];
+  const widths    = [["600mm","600"],["900mm","900"],["1200mm","1200"]];
+  const locks     = [["Electronic keypad","EC"],["Combination","CB"],["Hasp","HP"]];
+  const [mat,setMat]=useState(0), [wid,setWid]=useState(1), [lok,setLok]=useState(0);
+  const sku = `LCK-${widths[wid][1]}-${locks[lok][1]}-${materials[mat][1]}`;
+
+  const Row = ({label,options,value,onChange}) => (
+    <div>
+      <p className="text-[11px] font-mono uppercase tracking-[0.08em] text-[var(--muted)] mb-1.5">{label}</p>
+      <div className="seg" role="group" aria-label={label}>
+        {options.map(([lbl],i)=>(
+          <button key={lbl} aria-pressed={value===i} onClick={()=>onChange(i)} className="focus-ring">{lbl}</button>
+        ))}
+      </div>
+    </div>
+  );
+
+  // --- Advisor state ---
+  const prompts = [
+    {
+      q:"I need a locker for an outdoor gym — heavy use, no power nearby.",
+      a:<React.Fragment>Go with the <span className="rec">Hasp Lock series in 316 stainless with a combination lock</span> — rated for coastal, no-power environments.</React.Fragment>,
+    },
+    {
+      q:"Something low-cost for a school changing room, lots of units.",
+      a:<React.Fragment>Best value is <span className="rec">powder-coated steel with keypad locks, in 12-door banks</span> — lowest cost per door at volume.</React.Fragment>,
+    },
+    {
+      q:"High-security storage for a data centre.",
+      a:<React.Fragment>Spec <span className="rec">316 stainless with RFID smart locks and audit logging</span> — every open is access-controlled and recorded.</React.Fragment>,
+    },
+  ];
+  const [sel,setSel]=useState(0);
+  const [typing,setTyping]=useState(false);
+  const timer=useRef(null);
+
+  const pick=(i)=>{
+    if(i===sel) return;
+    clearTimeout(timer.current);
+    setSel(i);
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if(reduce){ setTyping(false); return; }
+    setTyping(true);
+    timer.current=setTimeout(()=>setTyping(false),700);
+  };
+  useEffect(()=>()=>clearTimeout(timer.current),[]);
+
+  return (
+    <section id="interactive-demos" className="py-24 lg:py-32 max-w-7xl mx-auto px-5 lg:px-8">
+      <div className="max-w-2xl mb-14">
+        <p className="text-[var(--green)] font-semibold mb-3">Try it yourself</p>
+        <h2 className="font-display text-4xl lg:text-5xl font-bold tracking-tight">The tools we build, running live.</h2>
+        <p className="mt-5 text-lg text-[var(--muted)] leading-relaxed">Two of the most common builds for manufacturers — a product configurator and a plain-language product advisor. These are working demos: change the inputs and watch the output update.</p>
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-5">
+        {/* ---------- Configurator ---------- */}
+        <div className="card shadow-soft p-7 flex flex-col">
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center gap-2.5">
+              <span className="w-9 h-9 rounded-none bg-[var(--green-light)] text-[var(--green)] flex items-center justify-center"><Icon name="flow" className="w-5 h-5"/></span>
+              <h3 className="font-display text-xl font-bold">Product configurator</h3>
+            </div>
+            <span className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.08em] text-[var(--green-dark)] bg-[var(--green-light)] border border-[var(--green)]/30 px-2 py-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--green)]"></span>Live
+            </span>
+          </div>
+          <p className="text-sm text-[var(--muted)] leading-relaxed mb-6">Buyers pick options, see the spec build up, and get an exact part number — no calls, no email chains.</p>
+
+          <div className="space-y-4">
+            <Row label="Material" options={materials} value={mat} onChange={setMat}/>
+            <Row label="Width"    options={widths}    value={wid} onChange={setWid}/>
+            <Row label="Locking"  options={locks}     value={lok} onChange={setLok}/>
+          </div>
+
+          <div className="sku-bar mt-6">
+            <span className="arrow">→</span>
+            <span className="label">PART NUMBER</span>
+            <span className="value">{sku}</span>
+          </div>
+          <p className="mt-3 text-xs text-[var(--muted)]">{materials[mat][0]} · {widths[wid][0]} · {locks[lok][0]}</p>
+        </div>
+
+        {/* ---------- Advisor ---------- */}
+        <div className="card shadow-soft p-7 flex flex-col">
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center gap-2.5">
+              <span className="w-9 h-9 rounded-none bg-[var(--green-light)] text-[var(--green)] flex items-center justify-center"><Icon name="bot" className="w-5 h-5"/></span>
+              <h3 className="font-display text-xl font-bold">AI product advisor</h3>
+            </div>
+            <span className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.08em] text-[var(--green-dark)] bg-[var(--green-light)] border border-[var(--green)]/30 px-2 py-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--green)]"></span>Demo
+            </span>
+          </div>
+          <p className="text-sm text-[var(--muted)] leading-relaxed mb-6">Buyers describe what they need in plain language; the advisor points them to the right spec.</p>
+
+          <div className="bg-[var(--soft)] border border-[var(--line)] p-4 flex flex-col gap-3 min-h-[168px]">
+            <div className="bubble user">{prompts[sel].q}</div>
+            {typing
+              ? <div className="bubble bot"><span className="demo-dots inline-flex gap-1 items-center"><span></span><span></span><span></span></span></div>
+              : <div className="bubble bot">{prompts[sel].a}</div>}
+          </div>
+
+          <p className="text-[11px] font-mono uppercase tracking-[0.08em] text-[var(--muted)] mt-5 mb-2">Try a question</p>
+          <div className="flex flex-col gap-2">
+            {prompts.map((p,i)=>(
+              <button key={i} aria-pressed={sel===i} onClick={()=>pick(i)} className="chip focus-ring">{p.q}</button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-8 flex justify-center">
+        <a href="#contact" className="inline-flex items-center gap-2 rounded-none bg-[var(--green)] text-white px-6 py-3 font-semibold hover:bg-[var(--green-dark)] transition focus-ring">Want one for your products? <Icon name="arrow" className="w-4 h-4"/></a>
+      </div>
+    </section>
+  );
 }
 
 // ==================== REPORT ====================
@@ -1599,6 +1748,7 @@ function Footer(){
           <div className="flex flex-col gap-1">
             <span className="text-xs uppercase tracking-wider text-[var(--muted)] font-semibold">Product</span>
             <a href="#engine" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Engine</a>
+            <a href="#interactive-demos" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Live demos</a>
             <a href="#process" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Process</a>
             <a href="#use-cases" className="text-sm text-[var(--muted)] hover:text-[var(--ink)] transition">Use cases</a>
           </div>
@@ -1782,6 +1932,7 @@ function App(){
       <Hero/>
       <AgentWorkflowDemo/>
       <ShowcaseMarquee/>
+      <InteractiveDemos/>
       <Report/>
       <Engine/>
       <UseCases/>
