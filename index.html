@@ -497,6 +497,44 @@
   .demo-dots span:nth-child(2){animation-delay:.2s;} .demo-dots span:nth-child(3){animation-delay:.4s;}
   @keyframes demo-blink{0%,80%,100%{opacity:.2;transform:scale(.8);}40%{opacity:1;transform:scale(1);}}
   @media (prefers-reduced-motion: reduce){.demo-dots span{animation:none;opacity:.6;}}
+
+  /* Website optimization timeline — Cognityl style */
+  .timeline-wrap{position:relative;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--soft);}
+  .timeline-shell{position:relative;}
+  .timeline-progress{display:grid;grid-template-columns:repeat(4,1fr);border:1.5px solid var(--line);background:#fff;}
+  .timeline-step{position:relative;padding:18px 18px 16px;text-align:left;border-left:1.5px solid var(--line);cursor:pointer;background:#fff;transition:.15s ease;}
+  .timeline-step:first-child{border-left:0;}
+  .timeline-step:hover{background:var(--soft-2);}
+  .timeline-step[aria-pressed="true"]{background:var(--ink);color:#fff;}
+  .timeline-step[aria-pressed="true"] .timeline-step-label,
+  .timeline-step[aria-pressed="true"] .timeline-step-time{color:#fff;}
+  .timeline-step-label{display:block;font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--green);margin-bottom:8px;}
+  .timeline-step-title{display:block;font-weight:700;font-size:14px;line-height:1.25;}
+  .timeline-step-time{display:block;margin-top:8px;font-size:12px;color:var(--muted);}
+  .timeline-panel{display:grid;grid-template-columns:1fr .78fr;gap:0;margin-top:22px;border:1.5px solid var(--line);background:#fff;box-shadow:4px 4px 0 rgba(16,20,18,.9);}
+  .timeline-panel-main{padding:42px;}
+  .timeline-panel-side{border-left:1.5px solid var(--line);background:#0d1110;color:#fff;padding:34px;display:flex;flex-direction:column;justify-content:space-between;min-height:340px;}
+  .timeline-badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--soft);padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:24px;}
+  .timeline-side-number{font-family:'IBM Plex Sans',sans-serif;font-size:86px;font-weight:800;line-height:.85;letter-spacing:-.07em;color:#7ee2a8;}
+  .timeline-side-label{font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#66736d;margin-top:10px;}
+  .timeline-side-list{margin-top:28px;display:grid;gap:12px;}
+  .timeline-side-list div{border-top:1px solid #1f2421;padding-top:12px;font-size:13px;color:#b8c4b8;line-height:1.45;}
+  .timeline-duration{display:inline-flex;border:1.5px solid var(--green);background:var(--green-light);color:var(--green-dark);padding:8px 13px;font-size:11px;font-weight:700;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.08em;margin-top:24px;}
+  @media(max-width:900px){
+    .timeline-progress{grid-template-columns:1fr 1fr;}
+    .timeline-step:nth-child(3){border-left:0;border-top:1.5px solid var(--line);}
+    .timeline-step:nth-child(4){border-top:1.5px solid var(--line);}
+    .timeline-panel{grid-template-columns:1fr;}
+    .timeline-panel-side{border-left:0;border-top:1.5px solid var(--line);min-height:auto;}
+  }
+  @media(max-width:640px){
+    .timeline-progress{grid-template-columns:1fr;}
+    .timeline-step{border-left:0;border-top:1.5px solid var(--line);}
+    .timeline-step:first-child{border-top:0;}
+    .timeline-panel-main,.timeline-panel-side{padding:26px;}
+    .timeline-side-number{font-size:64px;}
+  }
+
 </style>
 </head>
 <body>
@@ -563,6 +601,7 @@ function Nav(){
     ['Report','report','The AI Opportunity Report'],
     ['Live demos','interactive-demos','Configurator & advisor you can try'],
     ['Process','process','Scan to deployment, step by step'],
+    ['Timeline','timeline','Website optimization phases'],
     ['Use cases','use-cases','Where teams put it to work'],
     ['Showcase','showcase','Tools we design and ship'],
   ];
@@ -1669,6 +1708,107 @@ function FAQ(){
   </section>
 }
 
+
+// ==================== WEBSITE OPTIMIZATION TIMELINE ====================
+function WebsiteOptimizationTimeline(){
+  const steps = [
+    {
+      phase: "01",
+      label: "Signal audit",
+      title: "Map the leaks before touching the design",
+      copy: "We inspect the current website, contact paths, offers, forms, catalogue depth, mobile experience, page speed signals and trust gaps. The goal is not to redesign blindly — it is to find where revenue is leaking first.",
+      duration: "Week 1",
+      checks: ["Website + form review", "Conversion friction map", "Priority build plan"]
+    },
+    {
+      phase: "02",
+      label: "UX + copy rebuild",
+      title: "Turn unclear pages into clear buying paths",
+      copy: "We restructure the pages that matter most, sharpen the offer, improve section hierarchy, rewrite weak copy, and make the contact route easier to complete. This is where the website starts feeling like a sales tool.",
+      duration: "Weeks 2–3",
+      checks: ["Homepage / offer clarity", "CTA + form improvements", "Mobile-first layout fixes"]
+    },
+    {
+      phase: "03",
+      label: "Automation layer",
+      title: "Add the workflow that removes manual friction",
+      copy: "Once the website path is clear, we add the first practical automation: better lead intake, a chatbot, qualification logic, report capture, or an AI-assisted workflow depending on what the audit shows.",
+      duration: "Week 4",
+      checks: ["Lead capture flow", "AI assistant or intake logic", "Analytics events"]
+    },
+    {
+      phase: "04",
+      label: "Launch + improve",
+      title: "Publish, track, and optimize from real behavior",
+      copy: "We test the final site, check performance, analytics, forms and tracking. After launch, we monitor how people actually use it and identify the next optimization cycle.",
+      duration: "Week 5",
+      checks: ["QA + launch checks", "Tracking verification", "Next iteration roadmap"]
+    }
+  ];
+
+  const [active,setActive] = React.useState(0);
+  const step = steps[active];
+
+  return (
+    <section id="timeline" className="timeline-wrap py-24 lg:py-32 grid-bg">
+      <div className="timeline-shell max-w-7xl mx-auto px-5 lg:px-8">
+        <div className="grid lg:grid-cols-[.82fr_1.18fr] gap-10 items-end mb-12">
+          <div>
+            <p className="text-[var(--green)] font-semibold mb-3">Optimization timeline</p>
+            <h2 className="font-display text-4xl lg:text-5xl font-bold tracking-tight">
+              A five-week path from website audit to measurable launch.
+            </h2>
+          </div>
+          <p className="text-lg text-[var(--muted)] leading-relaxed">
+            Instead of copying a template, we work in phases: diagnose, rebuild the customer path, add automation, then launch with tracking. The timeline below shows what usually happens when we optimize a business website.
+          </p>
+        </div>
+
+        <div className="timeline-progress" role="tablist" aria-label="Website optimization timeline">
+          {steps.map((s,i)=>(
+            <button
+              key={s.phase}
+              type="button"
+              className="timeline-step focus-ring"
+              aria-pressed={active===i}
+              onClick={()=>setActive(i)}
+            >
+              <span className="timeline-step-label">{s.phase} · {s.duration}</span>
+              <span className="timeline-step-title">{s.label}</span>
+              <span className="timeline-step-time">{i === active ? "Currently selected" : "View phase"}</span>
+            </button>
+          ))}
+        </div>
+
+        <div className="timeline-panel">
+          <div className="timeline-panel-main">
+            <span className="timeline-badge">{step.phase} / {step.duration}</span>
+            <h3 className="font-display text-3xl lg:text-5xl font-bold tracking-tight mb-6">
+              {step.title}
+            </h3>
+            <p className="text-lg text-[var(--muted)] leading-relaxed max-w-2xl">
+              {step.copy}
+            </p>
+            <span className="timeline-duration">{step.duration}</span>
+          </div>
+
+          <aside className="timeline-panel-side">
+            <div>
+              <div className="timeline-side-number">{step.phase}</div>
+              <div className="timeline-side-label">{step.label}</div>
+            </div>
+            <div className="timeline-side-list">
+              {step.checks.map(item=>(
+                <div key={item}>✓ {item}</div>
+              ))}
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ==================== CONTACT ====================
 function Contact(){
   const [sent,setSent]=useState(false);
@@ -1932,6 +2072,7 @@ function App(){
     <main>
       <Hero/>
       <AgentWorkflowDemo/>
+      <WebsiteOptimizationTimeline/>
       <ShowcaseMarquee/>
       <InteractiveDemos/>
       <Report/>
