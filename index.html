@@ -1286,18 +1286,62 @@ function UseCases(){
 
 // ==================== PREVIEW ====================
 function Preview(){
+  const examples = [
+    { type:'Equipment manufacturer', finding:[
+      ['Company type','Industrial equipment maker'],
+      ['Visible gap','Catalogue + quote-heavy sales'],
+      ['Recommended agent','Quote generation assistant'],
+      ['Outreach angle','Cut manual quoting time'],
+    ]},
+    { type:'B2B distributor', finding:[
+      ['Company type','Multi-brand distributor'],
+      ['Visible gap','500-SKU catalogue, hard to navigate'],
+      ['Recommended agent','Product finder / advisor'],
+      ['Outreach angle','Help buyers self-serve specs'],
+    ]},
+    { type:'Support-heavy business', finding:[
+      ['Company type','Service business, high ticket volume'],
+      ['Visible gap','Repetitive questions, no self-serve'],
+      ['Recommended agent','Support deflection assistant'],
+      ['Outreach angle','Deflect tier-1 tickets'],
+    ]},
+    { type:'Professional services', finding:[
+      ['Company type','Professional services firm'],
+      ['Visible gap','Slow, manual lead intake'],
+      ['Recommended agent','Lead qualification agent'],
+      ['Outreach angle','Qualify inbound faster'],
+    ]},
+    { type:'Operations & logistics', finding:[
+      ['Company type','Operations-heavy business'],
+      ['Visible gap','Manual reporting & data entry'],
+      ['Recommended agent','Reporting automation'],
+      ['Outreach angle','Automate weekly reporting'],
+    ]},
+  ];
+  const [sel,setSel]=useState(0);
+  const ex=examples[sel];
+
   return <section className="py-20 lg:py-24 max-w-7xl mx-auto px-5 lg:px-8">
-    <div className="card p-8 lg:p-12 grid lg:grid-cols-[1fr_1fr] gap-10 items-center">
+    <div className="card p-8 lg:p-12 grid lg:grid-cols-[1fr_1fr] gap-10 items-start">
       <div>
         <Icon name="spark" className="w-8 h-8 text-[var(--green)] mb-5"/>
         <h2 className="font-display text-3xl lg:text-4xl font-bold tracking-tight">From website signal to sales angle.</h2>
-        <p className="mt-5 text-[var(--muted)] leading-relaxed">The engine does not need private analytics to start. It uses public information to detect likely bottlenecks, then creates a credible outreach angle your team can review before sending.</p>
+        <p className="mt-5 text-[var(--muted)] leading-relaxed">The engine does not need private analytics to start. It uses public information to detect likely bottlenecks in any kind of business, then creates a credible outreach angle your team can review before sending.</p>
+
+        <p className="mt-7 text-[11px] font-mono uppercase tracking-[0.08em] text-[var(--muted)] mb-2.5">Pick a business type</p>
+        <div className="flex flex-wrap gap-2">
+          {examples.map((e,i)=>(
+            <button key={e.type} aria-pressed={sel===i} onClick={()=>setSel(i)} className="chip focus-ring">{e.type}</button>
+          ))}
+        </div>
       </div>
+
       <div className="bg-[var(--soft)] rounded-none p-6 border border-[var(--line)]">
         <p className="font-mono text-xs uppercase tracking-[0.08em] text-[var(--muted)] mb-4">Example finding <span className="normal-case font-sans text-[var(--muted)]">(illustrative)</span></p>
-        {[['Company type','Locker supplier'],['Visible gap','Catalogue + quote-heavy sales'],['Recommended agent','Quote generation assistant'],['Outreach angle','Reduce manual quoting time']].map(([k,v])=><div key={k} className="flex justify-between gap-5 py-3 border-t border-[var(--line)] first:border-t-0 text-sm">
+        {ex.finding.map(([k,v])=><div key={k} className="flex justify-between gap-5 py-3 border-t border-[var(--line)] first:border-t-0 text-sm">
           <span className="text-[var(--muted)]">{k}</span><span className="font-semibold text-right">{v}</span>
         </div>)}
+        <p className="mt-4 text-xs text-[var(--muted)]">Illustrative example. Your report is generated from your own public business signals.</p>
       </div>
     </div>
   </section>
