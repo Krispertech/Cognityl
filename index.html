@@ -856,7 +856,7 @@ const KB=[
 {id:'contact',lv:['cilvēk','sazināties','kontakt','epasts','e-pasts'],en:['human','contact','email','speak to someone'],a:{lv:'Varat rakstīt uz kristaps@cognityl.com vai arī šeit pieteikt bezmaksas konsultāciju.',en:'You can email kristaps@cognityl.com or request a free consultation here.'}}
 ];
 const TXT={lv:{title:'Cognityl AI',status:'Tiešsaistē',hello:'Labdien! Esmu Cognityl AI asistents. Varu pastāstīt par cenām, darbību un palīdzēt pieteikt konsultāciju.',placeholder:'Rakstiet savu jautājumu…',send:'Sūtīt',mic:'🎤',stop:'■',lang:'EN',close:'×',fallback:'Par šo jautājumu man nav drošas informācijas. Varu palīdzēt ar cenām, darbības principu, integrācijām vai konsultācijas pieteikšanu.',chips:['Cenas','Kā tas strādā?','Pieteikt konsultāciju'],leadStart:'Lieliski! Kā jūs sauc?',askEmail:'Kāds ir jūsu e-pasts?',askCompany:'Kā sauc jūsu uzņēmumu?',askChallenge:'Kādu problēmu vēlaties atrisināt?',askTime:'Kāds konsultācijas laiks jums būtu vēlams?',confirm:'Lūdzu, apstipriniet pieteikumu:',yes:'Apstiprinu',cancel:'Atcelt',sent:'Paldies! Pieteikums nosūtīts. Cognityl sazināsies ar jums, lai apstiprinātu laiku.',failed:'Pieteikumu neizdevās nosūtīt. Lūdzu, rakstiet uz kristaps@cognityl.com.',listening:'Klausos…',denied:'Mikrofonam nav piekļuves. Varat rakstīt tekstu.',privacy:'Balss apstrādei tiek izmantotas pārlūkprogrammas runas funkcijas. Audio apzināti netiek uzglabāts.'},en:{title:'Cognityl AI',status:'Online',hello:'Hello! I am the Cognityl AI assistant. I can explain pricing, how it works, and help request a consultation.',placeholder:'Type your question…',send:'Send',mic:'🎤',stop:'■',lang:'LV',close:'×',fallback:'I do not have verified information about that. I can help with pricing, how it works, integrations, or requesting a consultation.',chips:['Pricing','How does it work?','Book a consultation'],leadStart:'Great! What is your name?',askEmail:'What is your email address?',askCompany:'What is your company name?',askChallenge:'What problem would you like to solve?',askTime:'What consultation time would you prefer?',confirm:'Please confirm your request:',yes:'Confirm',cancel:'Cancel',sent:'Thank you! Your request was sent. Cognityl will contact you to confirm the time.',failed:'The request could not be sent. Please email kristaps@cognityl.com.',listening:'Listening…',denied:'Microphone access was denied. You can type instead.',privacy:'Voice processing uses your browser speech features. Audio is not intentionally stored.'}};
-let lang=CFG.defaultLang,lead=null,listening=false,recognition=null,voiceOn=false;
+let lang=CFG.defaultLang,lead=null,listening=false,recognition=null,voiceOn=false,listenTimer=null;
 const root=document.getElementById('cognityl-chat');
 function e(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n}
 const fab=e('button','cog-fab','💬');fab.type='button';fab.setAttribute('aria-label','Open Cognityl AI');
@@ -912,7 +912,34 @@ async function handle(raw){const text=String(raw||'').trim().slice(0,500);if(!te
 function apply(){title.textContent=TXT[lang].title;status.textContent=TXT[lang].status;input.placeholder=TXT[lang].placeholder;send.textContent=TXT[lang].send;lb.textContent=TXT[lang].lang;privacy.textContent=TXT[lang].privacy;mic.textContent=listening?TXT[lang].stop:TXT[lang].mic}
 function resetGreeting(){log.textContent='';lead=null;say(TXT[lang].hello)}
 fab.onclick=()=>{panel.hidden=!panel.hidden;if(!panel.hidden&&!log.children.length)resetGreeting()};cb.onclick=()=>panel.hidden=true;lb.onclick=()=>{lang=lang==='lv'?'en':'lv';apply();resetGreeting()};form.onsubmit=ev=>{ev.preventDefault();handle(input.value)};
-const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){mic.hidden=true}else{mic.onclick=()=>{if(listening){recognition.stop();return}recognition=new SR();recognition.lang=lang==='lv'?'lv-LV':'en-US';recognition.interimResults=false;recognition.continuous=false;recognition.onstart=()=>{listening=true;mic.classList.add('live');apply();note.hidden=false;note.textContent=TXT[lang].listening};recognition.onresult=ev=>handle(ev.results[0][0].transcript);recognition.onerror=ev=>{note.hidden=false;note.textContent=ev.error==='not-allowed'?TXT[lang].denied:'Voice input error.'};recognition.onend=()=>{listening=false;mic.classList.remove('live');apply();if(note.textContent===TXT[lang].listening)note.hidden=true};recognition.start()}};
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+function stopListening(){if(listenTimer){clearTimeout(listenTimer);listenTimer=null}try{recognition?.stop()}catch{} }
+if(!SR){mic.hidden=true;note.hidden=false;note.textContent=lang==='lv'?'Šī pārlūkprogramma neatbalsta balss ievadi. Izmantojiet Chrome, Edge vai Safari.':'This browser does not support voice input. Use Chrome, Edge or Safari.'}
+else{mic.onclick=async()=>{
+  if(listening){stopListening();return}
+  voiceOn=true;
+  try{
+    if(!window.isSecureContext){throw new Error('insecure')}
+    if(navigator.mediaDevices?.getUserMedia){const stream=await navigator.mediaDevices.getUserMedia({audio:true});stream.getTracks().forEach(t=>t.stop())}
+    recognition=new SR();
+    recognition.lang=lang==='lv'?'lv-LV':'en-US';
+    recognition.interimResults=true;
+    recognition.continuous=false;
+    recognition.maxAlternatives=1;
+    recognition.onstart=()=>{listening=true;mic.classList.add('live');apply();note.hidden=false;note.textContent=TXT[lang].listening;listenTimer=setTimeout(()=>stopListening(),12000)};
+    recognition.onresult=ev=>{let finalText='',interim='';for(let i=ev.resultIndex;i<ev.results.length;i++){const t=ev.results[i][0].transcript;if(ev.results[i].isFinal)finalText+=t;else interim+=t}note.hidden=false;note.textContent=finalText||interim||TXT[lang].listening;if(finalText){stopListening();handle(finalText)}};
+    recognition.onnomatch=()=>{note.hidden=false;note.textContent=lang==='lv'?'Nedzirdēju skaidri. Nospiediet mikrofonu un mēģiniet vēlreiz.':'I could not hear clearly. Press the microphone and try again.'};
+    recognition.onerror=ev=>{const map={
+      'not-allowed':TXT[lang].denied,
+      'service-not-allowed':TXT[lang].denied,
+      'no-speech':lang==='lv'?'Nedzirdēju runu. Mēģiniet vēlreiz un runājiet tuvāk mikrofonam.':'No speech was detected. Try again and speak closer to the microphone.',
+      'audio-capture':lang==='lv'?'Mikrofons nav pieejams. Pārbaudiet Windows un pārlūka mikrofona iestatījumus.':'The microphone is unavailable. Check your browser and system microphone settings.',
+      'network':lang==='lv'?'Balss atpazīšanai neizdevās izveidot savienojumu. Pārbaudiet internetu un mēģiniet vēlreiz.':'Voice recognition could not connect. Check your internet and try again.'
+    };note.hidden=false;note.textContent=map[ev.error]||(lang==='lv'?'Balss ievades kļūda: ':'Voice input error: ')+ev.error};
+    recognition.onend=()=>{if(listenTimer){clearTimeout(listenTimer);listenTimer=null}listening=false;mic.classList.remove('live');apply();if(note.textContent===TXT[lang].listening)note.hidden=true};
+    recognition.start();
+  }catch(err){listening=false;mic.classList.remove('live');apply();note.hidden=false;note.textContent=err.message==='insecure'?(lang==='lv'?'Balss funkcija darbojas tikai HTTPS vietnē.':'Voice works only on an HTTPS website.'):TXT[lang].denied}
+}};
 apply();
 })();
 </script>
