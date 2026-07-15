@@ -122,6 +122,7 @@ const Icon = ({name, className="w-5 h-5"}) => {
 /* ── Pogas ────────────────────────────────────────────── */
 const CallButton = ({className="", children, size="lg"}) => (
   <a href={callHref}
+     onClick={(e)=>{ if(!hasPhone && window.cognitylOpenCallDemo){ e.preventDefault(); window.cognitylOpenCallDemo(); } }}
      className={`inline-flex items-center justify-center gap-2.5 rounded-full bg-brand text-white font-semibold
        hover:bg-brand-dark active:scale-[.98] transition focus-ring shadow-lg shadow-brand/25
        ${size==="lg" ? "px-7 py-4 text-[17px]" : "px-5 py-3 text-[15px]"} ${className}`}>
@@ -588,6 +589,7 @@ function LiveDemo(){
 
             {/* Numurs — uz mobilā tas ir poga, uz datora teksts */}
             <a href={callHref}
+               onClick={(e)=>{ if(!hasPhone && window.cognitylOpenCallDemo){ e.preventDefault(); window.cognitylOpenCallDemo(); } }}
                className="group mt-10 inline-flex items-center gap-4 rounded-3xl bg-white text-ink
                  px-7 py-6 sm:px-10 sm:py-7 hover:bg-brand-light transition focus-ring shadow-2xl">
               <span className="w-14 h-14 rounded-2xl bg-brand text-white grid place-items-center flex-shrink-0
@@ -801,6 +803,7 @@ function StickyCallBar(){
     <div className={`md:hidden fixed bottom-0 inset-x-0 z-50 p-3 bg-white/95 backdrop-blur border-t border-line
       transition-transform duration-300 ${show ? "translate-y-0" : "translate-y-full"}`}>
       <a href={callHref}
+         onClick={(e)=>{ if(!hasPhone && window.cognitylOpenCallDemo){ e.preventDefault(); window.cognitylOpenCallDemo(); } }}
          className="flex items-center justify-center gap-2.5 w-full rounded-full bg-brand text-white
            py-4 text-[16px] font-semibold active:scale-[.98] transition focus-ring shadow-lg shadow-brand/25">
         <Icon name="phone" className="w-5 h-5"/>
@@ -976,6 +979,273 @@ else{mic.onclick=async()=>{
   }catch(err){listening=false;mic.classList.remove('live');apply();note.hidden=false;note.textContent=err.message==='insecure'?(lang==='lv'?'Balss funkcija darbojas tikai HTTPS vietnē.':'Voice works only on an HTTPS website.'):TXT[lang].denied}
 }};
 apply();
+})();
+</script>
+
+<style id="cognityl-demo-styles">
+#cognityl-demo-overlay{position:fixed;inset:0;background:rgba(11,31,23,.55);backdrop-filter:blur(2px);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px}
+#cognityl-demo-overlay[hidden]{display:none}
+.cd-phone{width:100%;max-width:360px;border-radius:36px;background:#0B1F17;padding:10px;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.cd-screen{border-radius:28px;background:#fff;overflow:hidden;display:flex;flex-direction:column;height:min(600px,80vh)}
+.cd-topbar{background:#0B1F17;color:#fff;padding:16px 18px 20px;flex-shrink:0}
+.cd-topbar-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-family:'IBM Plex Mono',monospace;color:rgba(255,255,255,.45);margin-bottom:14px}
+.cd-caller{display:flex;align-items:center;gap:12px}
+.cd-avatar{width:44px;height:44px;border-radius:50%;background:#059669;display:grid;place-items:center;flex-shrink:0;font-size:20px}
+.cd-caller-name{font-size:13px;font-family:'IBM Plex Mono',monospace;color:rgba(255,255,255,.6)}
+.cd-status{font-size:13px;font-weight:600;color:#10B981}
+.cd-transcript{flex:1;overflow-y:auto;background:#F7FAF8;padding:16px;display:flex;flex-direction:column;gap:10px}
+.cd-bubble{max-width:82%;padding:10px 14px;border-radius:16px;font-size:13.5px;line-height:1.4}
+.cd-bubble.ai{align-self:flex-start;background:#fff;border:1px solid #E2E8E4;border-bottom-left-radius:4px;color:#0B1F17}
+.cd-bubble.user{align-self:flex-end;background:#0B1F17;color:#fff;border-bottom-right-radius:4px}
+.cd-controls{padding:16px;border-top:1px solid #E2E8E4;display:flex;gap:10px;justify-content:center;flex-shrink:0}
+.cd-btn-start{background:#059669;color:#fff;border:0;border-radius:999px;padding:14px 28px;font-weight:700;font-size:15px;cursor:pointer}
+.cd-btn-start:hover{background:#047857}
+.cd-btn-end{background:#DC2626;color:#fff;border:0;border-radius:50%;width:56px;height:56px;display:grid;place-items:center;cursor:pointer;font-size:22px}
+.cd-close-x{position:absolute;top:-44px;right:0;background:rgba(255,255,255,.15);color:#fff;border:0;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px;line-height:1}
+.cd-lang-toggle{background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:8px;padding:4px 8px;font-size:11px;cursor:pointer;font-weight:700}
+#cd-fab{position:fixed;right:20px;bottom:92px;z-index:9998;width:52px;height:52px;border-radius:50%;border:0;background:#0B1F17;color:#fff;font-size:20px;cursor:pointer;box-shadow:0 10px 26px rgba(11,31,23,.28);transition:.2s}
+#cd-fab:hover{background:#047857;transform:translateY(-2px)}
+@media(max-width:767px){#cd-fab{right:14px;bottom:156px}}
+@media(prefers-reduced-motion:reduce){#cognityl-demo-overlay *{transition:none!important}}
+</style>
+<div id="cognityl-demo-overlay" hidden>
+  <div style="position:relative;width:100%;max-width:360px">
+    <button class="cd-close-x" id="cd-close" aria-label="Close">×</button>
+    <div class="cd-phone">
+      <div class="cd-screen">
+        <div class="cd-topbar">
+          <div class="cd-topbar-row">
+            <span id="cd-timer">0:00</span>
+            <button class="cd-lang-toggle" id="cd-lang">EN</button>
+          </div>
+          <div class="cd-caller">
+            <div class="cd-avatar">✂️</div>
+            <div>
+              <div class="cd-caller-name">Frizētava Elegance</div>
+              <div class="cd-status" id="cd-status">Savieno zvanu…</div>
+            </div>
+          </div>
+        </div>
+        <div class="cd-transcript" id="cd-transcript"></div>
+        <div class="cd-controls" id="cd-controls"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+'use strict';
+const CD_TTS_URL = "https://cognityl-tts.krismezulis.workers.dev";
+const CD_VOICES = { lv:"lv-LV-EveritaNeural", en:"en-US-AvaMultilingualNeural" };
+function cdEscape(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');}
+function cdBuildSsml(text, l){const locale=l==='en'?'en-US':'lv-LV';const voice=CD_VOICES[l]||CD_VOICES.lv;return `<speak version="1.0" xml:lang="${locale}"><voice name="${voice}"><prosody rate="0%" pitch="0%">${cdEscape(text)}</prosody></voice></speak>`;}
+
+const CD_TXT = {
+  lv:{ connecting:'Savieno zvanu…', aiSpeaking:'AI atbild…', listening:'Klausos…', ended:'Zvans pabeigts',
+       greeting:'Labdien! Frizētava Elegance, ar ko varu palīdzēt?',
+       askService:'Protams! Kādu pakalpojumu vēlaties — matu griezumu, bārdas veidošanu vai abus?',
+       offerSlot:'Man ir brīva vieta rīt plkst. 14:00. Vai tas jums derētu?',
+       offerSlot2:'Saprotu. Vai plkst. 16:30 šodien būtu labāk?',
+       confirmed:'Lieliski, esmu jūs pierakstījis! Uz tikšanos frizētavā Elegance.',
+       declineAll:'Nekas cits, sazināsimies vēlāk — paldies par zvanu!',
+       goodbye:'Paldies par zvanu, uz redzēšanos!',
+       fallback:'Atvainojos, to nesapratu. Vai vēlaties pieteikties uz vizīti, vai ir kāds cits jautājums?',
+       noMic:'Mikrofons nav pieejams šajā pārlūkā. Lūdzu, izmantojiet Chrome vai Edge.',
+       start:'🎙️ Sākt zvanu'
+     },
+  en:{ connecting:'Connecting call…', aiSpeaking:'AI is speaking…', listening:'Listening…', ended:'Call ended',
+       greeting:'Hello! Elegance Barbershop, how can I help?',
+       askService:'Sure! What service would you like — a haircut, a beard trim, or both?',
+       offerSlot:'I have an opening tomorrow at 2:00 PM. Would that work for you?',
+       offerSlot2:'I see. Would 4:30 PM today work better?',
+       confirmed:"Great, you're booked! See you at Elegance Barbershop.",
+       declineAll:'No problem, feel free to call back anytime — thanks for calling!',
+       goodbye:'Thanks for calling, goodbye!',
+       fallback:"Sorry, I didn't catch that. Would you like to book an appointment, or is there something else?",
+       noMic:'Microphone is not available in this browser. Please use Chrome or Edge.',
+       start:'🎙️ Start call'
+     }
+};
+
+const CD_KB = [
+  {lv:['cena','maksā','izmaksas'], en:['price','cost','how much'],
+   a:{lv:'Matu griezums maksā no 20 eiro, bārdas veidošana no 12 eiro.', en:'A haircut starts from €20, a beard trim from €12.'}},
+  {lv:['darba laik','strādāj','atvērt'], en:['hours','open','when'],
+   a:{lv:'Mēs strādājam katru dienu no plkst. 9:00 līdz 19:00.', en:'We are open every day from 9 AM to 7 PM.'}},
+  {lv:['adrese','kur atrodaties','atrodas'], en:['address','located','where'],
+   a:{lv:'Atrodamies Brīvības ielā 55, Rīgā.', en:'We are located at Brivibas street 55, Riga.'}}
+];
+
+const CD_BOOK_LV = ['pieteikt','rezervēt','vizīt','griezum','griezt','bārd'];
+const CD_BOOK_EN = ['book','appointment','haircut','beard','schedule'];
+const CD_YES_LV = ['jā','derēs','labi','kārtībā'];
+const CD_YES_EN = ['yes','sure','okay','ok','fine'];
+
+function cdNorm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();}
+
+let cdLang='lv', cdState='idle', cdRecognition=null, cdAudio=null, cdTimerInt=null, cdSeconds=0, cdBookingStep=null;
+
+const overlay=document.getElementById('cognityl-demo-overlay');
+const transcriptEl=document.getElementById('cd-transcript');
+const statusEl=document.getElementById('cd-status');
+const controlsEl=document.getElementById('cd-controls');
+const closeBtn=document.getElementById('cd-close');
+const langBtn=document.getElementById('cd-lang');
+const timerEl=document.getElementById('cd-timer');
+
+function cdBubble(who,text){
+  const div=document.createElement('div');
+  div.className='cd-bubble '+(who==='ai'?'ai':'user');
+  div.textContent=text;
+  transcriptEl.appendChild(div);
+  transcriptEl.scrollTop=transcriptEl.scrollHeight;
+}
+function cdSetStatus(t){ statusEl.textContent=t; }
+function cdStartTimer(){
+  cdSeconds=0;
+  cdTimerInt=setInterval(()=>{cdSeconds++;const m=Math.floor(cdSeconds/60);const s=cdSeconds%60;timerEl.textContent=`${m}:${String(s).padStart(2,'0')}`;},1000);
+}
+function cdStopTimer(){ if(cdTimerInt) clearInterval(cdTimerInt); }
+
+async function cdSpeak(text){
+  cdBubble('ai',text);
+  cdSetStatus(CD_TXT[cdLang].aiSpeaking);
+  try{
+    const r=await fetch(CD_TTS_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ssml:cdBuildSsml(text,cdLang)})});
+    if(!r.ok) throw new Error('TTS failed '+r.status);
+    const blob=await r.blob();
+    const url=URL.createObjectURL(blob);
+    cdAudio=new Audio(url);
+    await new Promise((resolve)=>{
+      cdAudio.onended=()=>{URL.revokeObjectURL(url);resolve();};
+      cdAudio.onerror=()=>resolve();
+      cdAudio.play().catch(()=>resolve());
+    });
+  }catch(err){ console.error('cdSpeak failed',err); }
+  if(cdState==='active') cdListen();
+}
+
+function cdListen(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ cdSetStatus(CD_TXT[cdLang].noMic); return; }
+  cdSetStatus(CD_TXT[cdLang].listening);
+  cdRecognition=new SR();
+  cdRecognition.lang=cdLang==='lv'?'lv-LV':'en-US';
+  cdRecognition.interimResults=false;
+  cdRecognition.continuous=false;
+  cdRecognition.maxAlternatives=1;
+  cdRecognition.onresult=(ev)=>{
+    const text=ev.results[0][0].transcript;
+    cdBubble('user',text);
+    cdHandleTurn(text);
+  };
+  cdRecognition.onerror=()=>{ if(cdState==='active') setTimeout(cdListen,600); };
+  try{ cdRecognition.start(); }catch(e){}
+}
+
+function cdHandleTurn(rawText){
+  const t=cdNorm(rawText);
+  const T=CD_TXT[cdLang];
+
+  if(cdBookingStep==='awaitService'){ cdBookingStep='awaitSlot1'; cdSpeak(T.offerSlot); return; }
+  if(cdBookingStep==='awaitSlot1'){
+    const yes = cdLang==='lv' ? CD_YES_LV.some(w=>t.includes(w)) : CD_YES_EN.some(w=>t.includes(w));
+    if(yes){ cdBookingStep=null; cdSpeak(T.confirmed); cdShowBookedCard(); }
+    else { cdBookingStep='awaitSlot2'; cdSpeak(T.offerSlot2); }
+    return;
+  }
+  if(cdBookingStep==='awaitSlot2'){
+    const yes = cdLang==='lv' ? CD_YES_LV.some(w=>t.includes(w)) : CD_YES_EN.some(w=>t.includes(w));
+    if(yes){ cdBookingStep=null; cdSpeak(T.confirmed); cdShowBookedCard(); }
+    else { cdBookingStep=null; cdSpeak(T.declineAll); }
+    return;
+  }
+
+  const byeWords = cdLang==='lv' ? ['atā','tas ir viss','viss, paldies','beigt'] : ['bye','goodbye','that\'s all','nothing else'];
+  if(byeWords.some(w=>t.includes(w))){ cdSpeak(T.goodbye); setTimeout(cdEndCall, 2500); return; }
+
+  const bookWords = cdLang==='lv' ? CD_BOOK_LV : CD_BOOK_EN;
+  if(bookWords.some(w=>t.includes(w))){ cdBookingStep='awaitService'; cdSpeak(T.askService); return; }
+
+  const hit = CD_KB.find(k => (k[cdLang]||[]).some(w=>t.includes(w)));
+  if(hit){ cdSpeak(hit.a[cdLang]); return; }
+
+  cdSpeak(T.fallback);
+}
+
+function cdShowBookedCard(){
+  const div=document.createElement('div');
+  div.className='cd-bubble ai';
+  div.style.border='2px solid #059669';
+  div.style.background='#F0FDF7';
+  div.innerHTML = cdLang==='lv'
+    ? '<strong>✓ Vizīte rezervēta</strong>'
+    : '<strong>✓ Appointment booked</strong>';
+  transcriptEl.appendChild(div);
+  transcriptEl.scrollTop=transcriptEl.scrollHeight;
+}
+
+async function cdStartCall(){
+  try{
+    if(navigator.mediaDevices?.getUserMedia){
+      const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+      stream.getTracks().forEach(tr=>tr.stop());
+    }
+  }catch(e){ cdSetStatus(CD_TXT[cdLang].noMic); return; }
+  cdState='active';
+  transcriptEl.textContent='';
+  cdBookingStep=null;
+  controlsEl.innerHTML='';
+  const endBtn=document.createElement('button');
+  endBtn.className='cd-btn-end';
+  endBtn.innerHTML='☎';
+  endBtn.setAttribute('aria-label','End call');
+  endBtn.onclick=cdEndCall;
+  controlsEl.appendChild(endBtn);
+  cdStartTimer();
+  cdSpeak(CD_TXT[cdLang].greeting);
+}
+
+function cdEndCall(){
+  cdState='ended';
+  cdStopTimer();
+  try{ cdRecognition?.stop(); }catch(e){}
+  try{ cdAudio?.pause(); }catch(e){}
+  cdSetStatus(CD_TXT[cdLang].ended);
+  controlsEl.innerHTML='';
+  const startAgain=document.createElement('button');
+  startAgain.className='cd-btn-start';
+  startAgain.textContent=CD_TXT[cdLang].start;
+  startAgain.onclick=cdStartCall;
+  controlsEl.appendChild(startAgain);
+}
+
+function cdOpen(){
+  overlay.hidden=false;
+  cdState='idle';
+  transcriptEl.textContent='';
+  cdSetStatus(CD_TXT[cdLang].connecting);
+  timerEl.textContent='0:00';
+  controlsEl.innerHTML='';
+  const startAgain=document.createElement('button');
+  startAgain.className='cd-btn-start';
+  startAgain.textContent=CD_TXT[cdLang].start;
+  startAgain.onclick=cdStartCall;
+  controlsEl.appendChild(startAgain);
+  langBtn.textContent = cdLang==='lv' ? 'EN' : 'LV';
+}
+function cdClose(){
+  overlay.hidden=true;
+  cdState='ended';
+  cdStopTimer();
+  try{ cdRecognition?.stop(); }catch(e){}
+  try{ cdAudio?.pause(); }catch(e){}
+}
+
+closeBtn.onclick=cdClose;
+langBtn.onclick=()=>{ cdLang = cdLang==='lv' ? 'en' : 'lv'; langBtn.textContent = cdLang==='lv'?'EN':'LV'; cdSetStatus(CD_TXT[cdLang].connecting); };
+
+window.cognitylOpenCallDemo = cdOpen;
 })();
 </script>
 
