@@ -1131,16 +1131,38 @@ function cdListen(){
   cdSetStatus(CD_TXT[cdLang].listening);
   cdRecognition=new SR();
   cdRecognition.lang=cdLang==='lv'?'lv-LV':'en-US';
-  cdRecognition.interimResults=false;
-  cdRecognition.continuous=false;
+  cdRecognition.interimResults=true;
+  cdRecognition.continuous=true;
   cdRecognition.maxAlternatives=1;
+
+  let finalText='';
+  let silenceTimer=null;
+  const SILENCE_MS=1400;
+  const MAX_LISTEN_MS=15000;
+
+  function scheduleFinish(){
+    if(silenceTimer) clearTimeout(silenceTimer);
+    silenceTimer=setTimeout(()=>{ try{ cdRecognition.stop(); }catch(e){} }, SILENCE_MS);
+  }
+
   cdRecognition.onresult=(ev)=>{
-    const text=ev.results[0][0].transcript;
-    cdBubble('user',text);
-    cdHandleTurn(text);
+    for(let i=ev.resultIndex;i<ev.results.length;i++){
+      if(ev.results[i].isFinal) finalText+=ev.results[i][0].transcript+' ';
+    }
+    scheduleFinish();
   };
-  cdRecognition.onerror=()=>{ if(cdState==='active') setTimeout(cdListen,600); };
-  try{ cdRecognition.start(); }catch(e){}
+  cdRecognition.onerror=()=>{
+    if(silenceTimer) clearTimeout(silenceTimer);
+    if(cdState==='active') setTimeout(cdListen,600);
+  };
+  cdRecognition.onend=()=>{
+    if(silenceTimer) clearTimeout(silenceTimer);
+    const text=finalText.trim();
+    if(text){ cdBubble('user',text); cdHandleTurn(text); }
+    else if(cdState==='active'){ setTimeout(cdListen,400); }
+  };
+  try{ cdRecognition.start(); }catch(e){ if(cdState==='active') setTimeout(cdListen,600); }
+  setTimeout(()=>{ try{ cdRecognition.stop(); }catch(e){} }, MAX_LISTEN_MS);
 }
 
 function cdHandleTurn(rawText){
