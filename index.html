@@ -1045,6 +1045,13 @@ const CD_KB = [
   {kw:['address','located','where'], a:'Our Columbus location is at 4400 Main Street.'}
 ];
 
+// Things people ask that aren't bookings or FAQs, but shouldn't dead-end either —
+// a real receptionist redirects these instead of getting stuck.
+const CD_REDIRECTS = [
+  {kw:['how do i fix','how to fix','fix it myself','diy','repair it myself','what\'s wrong with my car','whats wrong with my car'],
+   a:"I'm not able to diagnose or give repair advice over the phone, but I can get a technician to take a proper look. Would you like to book a diagnostic?"}
+];
+
 const CD_SERVICES = [
   {id:'oil', label:'an oil change', kw:['oil change','oil'], detail:'Do you know if your vehicle takes conventional or synthetic oil? If you\'re not sure, that\'s fine — we\'ll check when you arrive.'},
   {id:'tire', label:'tire service', kw:['tire rotation','tire','tires'], detail:'Are you looking for a rotation, a full set replacement, or just a pressure check?'},
@@ -1061,7 +1068,7 @@ const CD_HUMAN_CHECK = ['are you a person','are you human','am i talking to a pe
 
 function cdNorm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();}
 
-let cdState='idle', cdRecognition=null, cdAudio=null, cdTimerInt=null, cdSeconds=0, cdBookingStep=null, cdLocation=null, cdService=null, cdVehicle=null, cdRetries=0;
+let cdState='idle', cdRecognition=null, cdAudio=null, cdTimerInt=null, cdSeconds=0, cdBookingStep=null, cdLocation=null, cdService=null, cdVehicle=null, cdRetries=0, cdFallbackCount=0;
 
 const overlay=document.getElementById('cognityl-demo-overlay');
 const transcriptEl=document.getElementById('cd-transcript');
@@ -1151,47 +1158,69 @@ function cdHandleTurn(rawText){
   // Honest, always-on disclosure: if asked directly, say so — every turn, regardless of state.
   if(CD_HUMAN_CHECK.some(w=>t.includes(w))){ cdSpeak(CD_TXT.areYouHuman); return; }
 
+  if(cdBookingStep==='awaitEscalation'){
+    cdBookingStep=null; cdFallbackCount=0;
+    if(CD_YES.some(w=>t.includes(w))){ cdSpeak("Great — I've noted that down and someone from the team will call you back shortly. Is there anything else I can help with in the meantime?"); }
+    else { cdSpeak("No problem. Is there anything else I can help with?"); }
+    return;
+  }
+
   if(cdBookingStep===null && !cdLocation){
     const loc = CD_LOCATIONS.find(l=>t.includes(l));
-    if(loc){ cdLocation=loc; cdSpeak(`Got it — ${loc.charAt(0).toUpperCase()+loc.slice(1)}. What can we help you with today?`); return; }
+    if(loc){ cdLocation=loc; cdFallbackCount=0; cdSpeak(`Got it — ${loc.charAt(0).toUpperCase()+loc.slice(1)}. What can we help you with today?`); return; }
   }
 
   if(cdBookingStep==='awaitService'){
     const svc = CD_SERVICES.find(s => (s.kw||[]).some(w=>t.includes(w)));
-    if(svc){ cdService=svc; cdBookingStep='awaitServiceDetail'; cdSpeak(svc.detail); return; }
+    if(svc){ cdService=svc; cdBookingStep='awaitServiceDetail'; cdFallbackCount=0; cdSpeak(svc.detail); return; }
     cdSpeak("Just to confirm, was that an oil change, tire service, a brake check, a battery check, a check-engine light, or a general inspection?");
     return;
   }
   if(cdBookingStep==='awaitServiceDetail'){
     cdBookingStep='awaitVehicle';
+    cdFallbackCount=0;
     cdSpeak(CD_TXT.askVehicle);
     return;
   }
   if(cdBookingStep==='awaitVehicle'){
     cdVehicle = rawText.trim();
     cdBookingStep='awaitSlot1';
+    cdFallbackCount=0;
     cdSpeak(CD_TXT.offerSlot);
     return;
   }
   if(cdBookingStep==='awaitSlot1'){
     if(CD_YES.some(w=>t.includes(w))){ cdBookingStep=null; cdSpeak(CD_TXT.confirmed); cdShowBookedCard(); }
     else { cdBookingStep='awaitSlot2'; cdSpeak(CD_TXT.offerSlot2); }
+    cdFallbackCount=0;
     return;
   }
   if(cdBookingStep==='awaitSlot2'){
     if(CD_YES.some(w=>t.includes(w))){ cdBookingStep=null; cdSpeak(CD_TXT.confirmed); cdShowBookedCard(); }
     else { cdBookingStep=null; cdSpeak(CD_TXT.declineAll); }
+    cdFallbackCount=0;
     return;
   }
 
   const byeWords = ['bye','goodbye','that\'s all','thats all','nothing else'];
   if(byeWords.some(w=>t.includes(w))){ cdSpeak(CD_TXT.goodbye); setTimeout(cdEndCall, 2500); return; }
 
-  if(CD_BOOK.some(w=>t.includes(w))){ cdBookingStep='awaitService'; cdSpeak(CD_TXT.askService); return; }
+  if(CD_BOOK.some(w=>t.includes(w))){ cdBookingStep='awaitService'; cdFallbackCount=0; cdSpeak(CD_TXT.askService); return; }
 
-  const hit = CD_KB.find(k => (k.kw||[]).some(w=>t.includes(w)));
-  if(hit){ cdSpeak(hit.a); return; }
+  const kbHit = CD_KB.find(k => (k.kw||[]).some(w=>t.includes(w)));
+  if(kbHit){ cdFallbackCount=0; cdSpeak(kbHit.a); return; }
 
+  const redirectHit = CD_REDIRECTS.find(k => (k.kw||[]).some(w=>t.includes(w)));
+  if(redirectHit){ cdFallbackCount=0; cdSpeak(redirectHit.a); return; }
+
+  // Nothing matched. Once is a shrug; twice in a row means stop looping and offer a human.
+  cdFallbackCount++;
+  if(cdFallbackCount>=2){
+    cdFallbackCount=0;
+    cdBookingStep='awaitEscalation';
+    cdSpeak("I want to make sure you get a real answer on that — would you like me to have someone from the team call you back?");
+    return;
+  }
   cdSpeak(CD_TXT.fallback);
 }
 
@@ -1227,6 +1256,7 @@ async function cdStartCall(){
   cdService=null;
   cdVehicle=null;
   cdRetries=0;
+  cdFallbackCount=0;
   controlsEl.innerHTML='';
   const endBtn=document.createElement('button');
   endBtn.className='cd-btn-end';
