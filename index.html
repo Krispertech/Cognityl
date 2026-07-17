@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="lv">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Cognityl — AI administrators, kas atbild uz katru zvanu</title>
-<meta name="description" content="AI administrators jūsu biznesam: atbild uz zvaniem 24/7 latviski, krieviski un angliski, un automātiski rezervē vizītes jūsu kalendārā. Autoservisiem, frizētavām un skaistumkopšanas saloniem." />
+<title>Cognityl — AI Call Handling for Multi-Location Service Businesses</title>
+<meta name="description" content="Cognityl answers every inbound call across every location, books appointments directly into your calendar, and routes callers to the right site automatically. Built for multi-location service businesses." />
 <link rel="icon" href="favicon.png" type="image/png">
 
-<meta property="og:title" content="Cognityl — AI administrators, kas atbild uz katru zvanu" />
-<meta property="og:description" content="Beidziet zaudēt klientus neatbildētu zvanu dēļ. AI atbild 24/7 un rezervē vizītes jūsu kalendārā." />
-<meta property="og:locale" content="lv_LV" />
+<meta property="og:title" content="Cognityl — AI Call Handling for Multi-Location Service Businesses" />
+<meta property="og:description" content="Never miss another call. Cognityl answers 24/7 across every location and books the appointment automatically." />
+<meta property="og:locale" content="en_US" />
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -26,9 +26,9 @@
       extend: {
         colors: {
           ink:    { DEFAULT:'#0B1F17', soft:'#1B3329', muted:'#5C6F66' },
-          brand:  { DEFAULT:'#059669', dark:'#047857', bright:'#10B981', light:'#D1FAE5', wash:'#F0FDF7' },
-          loss:   { DEFAULT:'#DC2626', light:'#FEF2F2', line:'#FECACA' },
-          line:   '#E2E8E4',
+          brand:  { DEFAULT:'#13944A', dark:'#0E7239', bright:'#22B563', light:'#DCF3E5', wash:'#F3F8F4' },
+          loss:   { DEFAULT:'#B3451D', light:'#FBF1EC', line:'#EAC6B5' },
+          line:   '#E3E8E4',
         },
         fontFamily: {
           display: ['Archivo','system-ui','sans-serif'],
@@ -45,24 +45,21 @@
   body{-webkit-font-smoothing:antialiased;}
   .display{font-family:'Archivo',system-ui,sans-serif;letter-spacing:-0.035em;}
 
-  /* Focus visibility — keyboard users must always see where they are */
-  .focus-ring:focus-visible{outline:3px solid #10B981;outline-offset:3px;border-radius:2px;}
+  .focus-ring:focus-visible{outline:3px solid #22B563;outline-offset:3px;border-radius:2px;}
 
-  /* Range sliders (loss calculator) */
   input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:99px;
-    background:#E2E8E4;outline:none;}
+    background:#E3E8E4;outline:none;}
   input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:26px;height:26px;
     border-radius:50%;background:#0B1F17;cursor:pointer;border:3px solid #fff;
     box-shadow:0 2px 8px rgba(11,31,23,.28);}
   input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:#0B1F17;
     cursor:pointer;border:3px solid #fff;box-shadow:0 2px 8px rgba(11,31,23,.28);}
-  input[type=range]:focus-visible::-webkit-slider-thumb{outline:3px solid #10B981;outline-offset:2px;}
+  input[type=range]:focus-visible::-webkit-slider-thumb{outline:3px solid #22B563;outline-offset:2px;}
 
-  /* Hero call animation */
   @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
   .rise{animation:rise .35s ease-out both;}
-  @keyframes pulsering{0%{box-shadow:0 0 0 0 rgba(16,185,129,.45)}70%{box-shadow:0 0 0 18px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
-  .pulse-ring{animation:pulsering 2s infinite;}
+  @keyframes pulsering{0%{box-shadow:0 0 0 0 rgba(34,181,99,.4)}70%{box-shadow:0 0 0 16px rgba(34,181,99,0)}100%{box-shadow:0 0 0 0 rgba(34,181,99,0)}}
+  .pulse-ring{animation:pulsering 2.2s infinite;}
   .dots span{width:6px;height:6px;border-radius:50%;background:#94A3A0;display:inline-block;
     animation:bounce 1.3s infinite both;}
   .dots span:nth-child(2){animation-delay:.18s}
@@ -75,7 +72,6 @@
     *{transition:none !important;}
   }
 
-  /* Leave room for the sticky mobile call bar */
   @media (max-width: 767px){ body{padding-bottom:76px;} }
 </style>
 </head>
@@ -83,28 +79,26 @@
 <div id="root"></div>
 
 <script type="text/babel" data-presets="react">
-const {useState, useEffect, useRef, useCallback} = React;
+const {useState, useEffect, useRef} = React;
 
 /* ─────────────────────────────────────────────────────────
-   VIENA VIETA, KUR MAINĪT KONTAKTUS
-   Nomainiet šos divus laukus, kad demo numurs ir aktīvs.
-   PHONE_TEL drīkst saturēt tikai ciparus un + zīmi.
+   SINGLE PLACE TO EDIT CONTACT DETAILS
+   PHONE_TEL must contain digits and + only.
    ───────────────────────────────────────────────────────── */
-const PHONE_DISPLAY = "+371 XX XXX XXX";   // kā to redz apmeklētājs
-const PHONE_TEL     = "";                   // piem. "+37120000000" — kamēr tukšs, poga ved uz pieteikuma formu
+const PHONE_DISPLAY = "+1 (XXX) XXX-XXXX";
+const PHONE_TEL     = "";                   // e.g. "+13125551234" — while empty, buttons open the live demo
 const EMAIL         = "kristaps@cognityl.com";
 
 const hasPhone = PHONE_TEL.replace(/[^\d+]/g, "").length > 7;
-const callHref = hasPhone ? `tel:${PHONE_TEL.replace(/[^\d+]/g,"")}` : "#pieteikties";
+const callHref = hasPhone ? `tel:${PHONE_TEL.replace(/[^\d+]/g,"")}` : "#book-demo";
 
-const eur = (n) => new Intl.NumberFormat('lv-LV',{maximumFractionDigits:0}).format(Math.round(n)) + " €";
+const usd = (n) => "$" + new Intl.NumberFormat('en-US',{maximumFractionDigits:0}).format(Math.round(n));
 
-/* ── Ikonas ───────────────────────────────────────────── */
 const Icon = ({name, className="w-5 h-5"}) => {
   const p = {
     phone:"M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z",
     clock:"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zm0-14v5l3 2",
-    globe:"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM2 12h20M12 2a15 15 0 0 1 0 20a15 15 0 0 1 0-20z",
+    map:"M9 20l-5.5-2.5V4L9 6.5m0 13.5l6-2.5m-6 2.5V6.5m6 11l5.5 2.5V6.5L15 4m0 13.5V4m0 0L9 6.5",
     calendar:"M8 2v4M16 2v4M3 8h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z",
     check:"M20 6L9 17l-5-5",
     arrow:"M5 12h14m-6-6l6 6-6 6",
@@ -113,13 +107,13 @@ const Icon = ({name, className="w-5 h-5"}) => {
     missed:"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM15 9l-6 6M9 9l6 6",
     menu:"M4 7h16M4 12h16M4 17h16",
     x:"M18 6L6 18M6 6l12 12",
-    spark:"M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2z",
+    layers:"M12 2l9 5-9 5-9-5 9-5zM3 12l9 5 9-5M3 17l9 5 9-5",
+    chat:"M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z",
   };
   return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor"
     strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={p[name]}/></svg>;
 };
 
-/* ── Pogas ────────────────────────────────────────────── */
 const CallButton = ({className="", children, size="lg"}) => (
   <a href={callHref}
      onClick={(e)=>{ if(!hasPhone && window.cognitylOpenCallDemo){ e.preventDefault(); window.cognitylOpenCallDemo(); } }}
@@ -127,12 +121,12 @@ const CallButton = ({className="", children, size="lg"}) => (
        hover:bg-brand-dark active:scale-[.98] transition focus-ring shadow-lg shadow-brand/25
        ${size==="lg" ? "px-7 py-4 text-[17px]" : "px-5 py-3 text-[15px]"} ${className}`}>
     <Icon name="phone" className="w-5 h-5"/>
-    {children || "Zvanīt AI asistentam tūlīt"}
+    {children || "Hear the live demo"}
   </a>
 );
 
 /* ══════════════════════════════════════════════════════
-   NAVIGĀCIJA
+   NAV
    ══════════════════════════════════════════════════════ */
 function Nav(){
   const [open,setOpen] = useState(false);
@@ -146,9 +140,9 @@ function Nav(){
   },[]);
 
   const links = [
-    ["Kā tas strādā", "#ka-tas-strada"],
-    ["Ieguvumi", "#ieguvumi"],
-    ["Cenas", "#cenas"],
+    ["How it works", "#how-it-works"],
+    ["Why Cognityl", "#benefits"],
+    ["Pricing", "#pricing"],
   ];
 
   return (
@@ -160,7 +154,7 @@ function Nav(){
           <span className="display text-xl font-extrabold">Cognityl</span>
         </a>
 
-        <nav className="hidden md:flex items-center gap-8" aria-label="Galvenā navigācija">
+        <nav className="hidden md:flex items-center gap-8" aria-label="Main navigation">
           {links.map(([label,href])=>(
             <a key={href} href={href}
                className="text-[15px] font-medium text-ink-muted hover:text-ink transition focus-ring">{label}</a>
@@ -168,10 +162,13 @@ function Nav(){
         </nav>
 
         <div className="hidden md:block">
-          <CallButton size="sm">Izmēģināt demo</CallButton>
+          <a href="#book-demo" className="inline-flex items-center justify-center gap-2 rounded-full bg-ink text-white
+            px-5 py-3 text-[15px] font-semibold hover:bg-brand-dark transition focus-ring">
+            Book a demo
+          </a>
         </div>
 
-        <button onClick={()=>setOpen(!open)} aria-expanded={open} aria-label="Atvērt izvēlni"
+        <button onClick={()=>setOpen(!open)} aria-expanded={open} aria-label="Open menu"
           className="md:hidden w-11 h-11 grid place-items-center focus-ring">
           <Icon name={open ? "x" : "menu"} className="w-6 h-6"/>
         </button>
@@ -184,6 +181,7 @@ function Nav(){
               <a key={href} href={href} onClick={()=>setOpen(false)}
                  className="py-3 text-[16px] font-medium border-b border-line last:border-0">{label}</a>
             ))}
+            <a href="#book-demo" onClick={()=>setOpen(false)} className="py-3 text-[16px] font-semibold text-brand-dark">Book a demo</a>
           </div>
         </div>
       )}
@@ -192,22 +190,22 @@ function Nav(){
 }
 
 /* ══════════════════════════════════════════════════════
-   PARAKSTA ELEMENTS: dzīva saruna telefonā
-   Klients zvana → AI atbild → vizīte kalendārā
+   SIGNATURE ELEMENT: a call that routes itself to the right location
    ══════════════════════════════════════════════════════ */
 const SCRIPT = [
-  {who:'ai',     text:'Labdien! Auto Serviss Rīga, kā varu palīdzēt?'},
-  {who:'client', text:'Sveiki, gribu pieteikties uz riepu maiņu.'},
-  {who:'ai',     text:'Protams. Vai jums derētu rītdien plkst. 10:00?'},
-  {who:'client', text:'Jā, derēs.'},
-  {who:'ai',     text:'Lieliski — esmu jūs pierakstījis. Uz tikšanos!'},
+  {who:'ai',     text:'Thanks for calling Sunrise Auto Group. Which location works best for you — Columbus, Dayton, or Cincinnati?'},
+  {who:'client', text:'Columbus, please.'},
+  {who:'ai',     text:'Got it. What can we help you with today?'},
+  {who:'client', text:'I need an oil change.'},
+  {who:'ai',     text:'Our Columbus location has an opening tomorrow at 10:00 AM — does that work?'},
+  {who:'client', text:'Yes, that works.'},
+  {who:'ai',     text:"You're booked at Columbus for tomorrow, 10:00 AM. We'll text a confirmation."},
 ];
 
 function LiveCall(){
   const reduce = typeof window !== "undefined" &&
     window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // reduce = uzreiz rādām visu sarunu, bez animācijas
   const [shown,setShown]   = useState(reduce ? SCRIPT.length : 0);
   const [typing,setTyping] = useState(false);
   const [booked,setBooked] = useState(reduce);
@@ -222,17 +220,17 @@ function LiveCall(){
       clearTimers();
       setShown(0); setBooked(false); setTyping(true);
 
-      let t = 900; // "zvans savienojas"
+      let t = 900;
       SCRIPT.forEach((_, i) => {
         timers.current.push(setTimeout(()=>{
           setShown(i+1);
           setTyping(i < SCRIPT.length-1);
         }, t));
-        t += 1500;
+        t += 1400;
       });
 
       timers.current.push(setTimeout(()=>{ setTyping(false); setBooked(true); }, t));
-      timers.current.push(setTimeout(run, t + 4200)); // cilpa
+      timers.current.push(setTimeout(run, t + 4500));
     };
 
     run();
@@ -241,11 +239,9 @@ function LiveCall(){
 
   return (
     <div className="relative">
-      {/* Telefona korpuss */}
       <div className="relative mx-auto w-full max-w-[360px] rounded-[36px] bg-ink p-2.5 shadow-2xl shadow-ink/25">
         <div className="rounded-[28px] bg-white overflow-hidden">
 
-          {/* Zvana josla */}
           <div className="bg-ink text-white px-5 pt-4 pb-5">
             <div className="flex items-center justify-between text-[11px] font-mono text-white/45 mb-4">
               <span>9:41</span>
@@ -259,19 +255,18 @@ function LiveCall(){
                 <Icon name="phone" className="w-5 h-5 text-white"/>
               </span>
               <div className="leading-tight min-w-0">
-                <p className="font-mono text-[13px] text-white/60">+371 2X XXX XXX</p>
+                <p className="font-mono text-[13px] text-white/60">+1 (614) XXX-XXXX</p>
                 <p className="text-[13px] font-semibold text-brand-bright">
-                  {booked ? "Zvans pabeigts · 0:38" : "AI atbild…"}
+                  {booked ? "Call complete · 0:41" : "AI is answering…"}
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Sarunas atšifrējums */}
-          <div className="px-4 py-4 bg-[#F7FAF8] min-h-[280px] flex flex-col gap-2.5" aria-live="polite">
+          <div className="px-4 py-4 bg-[#F7FAF8] min-h-[300px] flex flex-col gap-2.5" aria-live="polite">
             {SCRIPT.slice(0,shown).map((m,i)=>(
               <div key={i} className={`rise flex ${m.who==='ai' ? 'justify-start' : 'justify-end'}`}>
-                <div className={`max-w-[82%] px-3.5 py-2.5 text-[13.5px] leading-snug rounded-2xl
+                <div className={`max-w-[85%] px-3.5 py-2.5 text-[13.5px] leading-snug rounded-2xl
                   ${m.who==='ai'
                     ? 'bg-white border border-line rounded-bl-md text-ink'
                     : 'bg-ink text-white rounded-br-md'}`}>
@@ -288,17 +283,16 @@ function LiveCall(){
               </div>
             )}
 
-            {/* Rezervācijas apstiprinājums */}
             {booked && (
               <div className="rise mt-auto pt-2">
                 <div className="rounded-2xl border-2 border-brand bg-brand-light/70 p-3.5">
                   <p className="flex items-center gap-2 text-[11px] font-mono uppercase tracking-wider text-brand-dark font-semibold mb-2">
-                    <Icon name="check" className="w-3.5 h-3.5"/> Vizīte rezervēta
+                    <Icon name="check" className="w-3.5 h-3.5"/> Appointment booked · Columbus
                   </p>
-                  <p className="font-semibold text-[15px] text-ink">Riepu maiņa</p>
-                  <p className="text-[13px] text-ink-muted">Rītdien, plkst. 10:00</p>
+                  <p className="font-semibold text-[15px] text-ink">Oil change</p>
+                  <p className="text-[13px] text-ink-muted">Tomorrow, 10:00 AM</p>
                   <p className="flex items-center gap-1.5 text-[12px] text-brand-dark font-medium mt-2 pt-2 border-t border-brand/25">
-                    <Icon name="calendar" className="w-3.5 h-3.5"/> Pievienots Google Calendar
+                    <Icon name="calendar" className="w-3.5 h-3.5"/> Synced to the Columbus location calendar
                   </p>
                 </div>
               </div>
@@ -307,11 +301,10 @@ function LiveCall(){
         </div>
       </div>
 
-      {/* Peldošā zīmīte — tikai uz lieliem ekrāniem, lai nesaspiestu mobilo */}
-      <div className="hidden lg:flex absolute -left-6 top-1/3 items-center gap-2 rounded-full bg-white
+      <div className="hidden lg:flex absolute -left-6 top-[28%] items-center gap-2 rounded-full bg-white
         border border-line shadow-xl px-4 py-2.5">
-        <span className="w-2 h-2 rounded-full bg-brand-bright"></span>
-        <span className="text-[13px] font-semibold">Atbild 2 sekundēs</span>
+        <Icon name="layers" className="w-4 h-4 text-brand-dark"/>
+        <span className="text-[13px] font-semibold">Routes to the right location</span>
       </div>
     </div>
   );
@@ -323,7 +316,6 @@ function LiveCall(){
 function Hero(){
   return (
     <section id="top" className="relative pt-28 md:pt-36 pb-16 md:pb-24 overflow-hidden">
-      {/* maigs fona akcents */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-brand-wash to-white"></div>
 
       <div className="max-w-6xl mx-auto px-5 lg:px-8 grid lg:grid-cols-[1.05fr_.95fr] gap-14 lg:gap-12 items-center">
@@ -332,30 +324,30 @@ function Hero(){
           <p className="inline-flex items-center gap-2 rounded-full border border-line bg-white px-3.5 py-1.5
             text-[13px] font-medium text-ink-muted mb-6 shadow-sm">
             <span className="w-1.5 h-1.5 rounded-full bg-brand-bright"></span>
-            AI administrators · runā latviski, krieviski, angliski
+            AI call handling for multi-location businesses
           </p>
 
-          <h1 className="display text-[40px] leading-[1.02] sm:text-[54px] lg:text-[62px] font-extrabold">
-            Beidziet zaudēt klientus <span className="text-brand">neatbildētu zvanu</span> dēļ.
+          <h1 className="display text-[40px] leading-[1.02] sm:text-[54px] lg:text-[60px] font-extrabold">
+            Every missed call is a <span className="text-brand">missed customer.</span> Answer all of them.
           </h1>
 
           <p className="mt-6 text-[17px] sm:text-[19px] leading-relaxed text-ink-muted max-w-xl">
-            Jūsu jaunais AI administrators atbild uz zvaniem 24/7, runā latviski un krieviski,
-            un automātiski rezervē vizītes jūsu kalendārā.
+            Cognityl answers every inbound call across every location, 24/7 — identifies which
+            site the caller needs, and books the appointment directly into that location's calendar.
           </p>
 
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
             <CallButton/>
-            <a href="#pieteikties"
+            <a href="#book-demo"
                className="inline-flex items-center justify-center gap-2 rounded-full bg-white border-2 border-ink
                  px-7 py-4 text-[17px] font-semibold hover:bg-ink hover:text-white transition focus-ring">
-              Pieteikt konsultāciju
+              Book a demo
             </a>
           </div>
 
           <p className="mt-5 flex items-start gap-2 text-[14px] text-ink-muted">
-            <Icon name="check" className="w-4 h-4 text-brand mt-0.5 flex-shrink-0"/>
-            Pielāgojams autoservisiem, frizētavām un skaistumkopšanas saloniem.
+            <Icon name="layers" className="w-4 h-4 text-brand mt-0.5 flex-shrink-0"/>
+            Built for regional and multi-location service businesses — 10 to 50+ sites.
           </p>
         </div>
 
@@ -366,14 +358,15 @@ function Hero(){
 }
 
 /* ══════════════════════════════════════════════════════
-   PROBLĒMA — kalkulators (paša īpašnieka skaitļi)
+   PROBLEM — loss calculator, scaled across locations
    ══════════════════════════════════════════════════════ */
 function Problem(){
-  const [calls,setCalls] = useState(5);   // neatbildētie zvani dienā
-  const [value,setValue] = useState(30);  // vidējais pirkums €
+  const [locations,setLocations] = useState(15);
+  const [calls,setCalls] = useState(4);     // missed calls per day, per location
+  const [value,setValue] = useState(65);    // avg ticket value, USD
 
-  const perDay   = calls * value;
-  const perMonth = perDay * 22;   // ~22 darba dienas
+  const perDay   = locations * calls * value;
+  const perMonth = perDay * 22;
   const perYear  = perMonth * 12;
 
   return (
@@ -383,28 +376,36 @@ function Problem(){
         <div className="max-w-2xl">
           <p className="inline-flex items-center gap-2 text-[12px] font-mono uppercase tracking-[0.14em]
             text-loss-line mb-5">
-            <Icon name="missed" className="w-4 h-4"/> Neatbildētie zvani
+            <Icon name="missed" className="w-4 h-4"/> Missed calls, across your network
           </p>
           <h2 className="display text-[34px] sm:text-[44px] leading-[1.06] font-extrabold">
-            Cik daudz naudas jūs šodien pazaudējāt?
+            What is it costing you — across every location?
           </h2>
           <p className="mt-5 text-[17px] leading-relaxed text-white/65">
-            Kamēr jūs strādājat, klienti zvana. Ja jūs neatbildat 15 sekunžu laikā,
-            viņi zvana jūsu konkurentiem.
+            A single missed call is easy to shrug off. Multiply it by every site, every day,
+            and it becomes one of the largest, least visible line items in the business.
           </p>
         </div>
 
         <div className="mt-12 grid lg:grid-cols-[1fr_1fr] gap-6 items-stretch">
 
-          {/* Slīdņi */}
           <div className="rounded-3xl bg-white/[0.06] border border-white/10 p-6 sm:p-8">
             <p className="text-[12px] font-mono uppercase tracking-[0.12em] text-white/40 mb-7">
-              Ievadiet savus skaitļus
+              Enter your numbers
             </p>
 
             <div className="mb-8">
+              <label htmlFor="locations" className="flex items-baseline justify-between mb-3">
+                <span className="text-[15px] font-medium text-white/85">Locations</span>
+                <span className="font-mono text-[22px] font-semibold text-white">{locations}</span>
+              </label>
+              <input id="locations" type="range" min="1" max="60" value={locations}
+                onChange={e=>setLocations(+e.target.value)} className="focus-ring"/>
+            </div>
+
+            <div className="mb-8">
               <label htmlFor="calls" className="flex items-baseline justify-between mb-3">
-                <span className="text-[15px] font-medium text-white/85">Neatbildēti zvani dienā</span>
+                <span className="text-[15px] font-medium text-white/85">Missed calls per location, per day</span>
                 <span className="font-mono text-[22px] font-semibold text-white">{calls}</span>
               </label>
               <input id="calls" type="range" min="1" max="20" value={calls}
@@ -413,44 +414,42 @@ function Problem(){
 
             <div>
               <label htmlFor="value" className="flex items-baseline justify-between mb-3">
-                <span className="text-[15px] font-medium text-white/85">Vidējais pirkums</span>
-                <span className="font-mono text-[22px] font-semibold text-white">{eur(value)}</span>
+                <span className="text-[15px] font-medium text-white/85">Average ticket value</span>
+                <span className="font-mono text-[22px] font-semibold text-white">{usd(value)}</span>
               </label>
-              <input id="value" type="range" min="10" max="300" step="5" value={value}
+              <input id="value" type="range" min="10" max="500" step="5" value={value}
                 onChange={e=>setValue(+e.target.value)} className="focus-ring"/>
             </div>
 
-            <p className="mt-7 pt-6 border-t border-white/10 font-mono text-[14px] text-white/55">
-              {calls} zvani × {eur(value)} = <span className="text-loss-line font-semibold">{eur(perDay)}</span> dienā
+            <p className="mt-7 pt-6 border-t border-white/10 font-mono text-[13px] text-white/55">
+              {locations} locations × {calls} calls × {usd(value)} = <span className="text-loss-line font-semibold">{usd(perDay)}</span> per day
             </p>
           </div>
 
-          {/* Rezultāts */}
           <div className="rounded-3xl bg-loss-light border-2 border-loss p-6 sm:p-8 text-ink flex flex-col justify-center">
             <p className="text-[12px] font-mono uppercase tracking-[0.12em] text-loss font-semibold mb-2">
-              Jūs zaudējat
+              Estimated impact
             </p>
 
-            <p className="display text-[48px] sm:text-[64px] leading-none font-extrabold text-loss tabular-nums">
-              {eur(perDay)}
+            <p className="display text-[44px] sm:text-[58px] leading-none font-extrabold text-loss tabular-nums">
+              {usd(perMonth)}
             </p>
-            <p className="text-[15px] text-ink-muted mt-1">katru dienu</p>
+            <p className="text-[15px] text-ink-muted mt-1">per month, across your network</p>
 
             <div className="mt-7 pt-6 border-t border-loss-line grid grid-cols-2 gap-4">
               <div>
-                <p className="font-mono text-[24px] font-semibold text-ink tabular-nums">{eur(perMonth)}</p>
-                <p className="text-[13px] text-ink-muted">mēnesī</p>
+                <p className="font-mono text-[24px] font-semibold text-ink tabular-nums">{usd(perDay)}</p>
+                <p className="text-[13px] text-ink-muted">per day</p>
               </div>
               <div>
-                <p className="font-mono text-[24px] font-semibold text-ink tabular-nums">{eur(perYear)}</p>
-                <p className="text-[13px] text-ink-muted">gadā</p>
+                <p className="font-mono text-[24px] font-semibold text-ink tabular-nums">{usd(perYear)}</p>
+                <p className="text-[13px] text-ink-muted">per year</p>
               </div>
             </div>
 
             <p className="mt-6 text-[14px] leading-relaxed text-ink-muted">
-              Cognityl uzturēšana maksā <strong className="text-ink font-semibold">no 150 € mēnesī</strong> —
-              mazāk nekā {perMonth > 0 ? Math.max(1, Math.round(perMonth/150)) : 1}× lētāk par to, ko jūs
-              zaudējat neatbildētos zvanos.
+              This is a directional estimate, not a quote — the real number depends on your
+              current call volume and answer rate. We'll work it out together on a call.
             </p>
           </div>
         </div>
@@ -460,31 +459,31 @@ function Problem(){
 }
 
 /* ══════════════════════════════════════════════════════
-   KĀ TAS STRĀDĀ — reāla secība, tāpēc numuri ir pamatoti
+   HOW IT WORKS
    ══════════════════════════════════════════════════════ */
 function HowItWorks(){
   const steps = [
-    { icon:'phone',    title:'Klients piezvana',
-      text:'AI atbild nekavējoties — jau pirmajās sekundēs — un automātiski atpazīst valodu: latviešu, krievu vai angļu.' },
-    { icon:'globe',    title:'Sniedz atbildes',
-      text:'Atbild uz biežāk uzdotajiem jautājumiem: darba laiks, adrese, cenas, brīvie laiki un pakalpojumi.' },
-    { icon:'calendar', title:'Rezervē laiku',
-      text:'Pārbauda jūsu kalendāru (Fresha, Google Calendar) un pieraksta klientu brīvajā laikā. Jūs saņemat paziņojumu.' },
+    { icon:'phone',  title:'A customer calls',
+      text:"Cognityl answers immediately, in the first seconds — no hold music, no routing tree." },
+    { icon:'map',    title:'It identifies the right location',
+      text:"For multi-site businesses, it asks which location the caller means (or reads it from caller ID / IVR data) and pulls that site's hours, services and pricing." },
+    { icon:'calendar', title:'It books the appointment',
+      text:"Checks that location's calendar — Google Calendar, Fresha, or another system you already use — and confirms the booking on the call. You get a notification." },
   ];
 
   return (
-    <section id="ka-tas-strada" className="py-20 md:py-28">
+    <section id="how-it-works" className="py-20 md:py-28">
       <div className="max-w-6xl mx-auto px-5 lg:px-8">
 
         <div className="max-w-2xl mb-14">
           <p className="text-[12px] font-mono uppercase tracking-[0.14em] text-brand font-semibold mb-4">
-            Kā tas strādā
+            How it works
           </p>
           <h2 className="display text-[34px] sm:text-[44px] leading-[1.06] font-extrabold">
-            Kā Cognityl AI strādā jūsu biznesa labā?
+            One number, every location, no changes to your workflow.
           </h2>
           <p className="mt-5 text-[17px] text-ink-muted leading-relaxed">
-            Trīs soļi. Jums nav jāmaina ne telefona numurs, ne kalendārs, ne darba veids.
+            You keep your existing phone numbers and calendars. Cognityl sits in front of the call.
           </p>
         </div>
 
@@ -511,34 +510,34 @@ function HowItWorks(){
 }
 
 /* ══════════════════════════════════════════════════════
-   IEGUVUMI
+   BENEFITS
    ══════════════════════════════════════════════════════ */
 function Benefits(){
   const items = [
-    { icon:'clock',  title:'Atbild 24/7',
-      text:'Arī vakaros, brīvdienās un tad, kad jūs esat zem mašīnas vai ar šķērēm rokā. Neviens zvans nepaliek bez atbildes.' },
-    { icon:'globe',  title:'Latviski, krieviski, angliski',
-      text:'AI atpazīst klienta valodu jau pirmajā teikumā un turpina sarunu tajā pašā valodā.' },
-    { icon:'calendar', title:'Raksta tieši jūsu kalendārā',
-      text:'Fresha, Google Calendar vai cita sistēma, ko jau lietojat. Nekādas jaunas programmas nav jāapgūst.' },
-    { icon:'trend',  title:'Nekad nav aizņemts',
-      text:'Vairāki klienti var zvanīt vienlaikus. AI atbild visiem uzreiz — bez rindas un bez gaidīšanas.' },
-    { icon:'shield', title:'Jūs saglabājat kontroli',
-      text:'Katru sarunu varat pārskatīt un noklausīties. Sarežģītos gadījumus AI novirza jums.' },
-    { icon:'spark',  title:'Gatavs 5 dienās',
-      text:'Mēs apmācām sistēmu ar jūsu cenām, pakalpojumiem un darba laiku. Jums nekas nav jāprogrammē.' },
+    { icon:'layers', title:'Location-aware routing',
+      text:"Callers are matched to the right site automatically, without a phone tree or a front-desk transfer." },
+    { icon:'clock',  title:'Answers 24/7',
+      text:'Evenings, weekends, after close — every location, every time. No call goes unanswered.' },
+    { icon:'calendar', title:'Books into your existing calendar',
+      text:'Google Calendar, Fresha, or another system you already run. No new software for your team to learn.' },
+    { icon:'trend',  title:'Never busy',
+      text:'Multiple callers across multiple locations can be handled at once — no hold queue, no busy signal.' },
+    { icon:'shield', title:'You stay in control',
+      text:'Every call is logged and reviewable. Anything outside its scope gets escalated to your team.' },
+    { icon:'chat',   title:'Live in days, not months',
+      text:'We configure it with your locations, pricing and services. No procurement-heavy rollout required to get started.' },
   ];
 
   return (
-    <section id="ieguvumi" className="py-20 md:py-28 bg-brand-wash border-y border-line">
+    <section id="benefits" className="py-20 md:py-28 bg-brand-wash border-y border-line">
       <div className="max-w-6xl mx-auto px-5 lg:px-8">
 
         <div className="max-w-2xl mb-14">
           <p className="text-[12px] font-mono uppercase tracking-[0.14em] text-brand font-semibold mb-4">
-            Ieguvumi
+            Why Cognityl
           </p>
           <h2 className="display text-[34px] sm:text-[44px] leading-[1.06] font-extrabold">
-            Viens darbinieks, kas nekad neslimo un nekad neatvaļinās.
+            Built for businesses with more than one front desk.
           </h2>
         </div>
 
@@ -559,7 +558,7 @@ function Benefits(){
 }
 
 /* ══════════════════════════════════════════════════════
-   DZĪVAIS DEMO — galvenais konversijas punkts
+   LIVE DEMO
    ══════════════════════════════════════════════════════ */
 function LiveDemo(){
   return (
@@ -567,7 +566,6 @@ function LiveDemo(){
       <div className="max-w-6xl mx-auto px-5 lg:px-8">
         <div className="relative rounded-[32px] bg-ink text-white px-6 py-14 sm:px-14 sm:py-20 text-center overflow-hidden">
 
-          {/* smalks fona rakstiņš */}
           <div className="absolute inset-0 opacity-[0.07] pointer-events-none" aria-hidden="true"
             style={{backgroundImage:'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize:'28px 28px'}}></div>
 
@@ -575,19 +573,18 @@ function LiveDemo(){
             <p className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/15
               px-3.5 py-1.5 text-[13px] font-medium text-white/80 mb-7">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-bright pulse-ring"></span>
-              Dzīvais demo · pieejams 24/7
+              Live demo · available now
             </p>
 
             <h2 className="display text-[34px] sm:text-[48px] leading-[1.05] font-extrabold max-w-2xl mx-auto">
-              Neticiet? Piezvaniet mūsu asistentam!
+              Try it yourself — call the demo line.
             </h2>
 
             <p className="mt-5 text-[17px] text-white/65 max-w-xl mx-auto leading-relaxed">
-              Zvaniet uz zemāk norādīto numuru un mēģiniet pieteikt vizīti autoservisā.
-              Sarunājieties ar AI tā, kā to darītu īsts klients.
+              Call the number below and try booking an appointment with a multi-location
+              business, the way one of your customers would.
             </p>
 
-            {/* Numurs — uz mobilā tas ir poga, uz datora teksts */}
             <a href={callHref}
                onClick={(e)=>{ if(!hasPhone && window.cognitylOpenCallDemo){ e.preventDefault(); window.cognitylOpenCallDemo(); } }}
                className="group mt-10 inline-flex items-center gap-4 rounded-3xl bg-white text-ink
@@ -598,7 +595,7 @@ function LiveDemo(){
               </span>
               <span className="text-left">
                 <span className="block text-[11px] font-mono uppercase tracking-[0.14em] text-ink-muted mb-0.5">
-                  Zvaniet tagad
+                  Call now
                 </span>
                 <span className="block font-mono text-[26px] sm:text-[34px] font-semibold tracking-tight tabular-nums">
                   {PHONE_DISPLAY}
@@ -607,8 +604,8 @@ function LiveDemo(){
             </a>
 
             <p className="mt-7 flex items-center justify-center gap-2 text-[15px] text-white/70">
-              <Icon name="globe" className="w-4 h-4 text-brand-bright"/>
-              AI saprot gan latviešu, gan krievu valodu.
+              <Icon name="layers" className="w-4 h-4 text-brand-bright"/>
+              Try asking for a specific location — the AI will route you there.
             </p>
           </div>
         </div>
@@ -618,50 +615,47 @@ function LiveDemo(){
 }
 
 /* ══════════════════════════════════════════════════════
-   CENAS
+   PRICING — consultative, not self-serve checkout
    ══════════════════════════════════════════════════════ */
 function Pricing(){
   const setup = [
-    'Kalendāra integrācija (Fresha, Google Calendar)',
-    'Sistēmas apmācība ar jūsu cenām un pakalpojumiem',
-    'Balss un sarunas scenārija pielāgošana',
-    'Testēšana un palaišana — parasti 5 dienās',
+    'Configured for each of your locations — hours, services, pricing',
+    'Calendar integration (Google Calendar, Fresha, or your existing system)',
+    'Call flow and voice tuned to your business',
+    'Testing and go-live, typically within days',
   ];
   const monthly = [
-    'Visas sarunas — bez maksas par minūtēm',
-    'Serveru uzturēšana un atjauninājumi',
-    'Atbalsts 24/7',
-    'Sarunu ieraksti un pārskati',
+    'Every call handled — no per-minute charges',
+    'Hosting, monitoring and updates',
+    'Call logs and reporting across all locations',
+    'Ongoing support',
   ];
 
   return (
-    <section id="cenas" className="py-20 md:py-28 bg-brand-wash border-y border-line">
+    <section id="pricing" className="py-20 md:py-28 bg-brand-wash border-y border-line">
       <div className="max-w-6xl mx-auto px-5 lg:px-8">
 
         <div className="max-w-2xl mb-14">
           <p className="text-[12px] font-mono uppercase tracking-[0.14em] text-brand font-semibold mb-4">
-            Cenas
+            Pricing
           </p>
           <h2 className="display text-[34px] sm:text-[44px] leading-[1.06] font-extrabold">
-            Vienkārša un caurskatāma cenu politika
+            Two components. Scoped to your footprint.
           </h2>
           <p className="mt-5 text-[17px] text-ink-muted leading-relaxed">
-            Bez slēptām izmaksām un bez maksas par katru sarunas minūti. Divi maksājumi — un viss.
+            Pricing depends on the number of locations, call volume, and integrations involved —
+            we'll give you an exact number after a short call, not a generic tier.
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
 
-          {/* Ieviešana */}
           <div className="rounded-3xl bg-white border border-line p-8">
             <p className="text-[12px] font-mono uppercase tracking-[0.12em] text-ink-muted mb-4">
-              1. Ieviešana
+              1. Setup
             </p>
-            <div className="flex items-baseline gap-2 mb-1">
-              <span className="text-[15px] text-ink-muted">sākot no</span>
-              <span className="display text-[44px] font-extrabold leading-none">200 €</span>
-            </div>
-            <p className="text-[14px] text-ink-muted mb-7">Vienreizējs maksājums</p>
+            <p className="display text-[26px] font-extrabold leading-none mb-1">One-time</p>
+            <p className="text-[14px] text-ink-muted mb-7">Scoped to your location count and integrations</p>
 
             <ul className="space-y-3">
               {setup.map(t=>(
@@ -673,20 +667,12 @@ function Pricing(){
             </ul>
           </div>
 
-          {/* Uzturēšana — akcentētā kartīte */}
           <div className="relative rounded-3xl bg-ink text-white p-8 shadow-2xl shadow-ink/20">
-            <span className="absolute -top-3 left-8 rounded-full bg-brand-bright text-ink text-[12px]
-              font-bold px-3 py-1">Lētāk par vienu zaudētu klientu</span>
-
             <p className="text-[12px] font-mono uppercase tracking-[0.12em] text-white/50 mb-4">
-              2. Ikmēneša uzturēšana
+              2. Ongoing
             </p>
-            <div className="flex items-baseline gap-2 mb-1">
-              <span className="text-[15px] text-white/60">sākot no</span>
-              <span className="display text-[44px] font-extrabold leading-none">150 €</span>
-              <span className="text-[17px] text-white/60">/mēn.</span>
-            </div>
-            <p className="text-[14px] text-white/50 mb-7">Bez ilgtermiņa līguma</p>
+            <p className="display text-[26px] font-extrabold leading-none mb-1">Per location, monthly</p>
+            <p className="text-[14px] text-white/50 mb-7">No long-term contract required</p>
 
             <ul className="space-y-3">
               {monthly.map(t=>(
@@ -697,51 +683,46 @@ function Pricing(){
               ))}
             </ul>
 
-            <a href="#pieteikties"
+            <a href="#book-demo"
                className="mt-8 flex items-center justify-center gap-2 rounded-full bg-brand text-white
                  px-6 py-4 text-[16px] font-semibold hover:bg-brand-dark transition focus-ring w-full">
-              Pieteikt konsultāciju <Icon name="arrow" className="w-4 h-4"/>
+              Get a quote for your locations <Icon name="arrow" className="w-4 h-4"/>
             </a>
           </div>
         </div>
-
-        <p className="mt-6 text-[14px] text-ink-muted">
-          Precīza cena atkarīga no zvanu apjoma un integrāciju sarežģītības. Konsultācijā to pateiksim skaidri,
-          pirms jūs kaut ko maksājat.
-        </p>
       </div>
     </section>
   );
 }
 
 /* ══════════════════════════════════════════════════════
-   NOSLĒGUMA CTA
+   FINAL CTA
    ══════════════════════════════════════════════════════ */
 function FinalCTA(){
   return (
-    <section id="pieteikties" className="py-20 md:py-28">
+    <section id="book-demo" className="py-20 md:py-28">
       <div className="max-w-3xl mx-auto px-5 lg:px-8 text-center">
 
         <h2 className="display text-[34px] sm:text-[48px] leading-[1.05] font-extrabold">
-          Esat gatavi automatizēt savus ienākošos zvanus?
+          Ready to stop losing calls across your locations?
         </h2>
 
         <p className="mt-5 text-[17px] text-ink-muted leading-relaxed max-w-xl mx-auto">
-          Piezvaniet un 60 sekundēs dzirdiet, kā AI atbild jūsu klientiem. Vai arī rakstiet —
-          atbildam vienas darba dienas laikā.
+          Call the live demo and hear it in under a minute, or reach out directly —
+          we typically reply within one business day.
         </p>
 
         <div className="mt-9 flex flex-col sm:flex-row gap-3 justify-center">
           <CallButton/>
-          <a href={`mailto:${EMAIL}?subject=Pieteikums%20konsultācijai%20—%20Cognityl`}
+          <a href={`mailto:${EMAIL}?subject=Cognityl%20—%20Request%20for%20a%20demo`}
              className="inline-flex items-center justify-center gap-2 rounded-full bg-white border-2 border-ink
                px-7 py-4 text-[17px] font-semibold hover:bg-ink hover:text-white transition focus-ring">
-            Sazināties ar mums
+            Contact us
           </a>
         </div>
 
         <p className="mt-6 text-[14px] text-ink-muted">
-          Bez saistībām. Konsultācija ir bez maksas.
+          No commitment. The initial call is free.
         </p>
       </div>
     </section>
@@ -749,7 +730,7 @@ function FinalCTA(){
 }
 
 /* ══════════════════════════════════════════════════════
-   KĀJENE
+   FOOTER
    ══════════════════════════════════════════════════════ */
 function Footer(){
   return (
@@ -763,7 +744,7 @@ function Footer(){
               <span className="display text-lg font-extrabold">Cognityl</span>
             </div>
             <p className="text-[14px] text-ink-muted max-w-xs leading-relaxed">
-              AI administrators, kas atbild uz katru zvanu — latviski, krieviski un angliski.
+              AI call handling for multi-location service businesses — every call answered, every appointment booked.
             </p>
           </div>
 
@@ -774,12 +755,12 @@ function Footer(){
             <a href={callHref} className="font-mono text-[15px] text-ink-muted hover:text-ink transition focus-ring">
               {PHONE_DISPLAY}
             </a>
-            <p className="text-[14px] text-ink-muted mt-1">Rīga, Latvija</p>
+            <p className="text-[14px] text-ink-muted mt-1">Riga, Latvia · Serving businesses across the US</p>
           </div>
         </div>
 
         <p className="mt-10 pt-6 border-t border-line text-[13px] text-ink-muted">
-          © 2026 Cognityl. Visas tiesības aizsargātas.
+          © 2026 Cognityl. All rights reserved.
         </p>
       </div>
     </footer>
@@ -787,7 +768,7 @@ function Footer(){
 }
 
 /* ══════════════════════════════════════════════════════
-   LIPĪGĀ ZVANA JOSLA — mobilajiem (konversijas dzinējs)
+   STICKY MOBILE CALL BAR
    ══════════════════════════════════════════════════════ */
 function StickyCallBar(){
   const [show,setShow] = useState(false);
@@ -807,7 +788,7 @@ function StickyCallBar(){
          className="flex items-center justify-center gap-2.5 w-full rounded-full bg-brand text-white
            py-4 text-[16px] font-semibold active:scale-[.98] transition focus-ring shadow-lg shadow-brand/25">
         <Icon name="phone" className="w-5 h-5"/>
-        Zvanīt AI asistentam tūlīt
+        Hear the live demo
       </a>
     </div>
   );
@@ -835,52 +816,51 @@ function App(){
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
+
 <style id="cognityl-chatbot-styles">
-#cognityl-chat{--ink:#0b1f17;--brand:#059669;--brand-dark:#047857;--line:#e2e8e4;--muted:#5c6f66;position:fixed;right:20px;bottom:20px;z-index:9999;font-family:'IBM Plex Sans',system-ui,sans-serif}
+#cognityl-chat{--ink:#0b1f17;--brand:#13944A;--brand-dark:#0E7239;--line:#e3e8e4;--muted:#5c6f66;position:fixed;right:20px;bottom:20px;z-index:9999;font-family:'IBM Plex Sans',system-ui,sans-serif}
 @media(max-width:767px){#cognityl-chat{right:14px;bottom:88px}}
-.cog-fab{width:58px;height:58px;border-radius:50%;border:0;background:var(--ink);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 12px 30px rgba(11,31,23,.28);font-size:23px;transition:.2s}
+.cog-fab{width:58px;height:58px;border-radius:50%;border:0;background:var(--ink);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 12px 30px rgba(11,31,23,.28);transition:.2s}
 .cog-fab:hover{background:var(--brand-dark);transform:translateY(-2px)}
 .cog-panel{position:absolute;right:0;bottom:70px;width:min(380px,calc(100vw - 28px));height:min(590px,calc(100vh - 150px));background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 24px 70px rgba(11,31,23,.24);overflow:hidden;display:flex;flex-direction:column}
-.cog-panel[hidden]{display:none}.cog-head{background:var(--ink);color:#fff;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:10px}.cog-head-left{display:flex;gap:10px;align-items:center}.cog-avatar{width:36px;height:36px;border-radius:12px;background:var(--brand);display:grid;place-items:center;font-weight:800}.cog-title{font-size:15px;font-weight:700}.cog-status{font-size:11px;opacity:.7;margin-top:2px}.cog-actions{display:flex;gap:6px}.cog-actions button{border:0;background:rgba(255,255,255,.12);color:#fff;border-radius:8px;padding:6px 9px;cursor:pointer;font-weight:600}.cog-log{flex:1;overflow-y:auto;background:#f7faf8;padding:14px;display:flex;flex-direction:column;gap:9px}.cog-msg{max-width:86%;padding:10px 12px;border-radius:14px;font-size:14px;line-height:1.45;white-space:pre-wrap;word-break:break-word}.cog-bot{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:5px}.cog-user{align-self:flex-end;background:var(--brand);color:#fff;border-bottom-right-radius:5px}.cog-card{align-self:stretch;max-width:none;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 8px 24px rgba(11,31,23,.07)}.cog-card-head{padding:14px 15px 11px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,#f0fdf7,#fff)}.cog-card-kicker{font-size:10px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--brand-dark);margin-bottom:3px}.cog-card-title{font-size:15px;font-weight:800;color:var(--ink)}.cog-card-body{padding:5px 15px}.cog-card-row{display:grid;grid-template-columns:88px 1fr;gap:10px;padding:9px 0;border-bottom:1px solid #edf2ef}.cog-card-row:last-child{border-bottom:0}.cog-card-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}.cog-card-value{font-size:13px;font-weight:600;color:var(--ink);overflow-wrap:anywhere}.cog-card-note{padding:11px 15px;background:#f8faf9;border-top:1px solid var(--line);font-size:11px;line-height:1.45;color:var(--muted)}.cog-success{align-self:stretch;max-width:none;background:#f0fdf7;border:1px solid #a7f3d0;border-radius:16px;padding:14px 15px}.cog-success-title{font-weight:800;color:#065f46;margin-bottom:3px}.cog-success-text{font-size:13px;color:#356052;line-height:1.45}.cog-chips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 14px 0}.cog-chip{border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:6px 10px;font-size:12px;cursor:pointer}.cog-chip:hover{border-color:var(--brand);color:var(--ink)}.cog-note{margin:8px 14px 0;padding:8px 10px;border-radius:9px;background:#fff8e6;border:1px solid #f0dfb0;color:#7a5c14;font-size:12px}.cog-form{display:flex;gap:7px;padding:12px 14px;border-top:1px solid var(--line)}.cog-input{flex:1;min-width:0;border:1px solid var(--line);border-radius:10px;padding:10px 11px;font:inherit;font-size:14px}.cog-btn{border:0;border-radius:10px;padding:9px 11px;font-weight:700;cursor:pointer}.cog-mic{background:#fff;border:1px solid var(--line)}.cog-mic.live{background:#fee2e2;color:#b91c1c;border-color:#dc2626}.cog-send{background:var(--brand);color:#fff}.cog-privacy{font-size:10px;color:var(--muted);padding:0 14px 10px;text-align:center}.cog-thinking{display:inline-flex;gap:4px}.cog-thinking i{width:5px;height:5px;border-radius:50%;background:#94a3a0;animation:cogbounce 1.2s infinite}.cog-thinking i:nth-child(2){animation-delay:.15s}.cog-thinking i:nth-child(3){animation-delay:.3s}@keyframes cogbounce{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+.cog-panel[hidden]{display:none}.cog-head{background:var(--ink);color:#fff;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:10px}.cog-head-left{display:flex;gap:10px;align-items:center}.cog-avatar{width:36px;height:36px;border-radius:12px;background:var(--brand);display:grid;place-items:center;font-weight:800}.cog-title{font-size:15px;font-weight:700}.cog-status{font-size:11px;opacity:.7;margin-top:2px}.cog-actions{display:flex;gap:6px}.cog-actions button{border:0;background:rgba(255,255,255,.12);color:#fff;border-radius:8px;padding:6px 9px;cursor:pointer;font-weight:600}.cog-log{flex:1;overflow-y:auto;background:#f7faf8;padding:14px;display:flex;flex-direction:column;gap:9px}.cog-msg{max-width:86%;padding:10px 12px;border-radius:14px;font-size:14px;line-height:1.45;white-space:pre-wrap;word-break:break-word}.cog-bot{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:5px}.cog-user{align-self:flex-end;background:var(--brand);color:#fff;border-bottom-right-radius:5px}.cog-card{align-self:stretch;max-width:none;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 8px 24px rgba(11,31,23,.07)}.cog-card-head{padding:14px 15px 11px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,#f3f8f4,#fff)}.cog-card-kicker{font-size:10px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--brand-dark);margin-bottom:3px}.cog-card-title{font-size:15px;font-weight:800;color:var(--ink)}.cog-card-body{padding:5px 15px}.cog-card-row{display:grid;grid-template-columns:88px 1fr;gap:10px;padding:9px 0;border-bottom:1px solid #edf2ef}.cog-card-row:last-child{border-bottom:0}.cog-card-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}.cog-card-value{font-size:13px;font-weight:600;color:var(--ink);overflow-wrap:anywhere}.cog-card-note{padding:11px 15px;background:#f8faf9;border-top:1px solid var(--line);font-size:11px;line-height:1.45;color:var(--muted)}.cog-success{align-self:stretch;max-width:none;background:#f3f8f4;border:1px solid #bfe6cc;border-radius:16px;padding:14px 15px}.cog-success-title{font-weight:800;color:#0E7239;margin-bottom:3px}.cog-success-text{font-size:13px;color:#356052;line-height:1.45}.cog-chips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 14px 0}.cog-chip{border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:6px 10px;font-size:12px;cursor:pointer}.cog-chip:hover{border-color:var(--brand);color:var(--ink)}.cog-note{margin:8px 14px 0;padding:8px 10px;border-radius:9px;background:#fff8e6;border:1px solid #f0dfb0;color:#7a5c14;font-size:12px}.cog-form{display:flex;gap:7px;padding:12px 14px;border-top:1px solid var(--line)}.cog-input{flex:1;min-width:0;border:1px solid var(--line);border-radius:10px;padding:10px 11px;font:inherit;font-size:14px}.cog-btn{border:0;border-radius:10px;padding:9px 11px;font-weight:700;cursor:pointer}.cog-mic{background:#fff;border:1px solid var(--line)}.cog-mic.live{background:#fee2e2;color:#b91c1c;border-color:#dc2626}.cog-send{background:var(--brand);color:#fff}.cog-privacy{font-size:10px;color:var(--muted);padding:0 14px 10px;text-align:center}.cog-thinking{display:inline-flex;gap:4px}.cog-thinking i{width:5px;height:5px;border-radius:50%;background:#94a3a0;animation:cogbounce 1.2s infinite}.cog-thinking i:nth-child(2){animation-delay:.15s}.cog-thinking i:nth-child(3){animation-delay:.3s}@keyframes cogbounce{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
 @media(prefers-reduced-motion:reduce){#cognityl-chat *{animation:none!important;transition:none!important}}
 </style>
 <div id="cognityl-chat" aria-live="polite"></div>
 <script>
 (function(){
 'use strict';
-const CFG={email:'kristaps@cognityl.com',formspree:'https://formspree.io/f/mwvdrvdw',defaultLang:'lv'};
+const CFG={email:'kristaps@cognityl.com',formspree:'https://formspree.io/f/mwvdrvdw'};
 const KB=[
-{id:'pricing',lv:['cena','cenas','maksā','maksa','izmaksas','cik','eiro','eur'],en:['price','pricing','cost','how much','fee','eur'],a:{lv:'Protams. Ieviešana sākas no 200 € vienreizēji, savukārt uzturēšana — no 150 € mēnesī. Precīzo cenu nosakām pēc zvanu apjoma un nepieciešamajām integrācijām, lai jūs jau iepriekš skaidri zinātu visas izmaksas.',en:'Of course. Setup starts from €200 as a one-time payment, while maintenance starts from €150 per month. We confirm the exact price after reviewing your expected call volume and required integrations, so you know the full cost in advance.'}},
-{id:'how',lv:['kā strādā','kā darbojas','process','soļi','darbojas'],en:['how does','how it works','process','steps'],a:{lv:'Tas darbojas pavisam vienkārši. Klients piezvana, AI administrators uzreiz atbild, saprot sarunas valodu un palīdz ar biežākajiem jautājumiem. Ja klients vēlas pierakstīties, asistents pārbauda pieejamo laiku un palīdz izveidot rezervāciju jūsu kalendārā.',en:'It works quite simply. When a customer calls, the AI receptionist answers immediately, understands the conversation language, and helps with common questions. If the customer wants an appointment, it checks availability and helps create the booking in your calendar.'}},
-{id:'languages',lv:['valoda','latviski','krieviski','angliski','krievu','latviešu'],en:['language','latvian','russian','english','speak'],a:{lv:'Jā, risinājumu varam pielāgot latviešu, krievu un angļu valodai. Pirms palaišanas mēs pārbaudām sarunas kvalitāti tieši jūsu uzņēmuma situācijām, pakalpojumiem un klientu biežākajiem jautājumiem.',en:'Cognityl is designed for Latvian, Russian and English. Language quality is tested for each business before launch.'}},
-{id:'calendar',lv:['kalendār','fresha','google','integrāc','rezervāc','pierakst'],en:['calendar','fresha','google','integration','booking','schedule'],a:{lv:'Jā, risinājumu var savienot ar Google Calendar, Fresha vai citu rezervāciju sistēmu, ko jau izmantojat. Mērķis ir, lai jaunie pieraksti parādās jūsu ierastajā kalendārā un komandai nav jāapgūst vēl viena programma.',en:'The solution can be connected to Google Calendar, Fresha, or another booking system the business already uses.'}},
-{id:'setup',lv:['cik ilgi','termiņ','ieviešana','uzstādīšana','dienas'],en:['how long','timeline','setup','deploy','days'],a:{lv:'Ieviešanas laiks ir atkarīgs no tā, cik daudz informācijas un integrāciju nepieciešams. Vienkāršāku risinājumu dažkārt var sagatavot dažu dienu laikā, savukārt sarežģītākam projektam vajadzīgs ilgāks testēšanas periods. Precīzāku termiņu varam pateikt pēc īsas konsultācijas.',en:'Setup time depends on integrations and testing. A simple solution may be ready within days, while a more complex one takes longer.'}},
-{id:'industries',lv:['autoserviss','frizētava','salons','nozare','bizness','klīnika'],en:['auto repair','barbershop','salon','industry','business','clinic'],a:{lv:'Visvairāk tas palīdz uzņēmumiem, kuros darbinieki darba laikā nevar vienmēr pacelt telefonu — piemēram, autoservisiem, frizētavām, skaistumkopšanas saloniem un klīnikām. Ja jums regulāri paliek neatbildēti zvani, risinājums var būt īpaši noderīgs.',en:'The solution is especially suitable for auto repair shops, barbershops, beauty salons and other businesses that often cannot answer calls while working.'}},
-{id:'contact',lv:['cilvēk','sazināties','kontakt','epasts','e-pasts'],en:['human','contact','email','speak to someone'],a:{lv:'Protams. Varat uzrakstīt mums uz kristaps@cognityl.com, vai arī varu tepat palīdzēt pieteikt bezmaksas konsultāciju. Vai vēlaties sākt pieteikumu?',en:'You can email kristaps@cognityl.com or request a free consultation here.'}}
+{id:'pricing',kw:['price','pricing','cost','how much','fee'],a:'Setup is a one-time fee scoped to your number of locations and integrations. Ongoing is a per-location monthly fee — no per-minute charges. We confirm the exact number after a short call about your footprint.'},
+{id:'how',kw:['how does','how it works','process','steps'],a:'When a customer calls, Cognityl answers immediately, figures out which location they need, and helps with common questions. If they want to book, it checks that location\'s calendar and confirms the appointment on the call.'},
+{id:'locations',kw:['location','multi-location','multiple sites','multi site','routing'],a:'Yes — this is built for multi-location businesses specifically. It identifies which site the caller needs and books into that location\'s own calendar.'},
+{id:'calendar',kw:['calendar','fresha','google','integration','booking','schedule'],a:'It connects to Google Calendar, Fresha, or another booking system you already use — new appointments land in your existing calendar, no new software for your team.'},
+{id:'setup',kw:['how long','timeline','setup','deploy','days','rollout'],a:'Setup time depends on the number of locations and integrations involved. A single-integration rollout can be ready within days; larger multi-system setups take longer. We\'ll give you a real timeline on a call.'},
+{id:'industries',kw:['auto repair','barbershop','salon','industry','business','clinic','dental','who is this for'],a:'It works well for any multi-location service business where staff can\'t always pick up the phone — auto service groups, salons and spas, dental and medical groups, and similar businesses.'},
+{id:'contact',kw:['human','contact','email','speak to someone','talk to sales'],a:'You can email kristaps@cognityl.com, or I can help you request a demo right here. Want to get started?'}
 ];
-const TXT={lv:{title:'Cognityl AI',status:'Tiešsaistē',hello:'Labdien! Prieks jūs redzēt. Esmu Cognityl AI asistents. Varu īsi izskaidrot, kā risinājums darbojas, pastāstīt par cenām vai palīdzēt pieteikt konsultāciju. Ar ko sāksim?',placeholder:'Rakstiet savu jautājumu…',send:'Sūtīt',mic:'🎤',stop:'■',lang:'EN',close:'×',fallback:'Par šo jautājumu man nav drošas informācijas. Varu palīdzēt ar cenām, darbības principu, integrācijām vai konsultācijas pieteikšanu.',chips:['Cenas','Kā tas strādā?','Pieteikt konsultāciju'],leadStart:'Lieliski — palīdzēšu visu noformēt. Kā jūs sauc?',askEmail:'Paldies! Uz kuru e-pasta adresi varam nosūtīt atbildi?',askCompany:'Kā sauc jūsu uzņēmumu?',askChallenge:'Īsi pastāstiet — kādu problēmu jūs visvairāk vēlētos atrisināt?',askTime:'Kurš konsultācijas laiks jums būtu ērtākais?',confirm:'Lūdzu, apstipriniet pieteikumu:',yes:'Apstiprinu',cancel:'Atcelt',sent:'Paldies! Pieteikums nosūtīts. Cognityl sazināsies ar jums, lai apstiprinātu laiku.',failed:'Pieteikumu neizdevās nosūtīt. Lūdzu, rakstiet uz kristaps@cognityl.com.',listening:'Klausos…',denied:'Mikrofonam nav piekļuves. Varat rakstīt tekstu.',privacy:'Balss apstrādei tiek izmantotas pārlūkprogrammas runas funkcijas. Audio apzināti netiek uzglabāts.'},en:{title:'Cognityl AI',status:'Online',hello:'Hello! I am the Cognityl AI assistant. I can explain pricing, how it works, and help request a consultation.',placeholder:'Type your question…',send:'Send',mic:'🎤',stop:'■',lang:'LV',close:'×',fallback:'I do not have verified information about that. I can help with pricing, how it works, integrations, or requesting a consultation.',chips:['Pricing','How does it work?','Book a consultation'],leadStart:'Great! What is your name?',askEmail:'What is your email address?',askCompany:'What is your company name?',askChallenge:'What problem would you like to solve?',askTime:'What consultation time would you prefer?',confirm:'Please confirm your request:',yes:'Confirm',cancel:'Cancel',sent:'Thank you! Your request was sent. Cognityl will contact you to confirm the time.',failed:'The request could not be sent. Please email kristaps@cognityl.com.',listening:'Listening…',denied:'Microphone access was denied. You can type instead.',privacy:'Voice processing uses your browser speech features. Audio is not intentionally stored.'}};
-let lang=CFG.defaultLang,lead=null,listening=false,recognition=null,voiceOn=false,listenTimer=null;
+const TXT={title:'Cognityl AI',status:'Online',hello:'Hi — I\'m the Cognityl AI assistant. I can explain pricing, how it works, or help you book a demo. What would you like to know?',placeholder:'Type your question…',send:'Send',mic:'Mic',stop:'Stop',close:'×',fallback:'I don\'t have verified information on that. I can help with pricing, how it works, integrations, or booking a demo.',chips:['Pricing','How does it work?','Book a demo'],leadStart:'Great — let\'s get this set up. What\'s your name?',askEmail:'Thanks! What\'s the best email to reach you at?',askCompany:'What\'s your company name?',askLocations:'Roughly how many locations do you operate?',askChallenge:'In a sentence — what\'s the main problem you want to solve?',askTime:'What time works best for a quick call?',confirm:'Please confirm your request:',yes:'Confirm',cancel:'Cancel',sent:'Thanks! Your request has been sent. Cognityl will reach out to confirm a time.',failed:'The request could not be sent. Please email kristaps@cognityl.com.',listening:'Listening…',denied:'Microphone access was denied. You can type instead.',privacy:'Voice input uses your browser\'s speech recognition. Audio is not intentionally stored.'};
+let lead=null,listening=false,recognition=null,voiceOn=false,listenTimer=null;
 const root=document.getElementById('cognityl-chat');
 function e(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n}
-const fab=e('button','cog-fab','💬');fab.type='button';fab.setAttribute('aria-label','Open Cognityl AI');
+const fab=e('button','cog-fab');fab.type='button';fab.setAttribute('aria-label','Open Cognityl AI');fab.innerHTML='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>';
 const panel=e('section','cog-panel');panel.hidden=true;panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','false');
-const head=e('div','cog-head'),hl=e('div','cog-head-left'),av=e('div','cog-avatar','C'),titles=e('div'),title=e('div','cog-title'),status=e('div','cog-status'),acts=e('div','cog-actions'),lb=e('button','',TXT[lang].lang),cb=e('button','',TXT[lang].close);lb.type=cb.type='button';titles.append(title,status);hl.append(av,titles);acts.append(lb,cb);head.append(hl,acts);
+const head=e('div','cog-head'),hl=e('div','cog-head-left'),av=e('div','cog-avatar','C'),titles=e('div'),title=e('div','cog-title',TXT.title),status=e('div','cog-status',TXT.status),acts=e('div','cog-actions'),cb=e('button','',TXT.close);cb.type='button';titles.append(title,status);hl.append(av,titles);acts.append(cb);head.append(hl,acts);
 const log=e('div','cog-log'),chips=e('div','cog-chips'),note=e('div','cog-note');note.hidden=true;
-const form=e('form','cog-form'),input=e('input','cog-input'),mic=e('button','cog-btn cog-mic',TXT[lang].mic),send=e('button','cog-btn cog-send',TXT[lang].send);input.type='text';input.autocomplete='off';mic.type='button';send.type='submit';form.append(input,mic,send);const privacy=e('div','cog-privacy');panel.append(head,log,chips,note,form,privacy);root.append(fab,panel);
+const form=e('form','cog-form'),input=e('input','cog-input'),mic=e('button','cog-btn cog-mic',TXT.mic),send=e('button','cog-btn cog-send',TXT.send);input.type='text';input.autocomplete='off';input.placeholder=TXT.placeholder;mic.type='button';send.type='submit';form.append(input,mic,send);const privacy=e('div','cog-privacy',TXT.privacy);panel.append(head,log,chips,note,form,privacy);root.append(fab,panel);
 function norm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^\p{L}\p{N}\s@._+-]/gu,' ').replace(/\s+/g,' ').trim()}
 function msg(who,text){const b=e('div','cog-msg '+(who==='user'?'cog-user':'cog-bot'),text);log.appendChild(b);log.scrollTop=log.scrollHeight;return b}
-function confirmationCard(d){const card=e('div','cog-card');const head=e('div','cog-card-head');head.append(e('div','cog-card-kicker',lang==='lv'?'Konsultācijas pieteikums':'Consultation request'),e('div','cog-card-title',lang==='lv'?'Pārbaudiet informāciju':'Review your details'));const body=e('div','cog-card-body');const rows=lang==='lv'?[['Vārds',d.name],['E-pasts',d.email],['Uzņēmums',d.company],['Problēma',d.challenge],['Vēlamais laiks',d.preferredTime]]:[['Name',d.name],['Email',d.email],['Company',d.company],['Challenge',d.challenge],['Preferred time',d.preferredTime]];rows.forEach(([a,b])=>{const row=e('div','cog-card-row');row.append(e('div','cog-card-label',a),e('div','cog-card-value',b));body.append(row)});card.append(head,body,e('div','cog-card-note',lang==='lv'?'Pēc nosūtīšanas Cognityl sazināsies ar jums, lai apstiprinātu precīzu laiku.':'After submission, Cognityl will contact you to confirm the exact time.'));log.append(card);log.scrollTop=log.scrollHeight;renderChips([TXT[lang].yes,TXT[lang].cancel])}
-function successCard(){const box=e('div','cog-success');box.append(e('div','cog-success-title',lang==='lv'?'✓ Pieteikums nosūtīts':'✓ Request sent'),e('div','cog-success-text',lang==='lv'?'Paldies! Cognityl sazināsies ar jums, lai apstiprinātu konsultācijas laiku.':'Thank you! Cognityl will contact you to confirm the consultation time.'));log.append(box);log.scrollTop=log.scrollHeight;renderChips(TXT[lang].chips)}
+function confirmationCard(d){const card=e('div','cog-card');const head=e('div','cog-card-head');head.append(e('div','cog-card-kicker','Demo request'),e('div','cog-card-title','Review your details'));const body=e('div','cog-card-body');const rows=[['Name',d.name],['Email',d.email],['Company',d.company],['Locations',d.locations],['Challenge',d.challenge],['Preferred time',d.preferredTime]];rows.forEach(([a,b])=>{const row=e('div','cog-card-row');row.append(e('div','cog-card-label',a),e('div','cog-card-value',b));body.append(row)});card.append(head,body,e('div','cog-card-note','After submission, Cognityl will reach out to confirm the exact time.'));log.append(card);log.scrollTop=log.scrollHeight;renderChips([TXT.yes,TXT.cancel])}
+function successCard(){const box=e('div','cog-success');box.append(e('div','cog-success-title','✓ Request sent'),e('div','cog-success-text','Thanks! Cognityl will reach out to confirm your demo time.'));log.append(box);log.scrollTop=log.scrollHeight;renderChips(TXT.chips)}
 function renderChips(items){chips.textContent='';(items||[]).forEach(x=>{const b=e('button','cog-chip',x);b.type='button';b.onclick=()=>handle(x);chips.appendChild(b)})}
 const TTS_PROXY_URL = "https://cognityl-tts.krismezulis.workers.dev";
-const TTS_VOICES = { lv: "lv-LV-EveritaNeural", en: "en-US-AvaMultilingualNeural" };
+const TTS_VOICE = "en-US-AvaMultilingualNeural";
 function escapeSsml(s){
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
 }
-function buildSsml(text, langCode){
-  const locale = langCode === 'en' ? 'en-US' : 'lv-LV';
-  const voice = TTS_VOICES[langCode] || TTS_VOICES.lv;
-  return `<speak version="1.0" xml:lang="${locale}"><voice name="${voice}"><prosody rate="0%" pitch="0%">${escapeSsml(text)}</prosody></voice></speak>`;
+function buildSsml(text){
+  return `<speak version="1.0" xml:lang="en-US"><voice name="${TTS_VOICE}"><prosody rate="0%" pitch="0%">${escapeSsml(text)}</prosody></voice></speak>`;
 }
 let currentAudio = null;
 async function speakNaturally(text){
@@ -894,7 +874,7 @@ async function speakNaturally(text){
     const r = await fetch(TTS_PROXY_URL, {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ ssml: buildSsml(clean, lang) })
+      body: JSON.stringify({ ssml: buildSsml(clean) })
     });
     if(!r.ok) throw new Error('TTS request failed: ' + r.status);
     const blob = await r.blob();
@@ -904,24 +884,24 @@ async function speakNaturally(text){
     currentAudio.play();
   }catch(err){
     console.error('speakNaturally failed:', err);
-    // silent fail is fine here — chat text is still shown
   }
 }
-function say(text,buttons){msg('bot',text);renderChips(buttons===undefined?TXT[lang].chips:buttons);speakNaturally(text)}
-function classify(text){const h=norm(text);if((lang==='lv'?['pieteikt','konsultāc','demo','sazinieties']:['book','consultation','demo','contact me']).some(x=>h.includes(norm(x))))return{type:'booking'};let best=null;KB.forEach(k=>{let score=0;(k[lang]||[]).forEach(x=>{if(h.includes(norm(x)))score+=x.length});if(score&&(!best||score>best.score))best={k,score}});return best?{type:'answer',text:best.k.a[lang]}:{type:'fallback'}}
+function say(text,buttons){msg('bot',text);renderChips(buttons===undefined?TXT.chips:buttons);speakNaturally(text)}
+function classify(text){const h=norm(text);if(['book','demo','contact me','talk to sales'].some(x=>h.includes(norm(x))))return{type:'booking'};let best=null;KB.forEach(k=>{let score=0;(k.kw||[]).forEach(x=>{if(h.includes(norm(x)))score+=x.length});if(score&&(!best||score>best.score))best={k,score}});return best?{type:'answer',text:best.k.a}:{type:'fallback'}}
 function validEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)}
-async function localAIAnswer(text){try{const LM=window.LanguageModel||window.ai?.languageModel;if(!LM)return null;const availability=await LM.availability?.();if(availability==='unavailable')return null;const session=await LM.create({systemPrompt:'You are Cognityl AI. Answer briefly in '+(lang==='lv'?'Latvian':'English')+' using only these verified facts: setup from 200 EUR, maintenance from 150 EUR/month, supports calendar integrations, serves auto repair shops, salons and similar businesses. Never invent facts or confirm bookings.'});const out=await session.prompt(text);session.destroy?.();return String(out||'').slice(0,600)||null}catch{return null}}
-function startLead(){lead={step:'name',data:{language:lang}};say(TXT[lang].leadStart,[])}
+async function localAIAnswer(text){try{const LM=window.LanguageModel||window.ai?.languageModel;if(!LM)return null;const availability=await LM.availability?.();if(availability==='unavailable')return null;const session=await LM.create({systemPrompt:'You are Cognityl AI. Answer briefly in English using only these verified facts: setup is a one-time fee scoped to location count and integrations, ongoing is a per-location monthly fee with no per-minute charges, it integrates with Google Calendar and Fresha, and it is built for multi-location service businesses. Never invent facts or confirm bookings.'});const out=await session.prompt(text);session.destroy?.();return String(out||'').slice(0,600)||null}catch{return null}}
+function startLead(){lead={step:'name',data:{}};say(TXT.leadStart,[])}
 async function leadInput(text){
-if(lead.step==='name'){lead.data.name=text;lead.step='email';say(TXT[lang].askEmail,[]);return}
-if(lead.step==='email'){if(!validEmail(text)){say(lang==='lv'?'Lūdzu, ievadiet derīgu e-pasta adresi.':'Please enter a valid email address.',[]);return}lead.data.email=text;lead.step='company';say(TXT[lang].askCompany,[]);return}
-if(lead.step==='company'){lead.data.company=text;lead.step='challenge';say(TXT[lang].askChallenge,[]);return}
-if(lead.step==='challenge'){lead.data.challenge=text;lead.step='time';say(TXT[lang].askTime,[]);return}
+if(lead.step==='name'){lead.data.name=text;lead.step='email';say(TXT.askEmail,[]);return}
+if(lead.step==='email'){if(!validEmail(text)){say('Please enter a valid email address.',[]);return}lead.data.email=text;lead.step='company';say(TXT.askCompany,[]);return}
+if(lead.step==='company'){lead.data.company=text;lead.step='locations';say(TXT.askLocations,[]);return}
+if(lead.step==='locations'){lead.data.locations=text;lead.step='challenge';say(TXT.askChallenge,[]);return}
+if(lead.step==='challenge'){lead.data.challenge=text;lead.step='time';say(TXT.askTime,[]);return}
 if(lead.step==='time'){lead.data.preferredTime=text;lead.step='confirm';confirmationCard(lead.data);return}
 if(lead.step==='confirm'){
-if(norm(text)===norm(TXT[lang].cancel)){lead=null;say(lang==='lv'?'Pieteikums atcelts.':'Request cancelled.');return}
-if(norm(text)!==norm(TXT[lang].yes)){say(lang==='lv'?'Lūdzu, izvēlieties “Apstiprinu” vai “Atcelt”.':'Please choose “Confirm” or “Cancel”.',[TXT[lang].yes,TXT[lang].cancel]);return}
-const payload={...lead.data,submittedAt:new Date().toISOString(),pageUrl:location.href,language:lang};
+if(norm(text)===norm(TXT.cancel)){lead=null;say('Request cancelled.');return}
+if(norm(text)!==norm(TXT.yes)){say('Please choose "Confirm" or "Cancel".',[TXT.yes,TXT.cancel]);return}
+const payload={...lead.data,submittedAt:new Date().toISOString(),pageUrl:location.href};
 renderChips([]);send.disabled=true;mic.disabled=true;
 try{
 const body={
@@ -929,54 +909,58 @@ name:payload.name,
 email:payload.email,
 _replyto:payload.email,
 company:payload.company,
+locations:payload.locations,
 challenge:payload.challenge,
 preferred_time:payload.preferredTime,
-language:payload.language,
 page_url:payload.pageUrl,
 submitted_at:payload.submittedAt,
-message:`Konsultācijas pieteikums\n\nVārds: ${payload.name}\nE-pasts: ${payload.email}\nUzņēmums: ${payload.company}\nProblēma: ${payload.challenge}\nVēlamais laiks: ${payload.preferredTime}`,
-_subject:'Cognityl — jauns konsultācijas pieteikums'
+message:`Demo request\n\nName: ${payload.name}\nEmail: ${payload.email}\nCompany: ${payload.company}\nLocations: ${payload.locations}\nChallenge: ${payload.challenge}\nPreferred time: ${payload.preferredTime}`,
+_subject:'Cognityl — new demo request'
 };
 const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),12000);
 const r=await fetch(CFG.formspree,{method:'POST',headers:{'Accept':'application/json','Content-Type':'application/json'},body:JSON.stringify(body),signal:controller.signal});clearTimeout(timer);
 let result={};try{result=await r.json()}catch{}
 if(!r.ok){const details=(result.errors||[]).map(x=>x.message||x.code).filter(Boolean).join(' ');throw new Error(details||('Formspree HTTP '+r.status))}
 successCard();lead=null;
-}catch(err){console.error('Formspree submission failed:',err);say((lang==='lv'?'Pieteikumu neizdevās nosūtīt. ':'The request could not be sent. ')+(err.name==='AbortError'?(lang==='lv'?'Savienojums bija pārāk lēns.':'The connection timed out.'):(lang==='lv'?'Lūdzu, mēģiniet vēlreiz vai rakstiet uz kristaps@cognityl.com.':'Please try again or email kristaps@cognityl.com.')),[TXT[lang].yes,TXT[lang].cancel]);lead.step='confirm';
+}catch(err){console.error('Formspree submission failed:',err);say('The request could not be sent. '+(err.name==='AbortError'?'The connection timed out.':'Please try again or email kristaps@cognityl.com.'),[TXT.yes,TXT.cancel]);lead.step='confirm';
 }finally{send.disabled=false;mic.disabled=false}
 }
 }
-async function handle(raw){const text=String(raw||'').trim().slice(0,500);if(!text)return;speechSynthesis?.cancel?.();msg('user',text);input.value='';if(lead){await leadInput(text);return}const i=classify(text);if(i.type==='booking'){startLead();return}if(i.type==='answer'){say(i.text);return}const thinking=msg('bot','');thinking.appendChild(e('span','cog-thinking'));thinking.firstChild.append(e('i'),e('i'),e('i'));const ai=await localAIAnswer(text);thinking.remove();say(ai||TXT[lang].fallback)}
-function apply(){title.textContent=TXT[lang].title;status.textContent=TXT[lang].status;input.placeholder=TXT[lang].placeholder;send.textContent=TXT[lang].send;lb.textContent=TXT[lang].lang;privacy.textContent=TXT[lang].privacy;mic.textContent=listening?TXT[lang].stop:TXT[lang].mic}
-function resetGreeting(){log.textContent='';lead=null;say(TXT[lang].hello)}
-fab.onclick=()=>{panel.hidden=!panel.hidden;if(!panel.hidden&&!log.children.length)resetGreeting()};cb.onclick=()=>panel.hidden=true;lb.onclick=()=>{lang=lang==='lv'?'en':'lv';apply();resetGreeting()};form.onsubmit=ev=>{ev.preventDefault();handle(input.value)};
+async function handle(raw){const text=String(raw||'').trim().slice(0,500);if(!text)return;speechSynthesis?.cancel?.();msg('user',text);input.value='';if(lead){await leadInput(text);return}const i=classify(text);if(i.type==='booking'){startLead();return}if(i.type==='answer'){say(i.text);return}const thinking=msg('bot','');thinking.appendChild(e('span','cog-thinking'));thinking.firstChild.append(e('i'),e('i'),e('i'));const ai=await localAIAnswer(text);thinking.remove();say(ai||TXT.fallback)}
+function apply(){mic.textContent=listening?TXT.stop:TXT.mic}
+function resetGreeting(){log.textContent='';lead=null;say(TXT.hello)}
+fab.onclick=()=>{panel.hidden=!panel.hidden;if(!panel.hidden&&!log.children.length)resetGreeting()};cb.onclick=()=>panel.hidden=true;form.onsubmit=ev=>{ev.preventDefault();handle(input.value)};
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 function stopListening(){if(listenTimer){clearTimeout(listenTimer);listenTimer=null}try{recognition?.stop()}catch{} }
-if(!SR){mic.hidden=true;note.hidden=false;note.textContent=lang==='lv'?'Šī pārlūkprogramma neatbalsta balss ievadi. Izmantojiet Chrome, Edge vai Safari.':'This browser does not support voice input. Use Chrome, Edge or Safari.'}
+if(!SR){mic.hidden=true;note.hidden=false;note.textContent='This browser does not support voice input. Use Chrome, Edge or Safari.'}
 else{mic.onclick=async()=>{
   if(listening){stopListening();return}
   voiceOn=true;
   try{
     if(!window.isSecureContext){throw new Error('insecure')}
-    if(navigator.mediaDevices?.getUserMedia){const stream=await navigator.mediaDevices.getUserMedia({audio:true});stream.getTracks().forEach(t=>t.stop())}
+    if(navigator.mediaDevices?.getUserMedia){
+      const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+      stream.getTracks().forEach(t=>t.stop());
+    }
     recognition=new SR();
-    recognition.lang=lang==='lv'?'lv-LV':'en-US';
+    recognition.lang='en-US';
     recognition.interimResults=true;
     recognition.continuous=false;
     recognition.maxAlternatives=1;
-    recognition.onstart=()=>{listening=true;mic.classList.add('live');apply();note.hidden=false;note.textContent=TXT[lang].listening;listenTimer=setTimeout(()=>stopListening(),12000)};
-    recognition.onresult=ev=>{let finalText='',interim='';for(let i=ev.resultIndex;i<ev.results.length;i++){const t=ev.results[i][0].transcript;if(ev.results[i].isFinal)finalText+=t;else interim+=t}note.hidden=false;note.textContent=finalText||interim||TXT[lang].listening;if(finalText){stopListening();handle(finalText)}};
-    recognition.onnomatch=()=>{note.hidden=false;note.textContent=lang==='lv'?'Nedzirdēju skaidri. Nospiediet mikrofonu un mēģiniet vēlreiz.':'I could not hear clearly. Press the microphone and try again.'};
-    recognition.onerror=ev=>{const map={
-      'not-allowed':TXT[lang].denied,
-      'service-not-allowed':TXT[lang].denied,
-      'no-speech':lang==='lv'?'Nedzirdēju runu. Mēģiniet vēlreiz un runājiet tuvāk mikrofonam.':'No speech was detected. Try again and speak closer to the microphone.',
-      'audio-capture':lang==='lv'?'Mikrofons nav pieejams. Pārbaudiet Windows un pārlūka mikrofona iestatījumus.':'The microphone is unavailable. Check your browser and system microphone settings.',
-      'network':lang==='lv'?'Balss atpazīšanai neizdevās izveidot savienojumu. Pārbaudiet internetu un mēģiniet vēlreiz.':'Voice recognition could not connect. Check your internet and try again.'
-    };note.hidden=false;note.textContent=map[ev.error]||(lang==='lv'?'Balss ievades kļūda: ':'Voice input error: ')+ev.error};
-    recognition.onend=()=>{if(listenTimer){clearTimeout(listenTimer);listenTimer=null}listening=false;mic.classList.remove('live');apply();if(note.textContent===TXT[lang].listening)note.hidden=true};
+    recognition.onstart=()=>{listening=true;mic.classList.add('live');apply();note.hidden=false;note.textContent=TXT.listening;listenTimer=setTimeout(()=>stopListening(),15000)};
+    recognition.onresult=ev=>{let finalText='',interim='';for(let i=ev.resultIndex;i<ev.results.length;i++){const t=ev.results[i][0].transcript;if(ev.results[i].isFinal)finalText+=t;else interim+=t}note.hidden=false;note.textContent=finalText||interim||TXT.listening;if(finalText.trim().length>1){stopListening();handle(finalText)}};
+    recognition.onnomatch=()=>{note.hidden=false;note.textContent='I couldn\'t hear that clearly. Press the microphone and try again, speaking a bit closer to it.'};
+    recognition.onerror=ev=>{
+      if(ev.error==='no-speech'){note.hidden=false;note.textContent='No speech detected — try again.';return}
+      const map={
+        'not-allowed':TXT.denied,
+        'service-not-allowed':TXT.denied,
+        'audio-capture':'Microphone unavailable. Check your browser and system microphone settings.',
+        'network':'Voice recognition could not connect. Check your internet connection and try again.'
+      };note.hidden=false;note.textContent=map[ev.error]||'Voice input error: '+ev.error};
+    recognition.onend=()=>{if(listenTimer){clearTimeout(listenTimer);listenTimer=null}listening=false;mic.classList.remove('live');apply();if(note.textContent===TXT.listening)note.hidden=true};
     recognition.start();
-  }catch(err){listening=false;mic.classList.remove('live');apply();note.hidden=false;note.textContent=err.message==='insecure'?(lang==='lv'?'Balss funkcija darbojas tikai HTTPS vietnē.':'Voice works only on an HTTPS website.'):TXT[lang].denied}
+  }catch(err){listening=false;mic.classList.remove('live');apply();note.hidden=false;note.textContent=err.message==='insecure'?'Voice only works on an HTTPS site.':TXT.denied}
 }};
 apply();
 })();
@@ -990,21 +974,20 @@ apply();
 .cd-topbar{background:#0B1F17;color:#fff;padding:16px 18px 20px;flex-shrink:0}
 .cd-topbar-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-family:'IBM Plex Mono',monospace;color:rgba(255,255,255,.45);margin-bottom:14px}
 .cd-caller{display:flex;align-items:center;gap:12px}
-.cd-avatar{width:44px;height:44px;border-radius:50%;background:#059669;display:grid;place-items:center;flex-shrink:0;font-size:20px}
+.cd-avatar{width:44px;height:44px;border-radius:50%;background:#13944A;display:grid;place-items:center;flex-shrink:0;color:#fff;font-weight:800;font-family:'Archivo',sans-serif}
 .cd-caller-name{font-size:13px;font-family:'IBM Plex Mono',monospace;color:rgba(255,255,255,.6)}
-.cd-status{font-size:13px;font-weight:600;color:#10B981}
+.cd-status{font-size:13px;font-weight:600;color:#22B563}
 .cd-transcript{flex:1;overflow-y:auto;background:#F7FAF8;padding:16px;display:flex;flex-direction:column;gap:10px}
 .cd-bubble{max-width:82%;padding:10px 14px;border-radius:16px;font-size:13.5px;line-height:1.4}
-.cd-bubble.ai{align-self:flex-start;background:#fff;border:1px solid #E2E8E4;border-bottom-left-radius:4px;color:#0B1F17}
+.cd-bubble.ai{align-self:flex-start;background:#fff;border:1px solid #E3E8E4;border-bottom-left-radius:4px;color:#0B1F17}
 .cd-bubble.user{align-self:flex-end;background:#0B1F17;color:#fff;border-bottom-right-radius:4px}
-.cd-controls{padding:16px;border-top:1px solid #E2E8E4;display:flex;gap:10px;justify-content:center;flex-shrink:0}
-.cd-btn-start{background:#059669;color:#fff;border:0;border-radius:999px;padding:14px 28px;font-weight:700;font-size:15px;cursor:pointer}
-.cd-btn-start:hover{background:#047857}
-.cd-btn-end{background:#DC2626;color:#fff;border:0;border-radius:50%;width:56px;height:56px;display:grid;place-items:center;cursor:pointer;font-size:22px}
+.cd-controls{padding:16px;border-top:1px solid #E3E8E4;display:flex;gap:10px;justify-content:center;flex-shrink:0}
+.cd-btn-start{background:#13944A;color:#fff;border:0;border-radius:999px;padding:14px 28px;font-weight:700;font-size:15px;cursor:pointer}
+.cd-btn-start:hover{background:#0E7239}
+.cd-btn-end{background:#B3451D;color:#fff;border:0;border-radius:50%;width:56px;height:56px;display:grid;place-items:center;cursor:pointer;font-size:22px}
 .cd-close-x{position:absolute;top:-44px;right:0;background:rgba(255,255,255,.15);color:#fff;border:0;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px;line-height:1}
-.cd-lang-toggle{background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:8px;padding:4px 8px;font-size:11px;cursor:pointer;font-weight:700}
 #cd-fab{position:fixed;right:20px;bottom:92px;z-index:9998;width:52px;height:52px;border-radius:50%;border:0;background:#0B1F17;color:#fff;font-size:20px;cursor:pointer;box-shadow:0 10px 26px rgba(11,31,23,.28);transition:.2s}
-#cd-fab:hover{background:#047857;transform:translateY(-2px)}
+#cd-fab:hover{background:#0E7239;transform:translateY(-2px)}
 @media(max-width:767px){#cd-fab{right:14px;bottom:156px}}
 @media(prefers-reduced-motion:reduce){#cognityl-demo-overlay *{transition:none!important}}
 </style>
@@ -1016,13 +999,13 @@ apply();
         <div class="cd-topbar">
           <div class="cd-topbar-row">
             <span id="cd-timer">0:00</span>
-            <button class="cd-lang-toggle" id="cd-lang">EN</button>
+            <span style="opacity:.6">DEMO LINE</span>
           </div>
           <div class="cd-caller">
-            <div class="cd-avatar">✂️</div>
+            <div class="cd-avatar">SA</div>
             <div>
-              <div class="cd-caller-name">Frizētava Elegance</div>
-              <div class="cd-status" id="cd-status">Savieno zvanu…</div>
+              <div class="cd-caller-name">Sunrise Auto Group</div>
+              <div class="cd-status" id="cd-status">Connecting call…</div>
             </div>
           </div>
         </div>
@@ -1036,61 +1019,43 @@ apply();
 (function(){
 'use strict';
 const CD_TTS_URL = "https://cognityl-tts.krismezulis.workers.dev";
-const CD_VOICES = { lv:"lv-LV-EveritaNeural", en:"en-US-AvaMultilingualNeural" };
+const CD_VOICE = "en-US-AvaMultilingualNeural";
 function cdEscape(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');}
-function cdBuildSsml(text, l){const locale=l==='en'?'en-US':'lv-LV';const voice=CD_VOICES[l]||CD_VOICES.lv;return `<speak version="1.0" xml:lang="${locale}"><voice name="${voice}"><prosody rate="0%" pitch="0%">${cdEscape(text)}</prosody></voice></speak>`;}
+function cdBuildSsml(text){return `<speak version="1.0" xml:lang="en-US"><voice name="${CD_VOICE}"><prosody rate="0%" pitch="0%">${cdEscape(text)}</prosody></voice></speak>`;}
 
 const CD_TXT = {
-  lv:{ connecting:'Savieno zvanu…', aiSpeaking:'AI atbild…', listening:'Klausos…', ended:'Zvans pabeigts',
-       greeting:'Labdien! Frizētava Elegance, ar ko varu palīdzēt?',
-       askService:'Protams! Kādu pakalpojumu vēlaties — matu griezumu, bārdas veidošanu vai abus?',
-       offerSlot:'Man ir brīva vieta rīt plkst. 14:00. Vai tas jums derētu?',
-       offerSlot2:'Saprotu. Vai plkst. 16:30 šodien būtu labāk?',
-       confirmed:'Lieliski, esmu jūs pierakstījis! Uz tikšanos frizētavā Elegance.',
-       declineAll:'Nekas cits, sazināsimies vēlāk — paldies par zvanu!',
-       goodbye:'Paldies par zvanu, uz redzēšanos!',
-       fallback:'Atvainojos, to nesapratu. Vai vēlaties pieteikties uz vizīti, vai ir kāds cits jautājums?',
-       noMic:'Mikrofons nav pieejams šajā pārlūkā. Lūdzu, izmantojiet Chrome vai Edge.',
-       start:'🎙️ Sākt zvanu'
-     },
-  en:{ connecting:'Connecting call…', aiSpeaking:'AI is speaking…', listening:'Listening…', ended:'Call ended',
-       greeting:'Hello! Elegance Barbershop, how can I help?',
-       askService:'Sure! What service would you like — a haircut, a beard trim, or both?',
-       offerSlot:'I have an opening tomorrow at 2:00 PM. Would that work for you?',
-       offerSlot2:'I see. Would 4:30 PM today work better?',
-       confirmed:"Great, you're booked! See you at Elegance Barbershop.",
-       declineAll:'No problem, feel free to call back anytime — thanks for calling!',
-       goodbye:'Thanks for calling, goodbye!',
-       fallback:"Sorry, I didn't catch that. Would you like to book an appointment, or is there something else?",
-       noMic:'Microphone is not available in this browser. Please use Chrome or Edge.',
-       start:'🎙️ Start call'
-     }
+  connecting:'Connecting call…', aiSpeaking:'AI is speaking…', listening:'Listening…', ended:'Call ended',
+  greeting:'Thanks for calling Sunrise Auto Group. Which location works best for you — Columbus, Dayton, or Cincinnati?',
+  askService:'Got it. What can we help you with today — an oil change, a tire rotation, or a general inspection?',
+  offerSlot:'We have an opening tomorrow at 10:00 AM. Would that work for you?',
+  offerSlot2:'I understand. Would 2:30 PM today work better?',
+  confirmed:"Great, you're all set! See you soon.",
+  declineAll:'No problem — feel free to call back anytime. Thanks for calling!',
+  goodbye:'Thanks for calling, goodbye!',
+  fallback:"Sorry, I didn't quite catch that. Would you like to book an appointment, or is there something else I can help with?",
+  noMic:'Microphone is not available in this browser. Please use Chrome or Edge.',
+  start:'Start call'
 };
 
 const CD_KB = [
-  {lv:['cena','maksā','izmaksas'], en:['price','cost','how much'],
-   a:{lv:'Matu griezums maksā no 20 eiro, bārdas veidošana no 12 eiro.', en:'A haircut starts from €20, a beard trim from €12.'}},
-  {lv:['darba laik','strādāj','atvērt'], en:['hours','open','when'],
-   a:{lv:'Mēs strādājam katru dienu no plkst. 9:00 līdz 19:00.', en:'We are open every day from 9 AM to 7 PM.'}},
-  {lv:['adrese','kur atrodaties','atrodas'], en:['address','located','where'],
-   a:{lv:'Atrodamies Brīvības ielā 55, Rīgā.', en:'We are located at Brivibas street 55, Riga.'}}
+  {kw:['price','cost','how much'], a:'An oil change starts at $45, and a tire rotation starts at $25.'},
+  {kw:['hours','open','when'], a:'We\'re open every day from 8 AM to 7 PM.'},
+  {kw:['address','located','where'], a:'Our Columbus location is at 4400 Main Street.'}
 ];
 
-const CD_BOOK_LV = ['pieteikt','rezervēt','vizīt','griezum','griezt','bārd'];
-const CD_BOOK_EN = ['book','appointment','haircut','beard','schedule'];
-const CD_YES_LV = ['jā','derēs','labi','kārtībā'];
-const CD_YES_EN = ['yes','sure','okay','ok','fine'];
+const CD_BOOK = ['book','appointment','oil change','tire','inspection','schedule'];
+const CD_YES = ['yes','sure','okay','ok','fine','yeah','yep'];
+const CD_LOCATIONS = ['columbus','dayton','cincinnati'];
 
 function cdNorm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();}
 
-let cdLang='lv', cdState='idle', cdRecognition=null, cdAudio=null, cdTimerInt=null, cdSeconds=0, cdBookingStep=null;
+let cdState='idle', cdRecognition=null, cdAudio=null, cdTimerInt=null, cdSeconds=0, cdBookingStep=null, cdLocation=null, cdRetries=0;
 
 const overlay=document.getElementById('cognityl-demo-overlay');
 const transcriptEl=document.getElementById('cd-transcript');
 const statusEl=document.getElementById('cd-status');
 const controlsEl=document.getElementById('cd-controls');
 const closeBtn=document.getElementById('cd-close');
-const langBtn=document.getElementById('cd-lang');
 const timerEl=document.getElementById('cd-timer');
 
 function cdBubble(who,text){
@@ -1109,9 +1074,9 @@ function cdStopTimer(){ if(cdTimerInt) clearInterval(cdTimerInt); }
 
 async function cdSpeak(text){
   cdBubble('ai',text);
-  cdSetStatus(CD_TXT[cdLang].aiSpeaking);
+  cdSetStatus(CD_TXT.aiSpeaking);
   try{
-    const r=await fetch(CD_TTS_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ssml:cdBuildSsml(text,cdLang)})});
+    const r=await fetch(CD_TTS_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ssml:cdBuildSsml(text)})});
     if(!r.ok) throw new Error('TTS failed '+r.status);
     const blob=await r.blob();
     const url=URL.createObjectURL(blob);
@@ -1127,18 +1092,20 @@ async function cdSpeak(text){
 
 function cdListen(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){ cdSetStatus(CD_TXT[cdLang].noMic); return; }
-  cdSetStatus(CD_TXT[cdLang].listening);
+  if(!SR){ cdSetStatus(CD_TXT.noMic); return; }
+  cdSetStatus(CD_TXT.listening);
   cdRecognition=new SR();
-  cdRecognition.lang=cdLang==='lv'?'lv-LV':'en-US';
+  cdRecognition.lang='en-US';
   cdRecognition.interimResults=true;
   cdRecognition.continuous=true;
   cdRecognition.maxAlternatives=1;
 
   let finalText='';
   let silenceTimer=null;
-  const SILENCE_MS=1400;
-  const MAX_LISTEN_MS=15000;
+  // Slightly more tolerant silence window and audio pre-processing
+  // give the recognizer a cleaner signal and fewer false cutoffs.
+  const SILENCE_MS=1700;
+  const MAX_LISTEN_MS=18000;
 
   function scheduleFinish(){
     if(silenceTimer) clearTimeout(silenceTimer);
@@ -1151,15 +1118,16 @@ function cdListen(){
     }
     scheduleFinish();
   };
-  cdRecognition.onerror=()=>{
+  cdRecognition.onerror=(ev)=>{
     if(silenceTimer) clearTimeout(silenceTimer);
-    if(cdState==='active') setTimeout(cdListen,600);
+    // Auto-recover from no-speech / aborted instead of leaving the call dead.
+    if(cdState==='active' && cdRetries<4){ cdRetries++; setTimeout(cdListen,500); }
   };
   cdRecognition.onend=()=>{
     if(silenceTimer) clearTimeout(silenceTimer);
     const text=finalText.trim();
-    if(text){ cdBubble('user',text); cdHandleTurn(text); }
-    else if(cdState==='active'){ setTimeout(cdListen,400); }
+    if(text.length>1){ cdRetries=0; cdBubble('user',text); cdHandleTurn(text); }
+    else if(cdState==='active' && cdRetries<4){ cdRetries++; setTimeout(cdListen,400); }
   };
   try{ cdRecognition.start(); }catch(e){ if(cdState==='active') setTimeout(cdListen,600); }
   setTimeout(()=>{ try{ cdRecognition.stop(); }catch(e){} }, MAX_LISTEN_MS);
@@ -1167,42 +1135,41 @@ function cdListen(){
 
 function cdHandleTurn(rawText){
   const t=cdNorm(rawText);
-  const T=CD_TXT[cdLang];
 
-  if(cdBookingStep==='awaitService'){ cdBookingStep='awaitSlot1'; cdSpeak(T.offerSlot); return; }
+  if(cdBookingStep===null && !cdLocation){
+    const loc = CD_LOCATIONS.find(l=>t.includes(l));
+    if(loc){ cdLocation=loc; cdSpeak(`Got it — ${loc.charAt(0).toUpperCase()+loc.slice(1)}. What can we help you with today?`); return; }
+  }
+
+  if(cdBookingStep==='awaitService'){ cdBookingStep='awaitSlot1'; cdSpeak(CD_TXT.offerSlot); return; }
   if(cdBookingStep==='awaitSlot1'){
-    const yes = cdLang==='lv' ? CD_YES_LV.some(w=>t.includes(w)) : CD_YES_EN.some(w=>t.includes(w));
-    if(yes){ cdBookingStep=null; cdSpeak(T.confirmed); cdShowBookedCard(); }
-    else { cdBookingStep='awaitSlot2'; cdSpeak(T.offerSlot2); }
+    if(CD_YES.some(w=>t.includes(w))){ cdBookingStep=null; cdSpeak(CD_TXT.confirmed); cdShowBookedCard(); }
+    else { cdBookingStep='awaitSlot2'; cdSpeak(CD_TXT.offerSlot2); }
     return;
   }
   if(cdBookingStep==='awaitSlot2'){
-    const yes = cdLang==='lv' ? CD_YES_LV.some(w=>t.includes(w)) : CD_YES_EN.some(w=>t.includes(w));
-    if(yes){ cdBookingStep=null; cdSpeak(T.confirmed); cdShowBookedCard(); }
-    else { cdBookingStep=null; cdSpeak(T.declineAll); }
+    if(CD_YES.some(w=>t.includes(w))){ cdBookingStep=null; cdSpeak(CD_TXT.confirmed); cdShowBookedCard(); }
+    else { cdBookingStep=null; cdSpeak(CD_TXT.declineAll); }
     return;
   }
 
-  const byeWords = cdLang==='lv' ? ['atā','tas ir viss','viss, paldies','beigt'] : ['bye','goodbye','that\'s all','nothing else'];
-  if(byeWords.some(w=>t.includes(w))){ cdSpeak(T.goodbye); setTimeout(cdEndCall, 2500); return; }
+  const byeWords = ['bye','goodbye','that\'s all','thats all','nothing else'];
+  if(byeWords.some(w=>t.includes(w))){ cdSpeak(CD_TXT.goodbye); setTimeout(cdEndCall, 2500); return; }
 
-  const bookWords = cdLang==='lv' ? CD_BOOK_LV : CD_BOOK_EN;
-  if(bookWords.some(w=>t.includes(w))){ cdBookingStep='awaitService'; cdSpeak(T.askService); return; }
+  if(CD_BOOK.some(w=>t.includes(w))){ cdBookingStep='awaitService'; cdSpeak(CD_TXT.askService); return; }
 
-  const hit = CD_KB.find(k => (k[cdLang]||[]).some(w=>t.includes(w)));
-  if(hit){ cdSpeak(hit.a[cdLang]); return; }
+  const hit = CD_KB.find(k => (k.kw||[]).some(w=>t.includes(w)));
+  if(hit){ cdSpeak(hit.a); return; }
 
-  cdSpeak(T.fallback);
+  cdSpeak(CD_TXT.fallback);
 }
 
 function cdShowBookedCard(){
   const div=document.createElement('div');
   div.className='cd-bubble ai';
-  div.style.border='2px solid #059669';
-  div.style.background='#F0FDF7';
-  div.innerHTML = cdLang==='lv'
-    ? '<strong>✓ Vizīte rezervēta</strong>'
-    : '<strong>✓ Appointment booked</strong>';
+  div.style.border='2px solid #13944A';
+  div.style.background='#F3F8F4';
+  div.innerHTML = '<strong>✓ Appointment booked' + (cdLocation ? ' · '+cdLocation.charAt(0).toUpperCase()+cdLocation.slice(1) : '') + '</strong>';
   transcriptEl.appendChild(div);
   transcriptEl.scrollTop=transcriptEl.scrollHeight;
 }
@@ -1210,22 +1177,24 @@ function cdShowBookedCard(){
 async function cdStartCall(){
   try{
     if(navigator.mediaDevices?.getUserMedia){
-      const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+      const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
       stream.getTracks().forEach(tr=>tr.stop());
     }
-  }catch(e){ cdSetStatus(CD_TXT[cdLang].noMic); return; }
+  }catch(e){ cdSetStatus(CD_TXT.noMic); return; }
   cdState='active';
   transcriptEl.textContent='';
   cdBookingStep=null;
+  cdLocation=null;
+  cdRetries=0;
   controlsEl.innerHTML='';
   const endBtn=document.createElement('button');
   endBtn.className='cd-btn-end';
-  endBtn.innerHTML='☎';
+  endBtn.innerHTML='&#9742;';
   endBtn.setAttribute('aria-label','End call');
   endBtn.onclick=cdEndCall;
   controlsEl.appendChild(endBtn);
   cdStartTimer();
-  cdSpeak(CD_TXT[cdLang].greeting);
+  cdSpeak(CD_TXT.greeting);
 }
 
 function cdEndCall(){
@@ -1233,11 +1202,11 @@ function cdEndCall(){
   cdStopTimer();
   try{ cdRecognition?.stop(); }catch(e){}
   try{ cdAudio?.pause(); }catch(e){}
-  cdSetStatus(CD_TXT[cdLang].ended);
+  cdSetStatus(CD_TXT.ended);
   controlsEl.innerHTML='';
   const startAgain=document.createElement('button');
   startAgain.className='cd-btn-start';
-  startAgain.textContent=CD_TXT[cdLang].start;
+  startAgain.textContent=CD_TXT.start;
   startAgain.onclick=cdStartCall;
   controlsEl.appendChild(startAgain);
 }
@@ -1246,15 +1215,14 @@ function cdOpen(){
   overlay.hidden=false;
   cdState='idle';
   transcriptEl.textContent='';
-  cdSetStatus(CD_TXT[cdLang].connecting);
+  cdSetStatus(CD_TXT.connecting);
   timerEl.textContent='0:00';
   controlsEl.innerHTML='';
   const startAgain=document.createElement('button');
   startAgain.className='cd-btn-start';
-  startAgain.textContent=CD_TXT[cdLang].start;
+  startAgain.textContent=CD_TXT.start;
   startAgain.onclick=cdStartCall;
   controlsEl.appendChild(startAgain);
-  langBtn.textContent = cdLang==='lv' ? 'EN' : 'LV';
 }
 function cdClose(){
   overlay.hidden=true;
@@ -1265,7 +1233,6 @@ function cdClose(){
 }
 
 closeBtn.onclick=cdClose;
-langBtn.onclick=()=>{ cdLang = cdLang==='lv' ? 'en' : 'lv'; langBtn.textContent = cdLang==='lv'?'EN':'LV'; cdSetStatus(CD_TXT[cdLang].connecting); };
 
 window.cognitylOpenCallDemo = cdOpen;
 })();
