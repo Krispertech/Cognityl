@@ -840,11 +840,11 @@ const KB=[
 {id:'industries',kw:['auto repair','barbershop','salon','industry','business','clinic','dental','who is this for'],a:'It works well for any multi-location service business where staff can\'t always pick up the phone — auto service groups, salons and spas, dental and medical groups, and similar businesses.'},
 {id:'contact',kw:['human','contact','email','speak to someone','talk to sales'],a:'You can email kristaps@cognityl.com, or I can help you request a demo right here. Want to get started?'}
 ];
-const TXT={title:'Cognityl AI',status:'Online',hello:'Hi — I\'m the Cognityl AI assistant. I can explain pricing, how it works, or help you book a demo. What would you like to know?',placeholder:'Type your question…',send:'Send',mic:'Mic',stop:'Stop',close:'×',fallback:'I don\'t have verified information on that. I can help with pricing, how it works, integrations, or booking a demo.',chips:['Pricing','How does it work?','Book a demo'],leadStart:'Great — let\'s get this set up. What\'s your name?',askEmail:'Thanks! What\'s the best email to reach you at?',askCompany:'What\'s your company name?',askLocations:'Roughly how many locations do you operate?',askChallenge:'In a sentence — what\'s the main problem you want to solve?',askTime:'What time works best for a quick call?',confirm:'Please confirm your request:',yes:'Confirm',cancel:'Cancel',sent:'Thanks! Your request has been sent. Cognityl will reach out to confirm a time.',failed:'The request could not be sent. Please email kristaps@cognityl.com.',listening:'Listening…',denied:'Microphone access was denied. You can type instead.',privacy:'Voice input uses your browser\'s speech recognition. Audio is not intentionally stored.'};
-let lead=null,listening=false,recognition=null,voiceOn=false,listenTimer=null;
+const TXT={title:'Cognityl AI',status:'Automated assistant · not a human',hello:'Hi — I\'m the Cognityl AI assistant, not a live person. I can explain pricing, how it works, or help you book a demo. What would you like to know?',placeholder:'Type your question…',send:'Send',mic:'Mic',stop:'Stop',close:'×',fallback:'I don\'t have verified information on that. I can help with pricing, how it works, integrations, or booking a demo.',chips:['Pricing','How does it work?','Book a demo'],leadStart:'Great — let\'s get this set up. What\'s your name?',askEmail:'Thanks! What\'s the best email to reach you at?',askCompany:'What\'s your company name?',askLocations:'Roughly how many locations do you operate?',askChallenge:'In a sentence — what\'s the main problem you want to solve?',askTime:'What time works best for a quick call?',confirm:'Please confirm your request:',yes:'Confirm',cancel:'Cancel',sent:'Thanks! Your request has been sent. Cognityl will reach out to confirm a time.',failed:'The request could not be sent. Please email kristaps@cognityl.com.',listening:'Listening…',denied:'Microphone access was denied. You can type instead.',privacy:'This is an automated AI assistant, not a human. Voice input uses your browser\'s speech recognition; audio is not intentionally stored.'};
+let lead=null,listening=false,recognition=null,voiceOn=true,listenTimer=null;
 const root=document.getElementById('cognityl-chat');
 function e(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n}
-const fab=e('button','cog-fab');fab.type='button';fab.setAttribute('aria-label','Open Cognityl AI');fab.innerHTML='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>';
+const fab=e('button','cog-fab');fab.type='button';fab.setAttribute('aria-label','Open Cognityl AI, an automated assistant');fab.innerHTML='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>';
 const panel=e('section','cog-panel');panel.hidden=true;panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','false');
 const head=e('div','cog-head'),hl=e('div','cog-head-left'),av=e('div','cog-avatar','C'),titles=e('div'),title=e('div','cog-title',TXT.title),status=e('div','cog-status',TXT.status),acts=e('div','cog-actions'),cb=e('button','',TXT.close);cb.type='button';titles.append(title,status);hl.append(av,titles);acts.append(cb);head.append(hl,acts);
 const log=e('div','cog-log'),chips=e('div','cog-chips'),note=e('div','cog-note');note.hidden=true;
@@ -999,7 +999,7 @@ apply();
         <div class="cd-topbar">
           <div class="cd-topbar-row">
             <span id="cd-timer">0:00</span>
-            <span style="opacity:.6">DEMO LINE</span>
+            <span style="opacity:.6">DEMO · AI ASSISTANT</span>
           </div>
           <div class="cd-caller">
             <div class="cd-avatar">SA</div>
@@ -1025,31 +1025,43 @@ function cdBuildSsml(text){return `<speak version="1.0" xml:lang="en-US"><voice 
 
 const CD_TXT = {
   connecting:'Connecting call…', aiSpeaking:'AI is speaking…', listening:'Listening…', ended:'Call ended',
-  greeting:'Thanks for calling Sunrise Auto Group. Which location works best for you — Columbus, Dayton, or Cincinnati?',
-  askService:'Got it. What can we help you with today — an oil change, a tire rotation, or a general inspection?',
-  offerSlot:'We have an opening tomorrow at 10:00 AM. Would that work for you?',
+  greeting:"Thanks for calling Sunrise Auto Group — you're speaking with our AI assistant. Which location works best for you: Columbus, Dayton, or Cincinnati?",
+  askService:'Got it. What can we help you with today — an oil change, tire service, a brake check, a battery check, a check-engine light, or a general inspection?',
+  askVehicle:"Thanks — one more thing, what's the make, model and rough year of your vehicle?",
+  offerSlot:'Based on that, we have an opening tomorrow at 10:00 AM. Would that work for you?',
   offerSlot2:'I understand. Would 2:30 PM today work better?',
   confirmed:"Great, you're all set! See you soon.",
   declineAll:'No problem — feel free to call back anytime. Thanks for calling!',
   goodbye:'Thanks for calling, goodbye!',
+  areYouHuman:"I'm an AI assistant, not a live person — but I can get you booked in or connect you with the team if you'd rather speak with someone.",
   fallback:"Sorry, I didn't quite catch that. Would you like to book an appointment, or is there something else I can help with?",
   noMic:'Microphone is not available in this browser. Please use Chrome or Edge.',
   start:'Start call'
 };
 
 const CD_KB = [
-  {kw:['price','cost','how much'], a:'An oil change starts at $45, and a tire rotation starts at $25.'},
+  {kw:['price','cost','how much'], a:'An oil change starts at $45, tire rotation starts at $25, and a general inspection is $60.'},
   {kw:['hours','open','when'], a:'We\'re open every day from 8 AM to 7 PM.'},
   {kw:['address','located','where'], a:'Our Columbus location is at 4400 Main Street.'}
 ];
 
-const CD_BOOK = ['book','appointment','oil change','tire','inspection','schedule'];
+const CD_SERVICES = [
+  {id:'oil', label:'an oil change', kw:['oil change','oil'], detail:'Do you know if your vehicle takes conventional or synthetic oil? If you\'re not sure, that\'s fine — we\'ll check when you arrive.'},
+  {id:'tire', label:'tire service', kw:['tire rotation','tire','tires'], detail:'Are you looking for a rotation, a full set replacement, or just a pressure check?'},
+  {id:'brake', label:'a brake check', kw:['brake'], detail:'Understood. Are you noticing any squeaking, grinding, or a soft pedal when you brake?'},
+  {id:'battery', label:'a battery check', kw:['battery'], detail:'Got it. Is the vehicle starting fine right now, or having trouble?'},
+  {id:'diagnostic', label:'a check-engine diagnostic', kw:['check engine','diagnostic','engine light'], detail:'Is the check-engine light on continuously, or does it come and go?'},
+  {id:'inspection', label:'a general inspection', kw:['inspection','general inspection','multi-point','multi point'], detail:'Is this routine maintenance, or is there something specific you\'d like us to look at?'}
+];
+
+const CD_BOOK = ['book','appointment','oil change','tire','inspection','schedule','brake','battery','diagnostic','check engine'];
 const CD_YES = ['yes','sure','okay','ok','fine','yeah','yep'];
 const CD_LOCATIONS = ['columbus','dayton','cincinnati'];
+const CD_HUMAN_CHECK = ['are you a person','are you human','am i talking to a person','is this a real person','robot'];
 
 function cdNorm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();}
 
-let cdState='idle', cdRecognition=null, cdAudio=null, cdTimerInt=null, cdSeconds=0, cdBookingStep=null, cdLocation=null, cdRetries=0;
+let cdState='idle', cdRecognition=null, cdAudio=null, cdTimerInt=null, cdSeconds=0, cdBookingStep=null, cdLocation=null, cdService=null, cdVehicle=null, cdRetries=0;
 
 const overlay=document.getElementById('cognityl-demo-overlay');
 const transcriptEl=document.getElementById('cd-transcript');
@@ -1136,12 +1148,31 @@ function cdListen(){
 function cdHandleTurn(rawText){
   const t=cdNorm(rawText);
 
+  // Honest, always-on disclosure: if asked directly, say so — every turn, regardless of state.
+  if(CD_HUMAN_CHECK.some(w=>t.includes(w))){ cdSpeak(CD_TXT.areYouHuman); return; }
+
   if(cdBookingStep===null && !cdLocation){
     const loc = CD_LOCATIONS.find(l=>t.includes(l));
     if(loc){ cdLocation=loc; cdSpeak(`Got it — ${loc.charAt(0).toUpperCase()+loc.slice(1)}. What can we help you with today?`); return; }
   }
 
-  if(cdBookingStep==='awaitService'){ cdBookingStep='awaitSlot1'; cdSpeak(CD_TXT.offerSlot); return; }
+  if(cdBookingStep==='awaitService'){
+    const svc = CD_SERVICES.find(s => (s.kw||[]).some(w=>t.includes(w)));
+    if(svc){ cdService=svc; cdBookingStep='awaitServiceDetail'; cdSpeak(svc.detail); return; }
+    cdSpeak("Just to confirm, was that an oil change, tire service, a brake check, a battery check, a check-engine light, or a general inspection?");
+    return;
+  }
+  if(cdBookingStep==='awaitServiceDetail'){
+    cdBookingStep='awaitVehicle';
+    cdSpeak(CD_TXT.askVehicle);
+    return;
+  }
+  if(cdBookingStep==='awaitVehicle'){
+    cdVehicle = rawText.trim();
+    cdBookingStep='awaitSlot1';
+    cdSpeak(CD_TXT.offerSlot);
+    return;
+  }
   if(cdBookingStep==='awaitSlot1'){
     if(CD_YES.some(w=>t.includes(w))){ cdBookingStep=null; cdSpeak(CD_TXT.confirmed); cdShowBookedCard(); }
     else { cdBookingStep='awaitSlot2'; cdSpeak(CD_TXT.offerSlot2); }
@@ -1169,7 +1200,15 @@ function cdShowBookedCard(){
   div.className='cd-bubble ai';
   div.style.border='2px solid #13944A';
   div.style.background='#F3F8F4';
-  div.innerHTML = '<strong>✓ Appointment booked' + (cdLocation ? ' · '+cdLocation.charAt(0).toUpperCase()+cdLocation.slice(1) : '') + '</strong>';
+  const locLabel = cdLocation ? cdLocation.charAt(0).toUpperCase()+cdLocation.slice(1) : '';
+  const rows = [
+    ['Location', locLabel || '—'],
+    ['Service', cdService ? cdService.label : '—'],
+    ['Vehicle', cdVehicle || '—'],
+  ];
+  div.innerHTML = '<strong>✓ Appointment booked</strong><div style="margin-top:8px;font-size:12.5px;line-height:1.6;color:#356052">'
+    + rows.map(([k,v])=>`<div><strong>${k}:</strong> ${v}</div>`).join('')
+    + '</div>';
   transcriptEl.appendChild(div);
   transcriptEl.scrollTop=transcriptEl.scrollHeight;
 }
@@ -1185,6 +1224,8 @@ async function cdStartCall(){
   transcriptEl.textContent='';
   cdBookingStep=null;
   cdLocation=null;
+  cdService=null;
+  cdVehicle=null;
   cdRetries=0;
   controlsEl.innerHTML='';
   const endBtn=document.createElement('button');
